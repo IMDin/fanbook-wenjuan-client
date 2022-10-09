@@ -35,6 +35,7 @@ jobs:
           if_key_exists: replace
       - name: Webpack client
         run: |
+          npm install -g npm@6.14.1
           npm install -g vue-cli
           npm install
           npm run build
