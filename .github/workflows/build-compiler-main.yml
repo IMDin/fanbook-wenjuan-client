@@ -12,7 +12,10 @@ jobs:
   build:
     container: tarscloud/base-compiler
     runs-on: ubuntu-20.04
+    env:
+      TAR_PACKAGE: fanbook-client-1.0.0.tgz
     steps:
+      - uses: actions/checkout@v2
       - name: cache node modules
         uses: actions/cache@v2
         env:
@@ -30,18 +33,18 @@ jobs:
           known_hosts: ${{ secrets.ACTION_KNOWN_HOSTS }}
           config: ${{ secrets.ACTION_DEPLOY_CONFIG }}
           if_key_exists: replace
-      - name: Install Vue
-        run: npm install -g vue-cli --registry=https://registry.npm.taobao.org
-      - name: Install node-modules
+      - name: Webpack client
         run: |
-          ls -al
+          npm install -g vue-cli --registry=https://registry.npm.taobao.org
           npm install --registry=https://registry.npm.taobao.org
-      - name: Webpack dist
-        run: npm run build
+          npm run build
       - name: scp tgz
         run: |
-          mv dist fanbook
-          tar -zcvf fanbook.tgz fanbook
-          scp -P 22000 fanbook.tgz tarstime:/home/ubuntu/fanbook/
+          mv dist fanbook-client
+          tar -zcvf $TAR_PACKAGE fanbook-client
+          ssh -p 22000 tarstime "rm -f /home/ubuntu/fanbook/$TAR_PACKAGE"
+          scp -P 22000 $TAR_PACKAGE tarstime:/home/ubuntu/fanbook/
       - name: deploy
-        run: ssh -p 22000 tarstime "tar -zxvf /home/ubuntu/fanbook/fanbook.tgz -C /usr/share/nginx/"
+        run: |
+          ssh -p 22000 tarstime "rm -rf /usr/share/nginx/fanbook-client"
+          ssh -p 22000 tarstime "tar -zxvf /home/ubuntu/fanbook/$TAR_PACKAGE -C /usr/share/nginx/"
