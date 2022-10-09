@@ -47,5 +47,5 @@ jobs:
           scp -P 22000 $TAR_PACKAGE tarstime:/home/ubuntu/fanbook/
       - name: deploy
         run: |
-          ssh -p 22000 tarstime "rm -rf /usr/share/nginx/fanbook-client"
-          ssh -p 22000 tarstime "tar -zxvf /home/ubuntu/fanbook/$TAR_PACKAGE -C /usr/share/nginx/"
+          ssh -p 22000 tarstime "sudo rm -rf /usr/share/nginx/fanbook-client"
+          ssh -p 22000 tarstime "sudo tar -zxvf /home/ubuntu/fanbook/$TAR_PACKAGE -C /usr/share/nginx/"
