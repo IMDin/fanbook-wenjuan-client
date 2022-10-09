@@ -38,10 +38,10 @@ jobs:
           npm install -g npm@6.14.1
           npm install -g vue-cli
           npm install
-          npm run build
+          npm run build-dev
       - name: scp tgz
         run: |
-          mv dist fanbook-client
+          mv dist-dev fanbook-client
           tar -zcvf $TAR_PACKAGE fanbook-client
           ssh -p 22000 tarstime "rm -f /home/ubuntu/fanbook/$TAR_PACKAGE"
           scp -P 22000 $TAR_PACKAGE tarstime:/home/ubuntu/fanbook/
