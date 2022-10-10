@@ -1,0 +1,51 @@
+name: build-compiler-main
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    container: tarscloud/base-compiler
+    runs-on: ubuntu-20.04
+    env:
+      TAR_PACKAGE: fanbook-client-1.0.0.tgz
+    steps:
+      - uses: actions/checkout@v2
+      - name: cache node modules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}
+      - name: Install SSH Key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.ACTION_DEPLOY_KEY }}
+          name: ssh_tarstime_key
+          known_hosts: ${{ secrets.ACTION_KNOWN_HOSTS }}
+          config: ${{ secrets.ACTION_DEPLOY_CONFIG }}
+          if_key_exists: replace
+      - name: Webpack client
+        run: |
+          npm install -g npm@6.14.1
+          npm install -g vue-cli
+          npm install
+          npm run build
+      - name: scp tgz
+        run: |
+          mv dist fanbook-client
+          tar -zcvf $TAR_PACKAGE fanbook-client
+          ssh -p 22000 tarstime "rm -f /home/ubuntu/fanbook/$TAR_PACKAGE"
+          scp -P 22000 $TAR_PACKAGE tarstime:/home/ubuntu/fanbook/
+      - name: deploy
+        run: |
+          ssh -p 22000 tarstime "sudo rm -rf /usr/share/nginx/fanbook-client"
+          ssh -p 22000 tarstime "sudo tar -zxvf /home/ubuntu/fanbook/$TAR_PACKAGE -C /usr/share/nginx/"

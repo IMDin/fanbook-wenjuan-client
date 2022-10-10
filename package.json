@@ -3,11 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "vue-cli-service serve",
-    "serve": "vue-cli-service serve",
-    "build-dev": "vue-cli-service build --mode development --dest dist-dev",
+    "dev": "vue-cli-service serve --mode local",
+    "serve": "vue-cli-service serve --mode local",
+    "build": "vue-cli-service build --mode dev",
     "preview": "node build/index.js --preview",
-    "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "svgo": "svgo -f src/assets/icons"
   },
