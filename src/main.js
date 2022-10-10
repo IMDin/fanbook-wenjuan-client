@@ -22,6 +22,8 @@ import AOS from 'aos'
 import 'aos/dist/aos.css'
 import VConsole from 'vconsole'
 
+import  "@/utils/time.js"
+
 Vue.prototype.$api = api
 Vue.prototype.$dayjs = dayjs
 Vue.prototype.$store = store

@@ -13,11 +13,15 @@ module.exports = {
   devServer: {
     disableHostCheck: true,
     open: true,
-    port: 8888,
+    port: 8889,
     // 开发环境默认开启反向代理，如果不需要请自行注释
     proxy: {
       '/tduck-api': {
         target: 'http://localhost:8999',
+        changeOrigin: true
+      },
+      '/mofang-api': {
+        target: 'http://wenjuan.k.tarstime.com/mofang-api/',
         changeOrigin: true
       }
     }

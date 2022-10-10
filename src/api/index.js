@@ -1,7 +1,7 @@
 import axios from 'axios'
 // import qs from 'qs'
 import {Message, MessageBox} from 'element-ui'
-import Verification from '@/components/verifition/verification.js'
+// import Verification from '@/components/verifition/verification.js'
 import router from '@/router/index'
 import store from '@/store/index'
 import signMd5Utils from '@/utils/sign'
