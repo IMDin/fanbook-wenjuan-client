@@ -20,10 +20,10 @@ module.exports = {
         target: 'http://localhost:8999',
         changeOrigin: true
       },
-      '/mofang-api': {
-        target: 'http://wenjuan.k.tarstime.com/mofang-api/',
-        changeOrigin: true
-      }
+      // '/mofang-api': {
+      //   target: 'http://192.168.2.131:8999',
+      //   changeOrigin: true
+      // }
     }
   },
   configureWebpack: {

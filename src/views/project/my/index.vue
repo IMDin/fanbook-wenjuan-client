@@ -18,9 +18,10 @@
           <el-input
             placeholder="请输入搜索关键字"
             suffix-icon="el-icon-search"
-            v-model="searchForm.searchText"
+            v-model="queryParams.name"
             clearable
             style="width: 250px"
+            @change="getData"
           />
           <el-select 
             clearable 
@@ -44,9 +45,13 @@
       class="my-table"
     >
       <el-table-column
+        prop="name"
+        label="问卷名称"
+      />
+      <el-table-column
         prop="describe"
         label="标题"
-        width="400"
+        width="300"
         show-overflow-tooltip
       />
       <el-table-column
@@ -122,14 +127,14 @@
               ...
             </el-button>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item :command="'copy-' + row.key">
+              <el-dropdown-item :command="'copy-' + row.key + '-' + row.name ">
                 复制
               </el-dropdown-item>
-              <el-dropdown-item :command="'stop-' + row.key">
+              <el-dropdown-item :command="'stop-' + row.key + '-' + row.name ">
                 停止
               </el-dropdown-item>
               <el-dropdown-item 
-                :command="'delete-' + row.key"
+                :command="'delete-' + row.key + '-' + row.name "
                 style="color: red"
               >
                 删除
@@ -166,10 +171,6 @@ export default {
           endDateTime: null,
           status: null,
           fbUser:'',
-      },
-      searchForm: {
-        searchText: "",
-        type: ''
       },
       options: [{
         value: '1',
@@ -216,29 +217,67 @@ export default {
       if (!e) return 
       const type = e.split('-')[0]
       const key = e.split('-')[1]
+      const name = e.split('-')[2]
       switch (type) {
         case 'copy':
-          console.log(key, type)
+          this.openCopyBox(key, name)
           break;
         case 'stop':
-           console.log(key, type)
+          this.$confirm(`确定停止发布《${name}》吗？该问卷所以数据采集将停止，答题链接将无法收集数据`, '停止确认', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+          }).then(() => {
            reqStopProject({key}).then(res => {
-            if (res.data) {
-                this.msgSuccess('停止成功')
-                this.getData()
-            }
-        })
+              if (res.data) {
+                  this.msgSuccess('停止成功')
+                  this.getData()
+              }
+            })
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消停止'
+            });          
+          });
+           
           break;
         case 'delete':
-          reqDeleteProject({key}).then(res => {
+          this.$confirm(`确定要删除《${name}》吗？删除后问卷将移入回收站，可进行恢复`, '删除确认', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+          }).then(() => {
+           reqDeleteProject({key}).then(res => {
               if (res.data) {
                   this.msgSuccess('刪除成功')
                   this.getData()
               }
           })
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消删除'
+            });          
+          });
           break;
-
       }
+    },
+    openCopyBox(key, name) {
+      this.$prompt('副本名称', '复制为副本', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        inputValue: name + '_副本',
+        inputPattern: /\S/,
+        inputErrorMessage: '请填写副本名称'
+      }).then(({ value }) => {
+         console.log(value, key);
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '取消输入'
+        });       
+      });
     },
   }
 };
