@@ -23,11 +23,29 @@
         <!-- <el-col /> -->
         <el-col class="showGuide">
           <el-breadcrumb separator-class="el-icon-arrow-right">
-            <el-breadcrumb-item :to="{ path: '/' }">
+            <el-breadcrumb-item
+              :class="currentTab == 'editor' ? 'activeClass' : 'normalClass'"
+              :to="{ path: '/project/form/editor' }"
+              @click.native="editorBreadClick"
+            >
               编辑问卷
             </el-breadcrumb-item>
-            <el-breadcrumb-item>发布问卷</el-breadcrumb-item>
-            <el-breadcrumb-item>数据统计</el-breadcrumb-item>
+            <el-breadcrumb-item
+              :class="currentTab == 'publish' ? 'activeClass' : 'normalClass'"
+              :to="{ path: '/project/form/publish' }"
+              @click.native="publishBreadClick"
+            >
+              发布问卷
+            </el-breadcrumb-item>
+            <el-breadcrumb-item
+              :class="
+                currentTab == 'statistics' ? 'activeClass' : 'normalClass'
+              "
+              :to="{ path: '/project/form/statistics' }"
+              @click.native="statisticsBreadClick"
+            >
+              数据统计
+            </el-breadcrumb-item>
           </el-breadcrumb>
         </el-col>
         <el-button
@@ -52,7 +70,10 @@
       </el-row>
     </el-card>
     <div class="main-container">
-      <div class="left-menu-container">
+      <div
+        class="left-menu-container"
+        v-if="currentTab !== 'publish' && currentTab !== 'statistics'"
+      >
         <el-menu
           :collapse="isCollapse"
           :default-active="defaultActiveMenu"
@@ -144,6 +165,8 @@ export default {
       ],
       //新增问卷名称字段
       projectTitle: "问卷名称",
+      //当前页面
+      currentTab: "editor",
     };
   },
   created() {
@@ -191,10 +214,11 @@ export default {
           //     // this.sendMsg();
           //     this.msgSuccess('发布成功')
           // })
-          this.$message({
-            type: "success",
-            message: "发布成功!",
-          });
+          // this.$message({
+          //   type: "success",
+          //   message: "发布成功!",
+          // });
+          this.$router.push({ path: "/project/form/publish" });
         })
         .catch(() => {
           this.$message({
@@ -208,6 +232,24 @@ export default {
     changeTitle(val) {
       console.log(val);
       this.projectTitle = val;
+    },
+
+    //控制tab页签
+    editorBreadClick() {
+      console.log(111, this.$route.name);
+      if (this.$route.name == "editor") {
+        this.currentTab = "editor";
+      }
+    },
+    publishBreadClick() {
+      if (this.$route.name == "publish") {
+        this.currentTab = "publish";
+      }
+    },
+    statisticsBreadClick() {
+      if (this.$route.name == "statistics") {
+        this.currentTab = "statistics";
+      }
     },
   },
 };
@@ -263,6 +305,17 @@ export default {
     display: flex;
     justify-content: center;
   }
+
+  .activeClass {
+    ::v-deep .el-breadcrumb__inner {
+      border-bottom: 2px solid rgb(77, 166, 255);
+      padding-bottom: 10px;
+    }
+    font-size: 16px;
+  }
+  .normalClass {
+    font-size: 16px;
+  }
 }
 
 .main-container {
@@ -308,5 +361,16 @@ export default {
 
 ::v-deep.preview-container {
   background-color: #ffffff;
+}
+::v-deep .el-breadcrumb__inner {
+  color: rgb(58, 58, 58);
+}
+::v-deep .el-breadcrumb__item:last-child .el-breadcrumb__inner {
+  color: rgb(58, 58, 58);
+  cursor: pointer;
+  font-weight: 700;
+}
+::v-deep .el-breadcrumb__item:last-child :hover {
+  color: rgb(64, 158, 255);
 }
 </style>
