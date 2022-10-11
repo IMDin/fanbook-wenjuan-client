@@ -10,19 +10,38 @@
           class="el-icon-back"
           @click="$router.back(-1)"
         />
-        <img
+        <!-- <img
           class="header-logo"
           src="@/assets/images/blue.png"
           @click="$router.push({path:'/home'})"
-        >
-        <el-col />
-        <!-- <el-button
-          type="primary"
+        > -->
+        <div class="textTip">
+          <span>{{ projectTitle }}</span>
+          <br>
+          <span>已保存至草稿</span>
+        </div>
+        <!-- <el-col /> -->
+        <el-col class="showGuide">
+          <el-breadcrumb separator-class="el-icon-arrow-right">
+            <el-breadcrumb-item :to="{ path: '/' }">
+              编辑问卷
+            </el-breadcrumb-item>
+            <el-breadcrumb-item>发布问卷</el-breadcrumb-item>
+            <el-breadcrumb-item>数据统计</el-breadcrumb-item>
+          </el-breadcrumb>
+        </el-col>
+        <el-button
           icon="el-icon-view"
-          @click="previewDialogVisible=true"
+          @click="previewDialogVisible = true"
         >
           预览
-        </el-button> -->
+        </el-button>
+        <el-button
+          type="primary"
+          @click="publishProject"
+        >
+          发布问卷
+        </el-button>
         <!-- <el-button
           type="success"
           icon="el-icon-folder-add"
@@ -61,7 +80,7 @@
         />
       </div>
       <div class="right-content-container">
-        <router-view />
+        <router-view @getProjectTitle="changeTitle" />
       </div>
     </div>
     <el-dialog
@@ -78,77 +97,120 @@
 </template>
 
 <script>
-import PreView from '@/views/form/preview'
-import store from '@/store'
+import PreView from "@/views/form/preview";
+// import store from "@/store";
 
 export default {
-    name: 'NewIndex',
-    components: {PreView},
-    data() {
-        return {
-            previewKey: +new Date(),
-            previewDialogVisible: false,
-            defaultActiveMenu: 'editor',
-            projectKey: null,
-            isCollapse: false,
-            menuItemList: [
-                {
-                    title: '编辑',
-                    icon: 'el-icon-edit',
-                    route: '/project/form/editor'
-                },
-                {
-                    title: '逻辑',
-                    icon: 'el-icon-menu',
-                    route: '/project/form/logic'
-                }, {
-                    title: '外观',
-                    icon: 'el-icon-view',
-                    route: '/project/form/theme'
-                },
-                {
-                    title: '设置',
-                    icon: 'el-icon-setting',
-                    route: '/project/form/setting'
-                },
-                {
-                    title: '发布',
-                    icon: 'el-icon-video-play',
-                    route: '/project/form/publish'
-                }, {
-                    title: '统计',
-                    icon: 'el-icon-data-line',
-                    route: '/project/form/statistics'
-                }
-            ]
-        }
+  name: "NewIndex",
+  components: { PreView },
+  data() {
+    return {
+      previewKey: +new Date(),
+      previewDialogVisible: false,
+      defaultActiveMenu: "editor",
+      projectKey: null,
+      isCollapse: false,
+      menuItemList: [
+        {
+          title: "题目",
+          icon: "el-icon-edit",
+          route: "/project/form/editor",
+        },
+        {
+          title: "逻辑",
+          icon: "el-icon-menu",
+          route: "/project/form/logic",
+        },
+        {
+          title: "外观",
+          icon: "el-icon-view",
+          route: "/project/form/theme",
+        },
+        {
+          title: "设置",
+          icon: "el-icon-setting",
+          route: "/project/form/setting",
+        },
+        // {
+        //   title: "发布",
+        //   icon: "el-icon-video-play",
+        //   route: "/project/form/publish",
+        // },
+        // {
+        //     title: '统计',
+        //     icon: 'el-icon-data-line',
+        //     route: '/project/form/statistics'
+        // }
+      ],
+      //新增问卷名称字段
+      projectTitle: "问卷名称",
+    };
+  },
+  created() {
+    this.projectKey = this.$route.query.key;
+    this.defaultActiveMenu = this.$route.path;
+    this.isCollapse = this.$store.state.form.isCollapse;
+  },
+  methods: {
+    menuSelectHandle(index) {
+      this.$router.replace({ path: index, query: { key: this.projectKey } });
     },
-    created() {
-        this.projectKey = this.$route.query.key
-        this.defaultActiveMenu = this.$route.path
-        this.isCollapse = this.$store.state.form.isCollapse
+    openPreviewHandle() {
+      this.previewKey = +new Date();
+      this.previewDialogVisible = true;
     },
-    methods: {
-        menuSelectHandle(index) {
-            this.$router.replace({path: index, query: {key: this.projectKey}})
-        },
-        openPreviewHandle() {
-            this.previewKey = +new Date()
-            this.previewDialogVisible = true
-        },
-        saveProjectAsTemplateHandle() {
-            this.$api.post('/user/project/template/save', {key: this.projectKey,fbUser:localStorage.getItem("user_id")}).then(() => {
-                this.msgSuccess('保存成功')
-            })
-        },
-        collapseHandle() {
-            let isCollapse = !this.isCollapse
-            this.$store.dispatch('form/setIsCollapse', isCollapse).then(() => {
-                this.isCollapse = isCollapse
-            })
-        }
-    }
-}
+    saveProjectAsTemplateHandle() {
+      this.$api
+        .post("/user/project/template/save", {
+          key: this.projectKey,
+          fbUser: localStorage.getItem("user_id"),
+        })
+        .then(() => {
+          this.msgSuccess("保存成功");
+        });
+    },
+    collapseHandle() {
+      let isCollapse = !this.isCollapse;
+      this.$store.dispatch("form/setIsCollapse", isCollapse).then(() => {
+        this.isCollapse = isCollapse;
+      });
+    },
+
+    //新增发布问卷按钮
+    publishProject() {
+      console.log("点击发布按钮");
+      this.$confirm("请确认是否发布问卷?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          // this.$api.post('/user/project/publish', {key: this.projectKey,publishList:this.publishList}).then(() => {
+          //     this.publishStatus = true;
+          //     this.ksfb=true;
+          //     // this.sendMsg();
+          //     this.msgSuccess('发布成功')
+          // })
+          this.$message({
+            type: "success",
+            message: "发布成功!",
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消",
+          });
+        });
+    },
+
+    //更改问卷名称
+    changeTitle(val) {
+      console.log(val);
+      this.projectTitle = val;
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>
@@ -169,14 +231,14 @@ export default {
 .header-container {
   width: 100%;
   height: 50px;
-  padding: 0 20px;
+  padding: 0 30px;
 
   .el-icon-back {
     font-size: 22px;
     font-weight: 550;
     cursor: pointer;
     color: #000;
-    margin-right: 75px;
+    margin-right: 25px;
 
     &:hover {
       color: rgb(32, 160, 255);
@@ -187,6 +249,19 @@ export default {
     height: 45px;
     // width: 200px;
     padding: 5px;
+  }
+
+  .textTip {
+    flex: none;
+    :nth-last-child(1) {
+      font-size: 12px;
+      color: rgb(117, 117, 117);
+    }
+  }
+
+  .showGuide {
+    display: flex;
+    justify-content: center;
   }
 }
 
