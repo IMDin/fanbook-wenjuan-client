@@ -21,3 +21,11 @@ export const reqStopProject = ( data ) => {
     data
   })
 }
+// 复制 /user/project/copy
+export const reqCopyProject = ( data ) => {
+  return api({
+    url: '/user/project/copy', 
+    method: 'post',
+    data
+  })
+}

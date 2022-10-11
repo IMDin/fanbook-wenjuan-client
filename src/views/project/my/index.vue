@@ -63,9 +63,9 @@
         >
           <span 
             class="icon-left" 
-            :class="row.status == 2 ? 'Warning' : row.status == 3 ? 'Info' : ''"
+            :class="row.status == 1 ? 'Warning' : row.status == 3 ? 'Info' : ''"
           />
-          <span class="iconq">{{ row.status == 1 ? '收集中' : row.status == 2 ? '未发布' : '已停止' }}</span>
+          <span class="iconq">{{ row.status == 1 ? '未发布' : row.status == 2 ? '收集中' : '已停止' }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -159,7 +159,7 @@
 </template>
 
 <script>
-import { getMyProjectPage, reqDeleteProject, reqStopProject } from "@/api/myProject"
+import { getMyProjectPage, reqDeleteProject, reqStopProject, reqCopyProject } from "@/api/myProject"
 export default {
   data() {
     return {
@@ -174,10 +174,10 @@ export default {
       },
       options: [{
         value: '1',
-        label: '收集中'
+        label: '未发布'
       }, {
         value: '2',
-        label: '未发布'
+        label: '收集中'
       }, {
         value: '3',
         label: '已停止'
@@ -271,7 +271,22 @@ export default {
         inputPattern: /\S/,
         inputErrorMessage: '请填写副本名称'
       }).then(({ value }) => {
-         console.log(value, key);
+         let data = {}
+          this.tableData.forEach(item => {
+            if (item.key === key) {
+              data = Object.assign(data, item)
+            }
+          })
+          data.fbUser = localStorage.getItem("user_id")
+          data.name = value
+          data.createTime = ''
+          data.updateTime = ''
+         reqCopyProject(data).then(res => {
+            if (res.data) {
+                this.msgSuccess('复制成功')
+                this.getData()
+            }
+         })
       }).catch(() => {
         this.$message({
           type: 'info',
