@@ -13,7 +13,7 @@ module.exports = {
   devServer: {
     disableHostCheck: true,
     open: true,
-    port: 8889,
+    port: 8888,
     // 开发环境默认开启反向代理，如果不需要请自行注释
     proxy: {
       '/tduck-api': {
