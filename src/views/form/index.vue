@@ -79,7 +79,6 @@
 
 <script>
 import PreView from '@/views/form/preview'
-import store from '@/store'
 
 export default {
     name: 'NewIndex',
@@ -137,7 +136,10 @@ export default {
             this.previewDialogVisible = true
         },
         saveProjectAsTemplateHandle() {
-            this.$api.post('/user/project/template/save', {key: this.projectKey,fbUser:localStorage.getItem("user_id")}).then(() => {
+            this.$api.post('/user/project/template/save', {
+              key: this.projectKey,
+              fbUser:localStorage.getItem("user_id")
+            }).then(() => {
                 this.msgSuccess('保存成功')
             })
         },
