@@ -1,110 +1,143 @@
 <template>
-    <div class="form-edit-container">
-        <div class="left-board">
-            <el-scrollbar class="left-scrollbar">
-                <div class="components-list">
-                    <div v-for="(item, listIndex) in leftComponents" :key="listIndex">
-                        <div class="components-title">
-                            <svg-icon name="component" />
-                            {{ item.title }}
-                        </div>
-                        <draggable
-                            :clone="cloneComponent"
-                            :group="{ name: 'componentsGroup', pull: 'clone', put: false }"
-                            :list="item.list"
-                            :sort="false"
-                            class="components-draggable"
-                            draggable=".components-item"
-                            @end="onEnd"
-                        >
-                            <div
-                                v-for="(element, index) in item.list"
-                                :key="index"
-                                class="components-item"
-                                @click="addComponent(element)"
-                            >
-                                <div class="components-body">
-                                    <svg-icon :name="element.__config__.tagIcon" />
-                                    {{ element.__config__.label }}
-                                </div>
-                            </div>
-                        </draggable>
-                    </div>
+  <div class="form-edit-container">
+    <div class="left-board">
+      <el-scrollbar class="left-scrollbar">
+        <div class="components-list">
+          <div
+            v-for="(item, listIndex) in leftComponents"
+            :key="listIndex"
+          >
+            <div class="components-title">
+              <svg-icon name="component" />
+              {{ item.title }}
+            </div>
+            <draggable
+              :clone="cloneComponent"
+              :group="{ name: 'componentsGroup', pull: 'clone', put: false }"
+              :list="item.list"
+              :sort="false"
+              class="components-draggable"
+              draggable=".components-item"
+              @end="onEnd"
+            >
+              <div
+                v-for="(element, index) in item.list"
+                :key="index"
+                class="components-item"
+                @click="addComponent(element)"
+              >
+                <div class="components-body">
+                  <svg-icon :name="element.__config__.tagIcon" />
+                  {{ element.__config__.label }}
                 </div>
-            </el-scrollbar>
+              </div>
+            </draggable>
+          </div>
         </div>
-        <div class="center-board">
-            <el-scrollbar class="center-scrollbar">
-                <el-row v-if="formConf" :gutter="formConf.gutter" class="center-board-row">
-                    <el-row align="middle" justify="center" type="flex">
-                        <el-col class="form-head-title">
-                            <h4 class="form-name-text" contenteditable="true"
-                                @blur="(event)=>{
-                                    this.formConf.title=event.target.innerText;
-                                    this.saveProjectInfo()}"
-                            >
-                                {{ formConf.title }}
-                            </h4>
-                        </el-col>
-                    </el-row>
-                    <el-row align="middle" justify="center" type="flex">
-                        <el-col class="form-head-desc">
-                            <Tinymce v-if="editDescription" v-model="formConf.description"
-                                     placeholder="请输入表单描述"
-                                     @blur="editDescription=false" @input="saveProjectInfo"
-                            />
-                            <div v-else class="form-name-text"
-                                 @click="editDescription=true" v-html="formConf.description"
-                            />
-                            <!--                            <p class="form-name-text" contenteditable="true"-->
-                            <!--                               @blur="(event)=>{-->
-                            <!--                                   formConf.description=event.target.innerText;-->
-                            <!--                                   this.saveProjectInfo()}">-->
-                            <!--                                {{ formConf.description }}-->
-                            <!--                            </p>-->
-                        </el-col>
-                    </el-row>
-                    <el-divider class="form-head-divider" />
-                    <el-form
-                        :disabled="formConf.disabled"
-                        :label-position="formConf.labelPosition"
-                        :label-width="formConf.labelWidth + 'px'"
-                        :size="formConf.size"
-                    >
-                        <draggable :animation="340" :list="drawingList" class="drawing-board" group="componentsGroup"
-                                   @end="onItemEnd"
-                        >
-                            <draggable-item
-                                v-for="(item, index) in drawingList"
-                                :key="item.renderKey"
-                                :active-id="activeId"
-                                :current-item="item"
-                                :drawing-list="drawingList"
-                                :form-conf="formConf"
-                                :index="index"
-                                @activeItem="activeFormItem"
-                                @changeLabel="changeLabel"
-                                @copyItem="drawingItemCopy"
-                                @deleteItem="drawingItemDelete"
-                            />
-                        </draggable>
-                        <div v-show="!drawingList.length" class="empty-info">
-                            <img style="width: 20%" src="@/assets/images/form-bg.png">
-                            <p>从左侧拖入或点选组件进行表单设计</p>
-                        </div>
-                    </el-form>
-                </el-row>
-            </el-scrollbar>
-        </div>
-        <right-panel
-            v-if="activeData"
-            :active-data="activeData"
-            :form-conf="formConf"
-            :show-field="!!drawingList.length"
-            @tag-change="tagChange"
-            @data-change="updateProjectItemInfo"
-        />
+      </el-scrollbar>
     </div>
+    <div class="center-board">
+      <el-scrollbar class="center-scrollbar">
+        <el-row
+          v-if="formConf"
+          :gutter="formConf.gutter"
+          class="center-board-row"
+        >
+          <el-row
+            align="middle"
+            justify="center"
+            type="flex"
+          >
+            <el-col class="form-head-title">
+              <h4
+                class="form-name-text"
+                contenteditable="true"
+                @blur="(event)=>{
+                  this.formConf.title=event.target.innerText;
+                  this.saveProjectInfo()}"
+              >
+                {{ formConf.title }}
+              </h4>
+            </el-col>
+          </el-row>
+          <el-row
+            align="middle"
+            justify="center"
+            type="flex"
+          >
+            <el-col class="form-head-desc">
+              <Tinymce
+                v-if="editDescription"
+                v-model="formConf.description"
+                placeholder="请输入表单描述"
+                @blur="editDescription=false"
+                @input="saveProjectInfo"
+              />
+              <div
+                v-else
+                class="form-name-text"
+                @click="editDescription=true"
+                v-html="formConf.description"
+              />
+              <!--                            <p class="form-name-text" contenteditable="true"-->
+              <!--                               @blur="(event)=>{-->
+              <!--                                   formConf.description=event.target.innerText;-->
+              <!--                                   this.saveProjectInfo()}">-->
+              <!--                                {{ formConf.description }}-->
+              <!--                            </p>-->
+            </el-col>
+          </el-row>
+          <el-divider class="form-head-divider" />
+          <el-form
+            :disabled="formConf.disabled"
+            :label-position="formConf.labelPosition"
+            :label-width="formConf.labelWidth + 'px'"
+            :size="formConf.size"
+          >
+            <draggable
+              :animation="340"
+              :list="drawingList"
+              class="drawing-board"
+              group="componentsGroup"
+              @end="onItemEnd"
+            >
+              <draggable-item
+                v-for="(item, index) in drawingList"
+                :key="item.renderKey"
+                :active-id="activeId"
+                :current-item="item"
+                :drawing-list="drawingList"
+                :form-conf="formConf"
+                :index="index"
+                @activeItem="activeFormItem"
+                @changeLabel="changeLabel"
+                @copyItem="drawingItemCopy"
+                @deleteItem="drawingItemDelete"
+              />
+            </draggable>
+            <div
+              v-show="!drawingList.length"
+              class="empty-info"
+            >
+              <img
+                style="width: 20%"
+                src="@/assets/images/form-bg.png"
+              >
+              <p>从左侧拖入或点选组件进行表单设计</p>
+            </div>
+          </el-form>
+        </el-row>
+      </el-scrollbar>
+    </div>
+    <right-panel
+      v-if="activeData"
+      :active-data="activeData"
+      :form-conf="formConf"
+      :show-field="!!drawingList.length"
+      @tag-change="tagChange"
+      @data-change="updateProjectItemInfo"
+    />
+  </div>
 </template>
 
 <script>
@@ -236,7 +269,8 @@ export default {
             this.$api.post('/user/project/update', {
                 'key': this.projectKey,
                 'name': this.formConf.title,
-                'describe': this.formConf.description
+                'describe': this.formConf.description,
+                'fbUser': localStorage.getItem("user_id")
             }).then(() => {
 
             })
