@@ -8,6 +8,7 @@
             :key="listIndex"
           >
             <div class="components-title">
+              <!-- 大图标 -->
               <svg-icon name="component" />
               {{ item.title }}
             </div>
@@ -27,6 +28,7 @@
                 @click="addComponent(element)"
               >
                 <div class="components-body">
+                  <!-- 小图标tagIcon -->
                   <svg-icon :name="element.__config__.tagIcon" />
                   {{ element.__config__.label }}
                 </div>
@@ -91,7 +93,7 @@
               <!--                            </p>-->
             </el-col>
           </el-row>
-          <el-divider class="form-head-divider" />
+          <!-- <el-divider class="form-head-divider" /> -->
           <el-form
             :disabled="formConf.disabled"
             :label-position="formConf.labelPosition"
@@ -118,17 +120,28 @@
                 @copyItem="drawingItemCopy"
                 @deleteItem="drawingItemDelete"
               />
-            </draggable>
-            <div
-              v-show="!drawingList.length"
-              class="empty-info"
-            >
-              <img
+              <!-- 拖拽下方区域 -->
+              <div
+                class="contentTip"
+                v-show="!drawingList.length"
+              >
+                <div class="empty-info">
+                  <!-- <img
                 style="width: 20%"
                 src="@/assets/images/form-bg.png"
-              >
-              <p>从左侧拖入或点选组件进行表单设计</p>
-            </div>
+              > -->
+                  <svg-icon name="component" />
+                  <span>点击左侧题型</span>
+                  <span>&nbsp;或&nbsp;</span>
+                  <svg-icon name="component" />
+                  <span>拖拽题型到这里</span>
+                </div>
+              </div>
+              <div class="publishResult">
+                <span>设置提交结果页</span>
+                <svg-icon name="component" />
+              </div>
+            </draggable>
           </el-form>
         </el-row>
       </el-scrollbar>
@@ -150,12 +163,14 @@ import { debounce } from "throttle-debounce";
 import RightPanel from "./RightPanel";
 
 import {
-  assistComponents,
+  // imageComponents,
+  // assistComponents,
   formConf,
-  imageComponents,
-  inputComponents,
-  personalInfoComponents,
   selectComponents,
+  inputComponents,
+  matrixComponents,
+  personalInfoComponents,
+  otherComponents,
 } from "@/components/generator/config";
 import { deepClone } from "@/utils";
 import { dbDataConvertForItemJson, formItemConvertData } from "@/utils/convert";
@@ -193,25 +208,50 @@ export default {
       saveIdGlobalDebounce: debounce(340, saveIdGlobal),
       projectKey: null,
       leftComponents: [
+        // {
+        //   title: "联系人组件",
+        //   list: personalInfoComponents,
+        // },
+        // {
+        //   title: "输入型组件",
+        //   list: inputComponents,
+        // },
+        // {
+        //   title: "图片型组件",
+        //   list: imageComponents,
+        // },
+        // {
+        //   title: "辅助型组件",
+        //   list: assistComponents,
+        // },
+        // {
+        //   title: "选择型组件",
+        //   list: selectComponents,
+        // },
         {
-          title: "联系人组件",
-          list: personalInfoComponents,
+          title: "选择题",
+          icon: "",
+          list: selectComponents,
         },
         {
-          title: "输入型组件",
+          title: "填空题",
+          icon: "",
           list: inputComponents,
         },
         {
-          title: "图片型组件",
-          list: imageComponents,
+          title: "矩阵题",
+          icon: "",
+          list: matrixComponents,
         },
         {
-          title: "辅助型组件",
-          list: assistComponents,
+          title: "个人信息",
+          icon: "",
+          list: personalInfoComponents,
         },
         {
-          title: "选择型组件",
-          list: selectComponents,
+          title: "其他题型",
+          icon: "",
+          list: otherComponents,
         },
       ],
     };
@@ -474,6 +514,8 @@ export default {
 .center-board {
   .center-board-row {
     margin-right: 10px;
+
+    background-color: rgb(242, 242, 242);
   }
 
   .form-head-title {
@@ -495,5 +537,21 @@ export default {
     margin-left: 10px;
     width: auto;
   }
+}
+
+
+.contentTip {
+  color: #7b7b7b;
+  padding: 10px;
+  margin: 10px;
+  background-color: #fff;
+}
+.publishResult {
+  color: #7b7b7b;
+  border: 1px solid #fff;
+  background-color: #fff;
+  margin: 30px 10px 0;
+  padding: 20px;
+  text-align: center;
 }
 </style>

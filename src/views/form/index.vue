@@ -328,6 +328,8 @@ export default {
     width: calc(100vw - 100px);
     height: calc(100vh - 60px);
     overflow-x: hidden;
+
+    background-color: rgb(242, 242, 242);
   }
 }
 
