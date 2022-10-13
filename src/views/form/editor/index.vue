@@ -139,14 +139,19 @@
                   <span>拖拽题型到这里</span>
                 </div>
               </div>
-              <div class="publishResult">
-                <!-- <button>设置提交结果页</button> -->
+              <!-- <div class="publishResult">
                 <span @click="setCommit">设置提交结果页</span>
                 <svg-icon name="component" />
-              </div>
+              </div> -->
             </draggable>
           </el-form>
         </el-row>
+        <div style="padding: 10px">
+          <div class="publishResult">
+            <span @click="setCommit">设置提交结果页</span>
+            <svg-icon name="component" />
+          </div>
+        </div>
       </el-scrollbar>
     </div>
     <right-panel
