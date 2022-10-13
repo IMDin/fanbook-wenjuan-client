@@ -45,54 +45,56 @@
           :gutter="formConf.gutter"
           class="center-board-row"
         >
-          <el-row
-            align="middle"
-            justify="center"
-            type="flex"
-          >
-            <el-col class="form-head-title">
-              <h4
-                class="form-name-text"
-                contenteditable="true"
-                @blur="
-                  (event) => {
-                    this.formConf.title = event.target.innerText;
-                    this.saveProjectInfo();
-                    this.$emit('getProjectTitle', this.formConf.title);
-                  }
-                "
-              >
-                {{ formConf.title }}
-              </h4>
-            </el-col>
-          </el-row>
-          <el-row
-            align="middle"
-            justify="center"
-            type="flex"
-          >
-            <el-col class="form-head-desc">
-              <Tinymce
-                v-if="editDescription"
-                v-model="formConf.description"
-                placeholder="请输入表单描述"
-                @blur="editDescription = false"
-                @input="saveProjectInfo"
-              />
-              <div
-                v-else
-                class="form-name-text"
-                @click="editDescription = true"
-                v-html="formConf.description"
-              />
-              <!--                            <p class="form-name-text" contenteditable="true"-->
-              <!--                               @blur="(event)=>{-->
-              <!--                                   formConf.description=event.target.innerText;-->
-              <!--                                   this.saveProjectInfo()}">-->
-              <!--                                {{ formConf.description }}-->
-              <!--                            </p>-->
-            </el-col>
-          </el-row>
+          <div class="headerTip">
+            <el-row
+              align="middle"
+              justify="center"
+              type="flex"
+            >
+              <el-col class="form-head-title">
+                <h4
+                  class="form-name-text"
+                  contenteditable="true"
+                  @blur="
+                    (event) => {
+                      this.formConf.title = event.target.innerText;
+                      this.saveProjectInfo();
+                      this.$emit('getProjectTitle', this.formConf.title);
+                    }
+                  "
+                >
+                  {{ formConf.title }}
+                </h4>
+              </el-col>
+            </el-row>
+            <el-row
+              align="middle"
+              justify="center"
+              type="flex"
+            >
+              <el-col class="form-head-desc">
+                <Tinymce
+                  v-if="editDescription"
+                  v-model="formConf.description"
+                  placeholder="请输入问卷描述"
+                  @blur="editDescription = false"
+                  @input="saveProjectInfo"
+                />
+                <div
+                  v-else
+                  class="projectNameText"
+                  @click="editDescription = true"
+                  v-html="formConf.description"
+                />
+                <!--                            <p class="form-name-text" contenteditable="true"-->
+                <!--                               @blur="(event)=>{-->
+                <!--                                   formConf.description=event.target.innerText;-->
+                <!--                                   this.saveProjectInfo()}">-->
+                <!--                                {{ formConf.description }}-->
+                <!--                            </p>-->
+              </el-col>
+            </el-row>
+          </div>
           <!-- <el-divider class="form-head-divider" /> -->
           <el-form
             :disabled="formConf.disabled"
@@ -138,7 +140,8 @@
                 </div>
               </div>
               <div class="publishResult">
-                <span>设置提交结果页</span>
+                <!-- <button>设置提交结果页</button> -->
+                <span @click="setCommit">设置提交结果页</span>
                 <svg-icon name="component" />
               </div>
             </draggable>
@@ -154,6 +157,103 @@
       @tag-change="tagChange"
       @data-change="updateProjectItemInfo"
     />
+    <!-- 提交结果弹出框 -->
+    <el-dialog
+      title="提交设置"
+      :visible.sync="dialogVisible"
+      width="30%"
+      center
+    >
+      <div class="commitOption">
+        <div class="dialogShowTip">
+          <span>显示提示图片</span>
+          <el-switch
+            v-model="showTipPhoto"
+            active-color="rgb(2, 129, 255)"
+            inactive-color="#7b7b7b"
+          />
+        </div>
+        <div v-show="showTipPhoto">
+          <div v-if="uploadPhoto">
+            <img
+              src="../../../assets/images/blue.png"
+              class="showTipPhoto"
+            >
+            <el-button
+              @click="clickUploadPhoto"
+              type="text"
+              style="margin-left: 40%; font-size: 16px"
+            >
+              请上传显示图片
+            </el-button>
+          </div>
+          <div v-else>
+            <el-upload
+              class="avatar-uploader"
+              action="https://jsonplaceholder.typicode.com/posts/"
+              :show-file-list="false"
+              :on-success="handleAvatarSuccess"
+              :before-upload="beforeAvatarUpload"
+            >
+              <img
+                v-if="imageUrl"
+                :src="imageUrl"
+                class="avatar"
+              >
+              <i
+                v-else
+                class="el-icon-plus avatar-uploader-icon"
+              />
+            </el-upload>
+            <el-button
+              @click="cancelUploadPhoto"
+              type="text"
+              style="margin-left: 45%; font-size: 16px"
+            >
+              取消
+            </el-button>
+          </div>
+        </div>
+        <div class="dialogShowTip">
+          <span>显示提示文字</span>
+          <el-switch
+            v-model="showTipText"
+            active-color="rgb(2, 129, 255)"
+            inactive-color="#7b7b7b"
+          />
+        </div>
+        <el-input
+          v-show="showTipText"
+          placeholder="请输入显示提示文字"
+          v-model="inputTipText"
+          clearable
+        />
+        <div class="dialogShowTip">
+          <span>跳转网页地址</span>
+          <el-switch
+            v-model="showTipUrl"
+            active-color="rgb(2, 129, 255)"
+            inactive-color="#7b7b7b"
+          />
+        </div>
+        <el-input
+          v-show="showTipUrl"
+          placeholder="请输入跳转网页地址"
+          v-model="inputTipUrl"
+          clearable
+        />
+      </div>
+      <span
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button
+          type="primary"
+          @click="commitSave"
+        >保 存</el-button>
+        <el-button @click="dialogVisible = false">取 消</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -192,7 +292,7 @@ export default {
     return {
       idGlobal,
       formConf: null,
-      editDescription: true,
+      editDescription: false, //控制问卷描述
       inputComponents,
       selectComponents,
       labelWidth: 100,
@@ -254,6 +354,15 @@ export default {
           list: otherComponents,
         },
       ],
+      // 新增字段
+      showTipPhoto: false,
+      showTipText: false,
+      showTipUrl: false,
+      inputTipPhoto: "",
+      inputTipText: "",
+      inputTipUrl: "",
+      uploadPhoto: true,
+      imageUrl: "",
     };
   },
   computed: {},
@@ -502,6 +611,40 @@ export default {
         });
       }
     },
+
+    //新增方法
+    setCommit() {
+      console.log(111);
+      this.dialogVisible = true;
+      this.showTipPhoto = false;
+      this.showTipText = false;
+      this.showTipUrl = false;
+    },
+    commitSave() {
+      this.dialogVisible = false;
+    },
+    clickUploadPhoto() {
+      this.uploadPhoto = false;
+    },
+    cancelUploadPhoto() {
+      this.uploadPhoto = true;
+    },
+    //上传组件方法
+    handleAvatarSuccess(res, file) {
+      this.imageUrl = URL.createObjectURL(file.raw);
+    },
+    beforeAvatarUpload(file) {
+      const isJPG = file.type === "image/jpeg";
+      const isLt2M = file.size / 1024 / 1024 < 2;
+
+      if (!isJPG) {
+        this.$message.error("上传头像图片只能是 JPG 格式!");
+      }
+      if (!isLt2M) {
+        this.$message.error("上传头像图片大小不能超过 2MB!");
+      }
+      return isJPG && isLt2M;
+    },
   },
 };
 </script>
@@ -519,7 +662,7 @@ export default {
   }
 
   .form-head-title {
-    padding: 0 10px;
+    padding: 10px 20px;
     text-align: center;
 
     .form-name-text:hover {
@@ -529,7 +672,7 @@ export default {
   }
 
   .form-head-desc {
-    padding: 0 10px;
+    padding: 10px 10px;
   }
 
   .form-head-divider {
@@ -539,12 +682,29 @@ export default {
   }
 }
 
-
+.headerTip {
+  background-color: #fff;
+  margin: 10px;
+  margin-bottom: 0;
+}
 .contentTip {
   color: #7b7b7b;
   padding: 10px;
   margin: 10px;
+  margin-top: 0;
   background-color: #fff;
+}
+.projectNameText {
+  padding: 10px 10px;
+  border: 1px dashed transparent;
+  line-height: 30px;
+  margin: 0;
+  font-size: 20px;
+  text-align: center;
+  :hover {
+    border: 1px dashed;
+    padding: 30px 10px;
+  }
 }
 .publishResult {
   color: #7b7b7b;
@@ -553,5 +713,54 @@ export default {
   margin: 30px 10px 0;
   padding: 20px;
   text-align: center;
+  font-size: 20px;
+  cursor: pointer;
+}
+::v-deep .el-dialog__header {
+  text-align: left;
+  font-weight: bold;
+}
+.commitOption {
+  padding: 0 30px;
+  font-size: 16px;
+  input {
+    width: 100%;
+    opacity: 0.3;
+  }
+}
+.dialogShowTip {
+  margin: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+.showTipPhoto {
+  width: 100%;
+}
+//上传组件样式
+.avatar-uploader {
+  text-align: center;
+}
+.avatar-uploader .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.avatar-uploader .el-upload:hover {
+  border-color: #409eff;
+}
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 178px;
+  height: 178px;
+  line-height: 178px;
+  text-align: center;
+}
+.avatar {
+  width: 178px;
+  height: 178px;
+  display: block;
 }
 </style>
