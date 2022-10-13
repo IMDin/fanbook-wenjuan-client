@@ -43,6 +43,11 @@ export default [
                 path: 'statistics',
                 meta: {requireLogin: true},
                 component: () => import(/* webpackChunkName: 'root' */ '@/views/form/statistics')
+            },
+            {
+              path: 'postQuestionnaire',
+              meta: {requireLogin: true},
+              component: () => import(/* webpackChunkName: 'root' */ '@/views/form/postQuestionnaire')
             }
         ]
     }

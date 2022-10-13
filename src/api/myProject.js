@@ -29,3 +29,11 @@ export const reqCopyProject = ( data ) => {
     data
   })
 }
+// 发布 /user/project/publish
+export const reqPublishProject = ( data ) => {
+  return api({
+    url: '/user/project/publish', 
+    method: 'post',
+    data
+  })
+}

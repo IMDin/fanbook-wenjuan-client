@@ -103,7 +103,7 @@
           <el-button
             type="text" 
             class="btn-befo"
-            @click="release(row.id)"
+            @click="publishProject(row.key, row.name, row.status)"
           >
             发布
           </el-button>
@@ -159,7 +159,13 @@
 </template>
 
 <script>
-import { getMyProjectPage, reqDeleteProject, reqStopProject, reqCopyProject } from "@/api/myProject"
+import { 
+  getMyProjectPage, 
+  reqDeleteProject, 
+  reqStopProject, 
+  reqCopyProject, 
+  reqPublishProject 
+} from "@/api/myProject"
 export default {
   data() {
     return {
@@ -207,9 +213,36 @@ export default {
     toProjectHandle(key, type) {// 编辑
       this.$router.push({path: `/project/form/${type}`, query: {key: key, active: type}})
     },
-    release(id) { // 发布
-      console.log('发布', id)
-    } ,
+    publishProject(key, name, status) {
+      //    if(this.guilds.length<1){
+      //         console.log("请先选择频道再发布！",this.guilds.length)
+      //      this.$message.warning('错了哦，请先选择频道再发布！');
+      //      return 
+      //    }
+      if (status === 2) {
+        this.msgInfo('该问卷已发布')
+        return
+      }
+      this.$confirm(`确定发布《${name}》吗？`, '确认发布', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        }).then(() => {
+          reqPublishProject({ key }).then((res) => {
+          console.log( res )
+          // this.publishStatus = true;
+          // this.ksfb=true;
+          // this.sendMsg();
+          this.msgSuccess('发布成功')
+           this.$router.push({path: `/project/form/postQuestionnaire`, query: {key: key, active: name}})
+          this.getData()
+        })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消'
+          });          
+        });
+    },
     dataCharts(id) { // 查看数据
       console.log('查看数据', id)
     },
