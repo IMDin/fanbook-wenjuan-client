@@ -76,7 +76,7 @@ $lighterBlue: #1890ff;
     margin: 20px auto 0;
     box-sizing: border-box;
     background-color: rgb(255, 255, 255);
-    border: 2px solid rgba(255, 255, 255, 100);
+    // border: 2px solid rgba(255, 255, 255, 100);
     overflow-y: hidden;
 }
 .center-board {
@@ -86,14 +86,19 @@ $lighterBlue: #1890ff;
     box-sizing: border-box;
 }
 .empty-info {
-    position: absolute;
+  background-color: #fff;
+    // position: absolute;
     top: 36%;
     left: 0;
     right: 0;
     text-align: center;
     font-size: 18px;
-    color: $--color-primary;
+    // color: $--color-primary;
     letter-spacing: 4px;
+
+    border: 1px dashed #7b7b7b;
+    margin: 10px;
+    padding: 80px;
 }
 .action-bar {
     position: relative;
@@ -118,6 +123,8 @@ $lighterBlue: #1890ff;
     }
 }
 .drawing-board {
+    // margin-top: 30px;
+
     height: 100%;
     position: relative;
     .components-body {
@@ -255,10 +262,12 @@ $lighterBlue: #1890ff;
 }
 
 .form-name-text {
-    padding: 6px 10px;
+    padding: 10px 10px;
     border: 1px dashed transparent;
     line-height: 30px;
     margin: 0;
+
+    font-size: 30px;
 }
 .form-name-text input {
     border: none;
