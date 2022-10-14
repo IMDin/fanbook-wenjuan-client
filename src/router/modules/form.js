@@ -48,6 +48,11 @@ export default [
               path: 'postQuestionnaire',
               meta: {requireLogin: true},
               component: () => import(/* webpackChunkName: 'root' */ '@/views/form/postQuestionnaire')
+            },
+            {
+              path: 'pushChannelPage',
+              meta: {requireLogin: true},
+              component: () => import(/* webpackChunkName: 'root' */ '@/views/form/pushChannelPage')
             }
         ]
     }

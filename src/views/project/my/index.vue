@@ -233,7 +233,7 @@ export default {
           // this.ksfb=true;
           // this.sendMsg();
           this.msgSuccess('发布成功')
-           this.$router.push({path: `/project/form/postQuestionnaire`, query: {key: key, active: name}})
+          this.$router.push({path: `/project/form/postQuestionnaire`, query: {key: key, active: name}})
           this.getData()
         })
         }).catch(() => {

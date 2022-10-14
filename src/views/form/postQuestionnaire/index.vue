@@ -34,7 +34,10 @@
         </div>
         <div>
           可将问卷推送至服务器内的任意频道 
-          <el-button type="text">
+          <el-button 
+            type="text"
+            @click="setPublist"
+          >
             >>设置频道推送
           </el-button>
         </div>
@@ -51,16 +54,20 @@ export default {
       formInline: {
         value: ''
       },
+      key: '',
       projectUrl:''
     }
   },
   mounted() {
-    const key = this.$route.query.key
+    this.key = this.$route.query.key
     let url = window.location.protocol + '//' + window.location.host
-    this.projectUrl  = `${url}/s/${key}`
+    this.projectUrl  = `${url}/s/${this.key}`
     this.formInline.value = this.projectUrl
   },
   methods: {
+    setPublist() {// 推送频道
+      this.$router.push({path: `/project/form/pushChannelPage`, query: {key: this.key}})
+    },
     onSubmit(){
       let url = this.projectUrl;
       //新建一个文本框

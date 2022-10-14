@@ -40,7 +40,7 @@
                 <p
                   class="person-menu-item"
                   @click="logoutHandle"
-               >
+                >
                   <font-icon class="fas fa-sign-out" />
                   退出登录
                 </p>
@@ -57,7 +57,10 @@
         </div>
       </el-header>
       <el-container>
-        <el-aside width="280px">
+        <el-aside
+          width="280px"
+          v-if="this.defaultActiveMenu !== '/role'"
+        >
           <el-card>
             <el-button
               type="primary"
