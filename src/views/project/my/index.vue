@@ -75,6 +75,7 @@
       <el-table-column
         prop="createTime"
         label="创建时间"
+        width="150px"
       />
       <el-table-column
         prop="updateTime"

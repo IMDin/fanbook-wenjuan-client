@@ -24,3 +24,11 @@ export const getFbAdminUp = ( data ) => {
     data
   })
 }
+// 拉取fb角色列表
+export const getFbPullroles = ( data ) => {
+  return api({
+    url: '/admin/fanbook/pullroles', 
+    method: 'post',
+    data
+  })
+}

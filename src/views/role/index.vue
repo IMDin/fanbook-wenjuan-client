@@ -19,14 +19,19 @@
           </el-button>
         </div>
         <div class="textarr">
-          xxx成员xxx成员
+          <span 
+            v-for="(item, index) in list" 
+            :key="index"
+          >
+            {{ item.user.first_name }},&nbsp;&nbsp;
+          </span>
         </div>
       </el-col>
     </el-row>
     <el-dialog
       title="提示"
       :visible.sync="dialogVisible"
-      width="45%"
+      width="40%"
       :before-close="() => dialogVisible = false"
     >
       <el-transfer
@@ -56,6 +61,7 @@
 <script>
 import {
   getPullMembers,
+  getFbPullroles,
   getFbAdminUp
 } from "@/api/role"
 export default {
@@ -68,32 +74,55 @@ export default {
       },
       dialogVisible: false,
       membersList: [],
-      list:[]
+      list:[],
+      FbPullroles: [],
     }
   },
   mounted() {
-   this.getUserList()
+    this.getFbPullroles()
   },
   methods: {
-    getUserList() { // 获取fb服务器成员列表
+    getFbPullroles() {
       const data = {
-          "token": "93d4029fc9e80eb3b3415c560419f6f0fb0506ba320bdec5f5aa96980fd7d9b7bb2b697976ba3197fc659424a765f961",
-          "guildId": "420861300550139904",
-          "roleId": "420861300608860160"
+        "token": "93d4029fc9e80eb3b3415c560419f6f0fb0506ba320bdec5f5aa96980fd7d9b7bb2b697976ba3197fc659424a765f961",
+        "guildId": "420861300550139904",
       }
-      getPullMembers(data).then(res => {
-        if (res.code == 200) {
-          let arr = []
-          this.list = res.data
+      getFbPullroles(data).then(res => {
+        if (res.code === 200) {
           res.data.forEach(item => {
-            arr.push({
-              lable:  item.user?.id,
-              key: item.user?.first_name,
-              pinyin: item.user?.first_name
+            this.FbPullroles.push({
+              id: String(item.id),
+              lable: item.name
             })
           })
-          this.membersList = arr
+          console.log(this.FbPullroles);
+          this.getUserList()
         }
+      })
+    },
+    getUserList() { // 获取fb服务器成员列表
+      Promise.all(this.FbPullroles.map(item => getPullMembers({
+        "token": "93d4029fc9e80eb3b3415c560419f6f0fb0506ba320bdec5f5aa96980fd7d9b7bb2b697976ba3197fc659424a765f961",
+        "guildId": "420861300550139904",
+        "roleId": item.id
+      })))
+      .then(res => {
+        res.forEach(it => {
+          const { code, data } = it
+          this.list.push(...data)
+          if (code === 200 && data.length !== 0) {
+            data.forEach(item => {
+              this.membersList.push({
+                lable:  item.user?.id,
+                key: item.user?.first_name,
+                pinyin: item.user?.first_name
+              })
+            })
+          }
+        })
+      })
+      .catch(err => {
+        console.log(err);
       })
     },
     confirm() {
