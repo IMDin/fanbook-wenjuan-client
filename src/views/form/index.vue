@@ -10,19 +10,56 @@
           class="el-icon-back"
           @click="$router.back(-1)"
         />
-        <img
+        <!-- <img
           class="header-logo"
           src="@/assets/images/blue.png"
           @click="$router.push({path:'/home'})"
-        >
-        <el-col />
-        <!-- <el-button
-          type="primary"
+        > -->
+        <div class="textTip">
+          <span>{{ projectTitle }}</span>
+          <br>
+          <span>已保存至草稿</span>
+        </div>
+        <!-- <el-col /> -->
+        <el-col class="showGuide">
+          <el-breadcrumb separator-class="el-icon-arrow-right">
+            <el-breadcrumb-item
+              :class="currentTab == 'editor' ? 'activeClass' : 'normalClass'"
+              :to="{ path: '/project/form/editor' }"
+              @click.native="editorBreadClick"
+            >
+              编辑问卷
+            </el-breadcrumb-item>
+            <el-breadcrumb-item
+              :class="currentTab == 'publish' ? 'activeClass' : 'normalClass'"
+              :to="{ path: '/project/form/publish' }"
+              @click.native="publishBreadClick"
+            >
+              发布问卷
+            </el-breadcrumb-item>
+            <el-breadcrumb-item
+              :class="
+                currentTab == 'statistics' ? 'activeClass' : 'normalClass'
+              "
+              :to="{ path: '/project/form/statistics' }"
+              @click.native="statisticsBreadClick"
+            >
+              数据统计
+            </el-breadcrumb-item>
+          </el-breadcrumb>
+        </el-col>
+        <el-button
           icon="el-icon-view"
-          @click="previewDialogVisible=true"
+          @click="previewDialogVisible = true"
         >
           预览
-        </el-button> -->
+        </el-button>
+        <el-button
+          type="primary"
+          @click="publishProject"
+        >
+          发布问卷
+        </el-button>
         <!-- <el-button
           type="success"
           icon="el-icon-folder-add"
@@ -33,7 +70,10 @@
       </el-row>
     </el-card>
     <div class="main-container">
-      <div class="left-menu-container">
+      <div
+        class="left-menu-container"
+        v-if="currentTab !== 'publish' && currentTab !== 'statistics'"
+      >
         <el-menu
           :collapse="isCollapse"
           :default-active="defaultActiveMenu"
@@ -61,7 +101,7 @@
         />
       </div>
       <div class="right-content-container">
-        <router-view />
+        <router-view @getProjectTitle="changeTitle" />
       </div>
     </div>
     <el-dialog
@@ -78,79 +118,141 @@
 </template>
 
 <script>
-import PreView from '@/views/form/preview'
+import PreView from "@/views/form/preview";
+// import store from "@/store";
 
 export default {
-    name: 'NewIndex',
-    components: {PreView},
-    data() {
-        return {
-            previewKey: +new Date(),
-            previewDialogVisible: false,
-            defaultActiveMenu: 'editor',
-            projectKey: null,
-            isCollapse: false,
-            menuItemList: [
-                {
-                    title: '编辑',
-                    icon: 'el-icon-edit',
-                    route: '/project/form/editor'
-                },
-                {
-                    title: '逻辑',
-                    icon: 'el-icon-menu',
-                    route: '/project/form/logic'
-                }, {
-                    title: '外观',
-                    icon: 'el-icon-view',
-                    route: '/project/form/theme'
-                },
-                {
-                    title: '设置',
-                    icon: 'el-icon-setting',
-                    route: '/project/form/setting'
-                },
-                {
-                    title: '发布',
-                    icon: 'el-icon-video-play',
-                    route: '/project/form/publish'
-                }, {
-                    title: '统计',
-                    icon: 'el-icon-data-line',
-                    route: '/project/form/statistics'
-                }
-            ]
-        }
+  name: "NewIndex",
+  components: { PreView },
+  data() {
+    return {
+      previewKey: +new Date(),
+      previewDialogVisible: false,
+      defaultActiveMenu: "editor",
+      projectKey: null,
+      isCollapse: false,
+      menuItemList: [
+        {
+          title: "题目",
+          icon: "el-icon-edit",
+          route: "/project/form/editor",
+        },
+        {
+          title: "逻辑",
+          icon: "el-icon-menu",
+          route: "/project/form/logic",
+        },
+        {
+          title: "外观",
+          icon: "el-icon-view",
+          route: "/project/form/theme",
+        },
+        {
+          title: "设置",
+          icon: "el-icon-setting",
+          route: "/project/form/setting",
+        },
+        // {
+        //   title: "发布",
+        //   icon: "el-icon-video-play",
+        //   route: "/project/form/publish",
+        // },
+        // {
+        //     title: '统计',
+        //     icon: 'el-icon-data-line',
+        //     route: '/project/form/statistics'
+        // }
+      ],
+      //新增问卷名称字段
+      projectTitle: "问卷名称",
+      //当前页面
+      currentTab: "editor",
+    };
+  },
+  created() {
+    this.projectKey = this.$route.query.key;
+    this.defaultActiveMenu = this.$route.path;
+    this.isCollapse = this.$store.state.form.isCollapse;
+  },
+  methods: {
+    menuSelectHandle(index) {
+      this.$router.replace({ path: index, query: { key: this.projectKey } });
     },
-    created() {
-        this.projectKey = this.$route.query.key
-        this.defaultActiveMenu = this.$route.path
-        this.isCollapse = this.$store.state.form.isCollapse
+    openPreviewHandle() {
+      this.previewKey = +new Date();
+      this.previewDialogVisible = true;
     },
-    methods: {
-        menuSelectHandle(index) {
-            this.$router.replace({path: index, query: {key: this.projectKey}})
-        },
-        openPreviewHandle() {
-            this.previewKey = +new Date()
-            this.previewDialogVisible = true
-        },
-        saveProjectAsTemplateHandle() {
-            this.$api.post('/user/project/template/save', {
-              key: this.projectKey,
-              fbUser:localStorage.getItem("user_id")
-            }).then(() => {
-                this.msgSuccess('保存成功')
-            })
-        },
-        collapseHandle() {
-            let isCollapse = !this.isCollapse
-            this.$store.dispatch('form/setIsCollapse', isCollapse).then(() => {
-                this.isCollapse = isCollapse
-            })
-        }
-    }
-}
+    saveProjectAsTemplateHandle() {
+      this.$api
+        .post("/user/project/template/save", {
+          key: this.projectKey,
+          fbUser: localStorage.getItem("user_id"),
+        })
+        .then(() => {
+          this.msgSuccess("保存成功");
+        });
+    },
+    collapseHandle() {
+      let isCollapse = !this.isCollapse;
+      this.$store.dispatch("form/setIsCollapse", isCollapse).then(() => {
+        this.isCollapse = isCollapse;
+      });
+    },
+
+    //新增发布问卷按钮
+    publishProject() {
+      console.log("点击发布按钮");
+      this.$confirm("请确认是否发布问卷?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          // this.$api.post('/user/project/publish', {key: this.projectKey,publishList:this.publishList}).then(() => {
+          //     this.publishStatus = true;
+          //     this.ksfb=true;
+          //     // this.sendMsg();
+          //     this.msgSuccess('发布成功')
+          // })
+          // this.$message({
+          //   type: "success",
+          //   message: "发布成功!",
+          // });
+          this.$router.push({ path: "/project/form/publish" });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消",
+          });
+        });
+    },
+
+    //更改问卷名称
+    changeTitle(val) {
+      console.log(val);
+      this.projectTitle = val;
+    },
+
+    //控制tab页签
+    editorBreadClick() {
+      console.log(111, this.$route.name);
+      if (this.$route.name == "editor") {
+        this.currentTab = "editor";
+      }
+    },
+    publishBreadClick() {
+      if (this.$route.name == "publish") {
+        this.currentTab = "publish";
+      }
+    },
+    statisticsBreadClick() {
+      if (this.$route.name == "statistics") {
+        this.currentTab = "statistics";
+      }
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>
@@ -171,14 +273,14 @@ export default {
 .header-container {
   width: 100%;
   height: 50px;
-  padding: 0 20px;
+  padding: 0 30px;
 
   .el-icon-back {
     font-size: 22px;
     font-weight: 550;
     cursor: pointer;
     color: #000;
-    margin-right: 75px;
+    margin-right: 25px;
 
     &:hover {
       color: rgb(32, 160, 255);
@@ -189,6 +291,30 @@ export default {
     height: 45px;
     // width: 200px;
     padding: 5px;
+  }
+
+  .textTip {
+    flex: none;
+    :nth-last-child(1) {
+      font-size: 12px;
+      color: rgb(117, 117, 117);
+    }
+  }
+
+  .showGuide {
+    display: flex;
+    justify-content: center;
+  }
+
+  .activeClass {
+    ::v-deep .el-breadcrumb__inner {
+      border-bottom: 2px solid rgb(77, 166, 255);
+      padding-bottom: 10px;
+    }
+    font-size: 16px;
+  }
+  .normalClass {
+    font-size: 16px;
   }
 }
 
@@ -202,6 +328,8 @@ export default {
     width: calc(100vw - 100px);
     height: calc(100vh - 60px);
     overflow-x: hidden;
+
+    background-color: rgb(242, 242, 242);
   }
 }
 
@@ -235,5 +363,16 @@ export default {
 
 ::v-deep.preview-container {
   background-color: #ffffff;
+}
+::v-deep .el-breadcrumb__inner {
+  color: rgb(58, 58, 58);
+}
+::v-deep .el-breadcrumb__item:last-child .el-breadcrumb__inner {
+  color: rgb(58, 58, 58);
+  cursor: pointer;
+  font-weight: 700;
+}
+::v-deep .el-breadcrumb__item:last-child :hover {
+  color: rgb(64, 158, 255);
 }
 </style>
