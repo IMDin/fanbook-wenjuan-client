@@ -37,3 +37,11 @@ export const reqPublishProject = ( data ) => {
     data
   })
 }
+// 消息推送接口 timingPublishMsg
+export const reqTimingPublishMsg = ( data ) => {
+  return api({
+    url: '/user/project/timingPublishMsg', 
+    method: 'post',
+    data
+  })
+}

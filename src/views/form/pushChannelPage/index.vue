@@ -52,7 +52,7 @@
     >
       <el-form :model="form">
         <el-form-item
-          label="服务器频道"
+          label="服务器频道:"
           label-width="120px"
         >
           <el-cascader
@@ -64,7 +64,28 @@
             @change="handleChange2"
             filterable
             clearable
+            collapse-tags
           />
+        </el-form-item>
+        <el-form-item 
+          label="推送时间:"
+          label-width="120px"
+        >
+          <el-date-picker
+            v-model="publishTime"
+            type="datetime"
+            placeholder="选择日期时间"
+            :disabled="publishTimeED"
+            value-format="yyyy-MM-dd HH:mm:ss"
+            @change="handleChange2"
+          />
+          <el-checkbox 
+            style="margin-left: 15px"
+            v-model="checkbox"
+            @change="checkboxCheage"
+          >
+            立即推送
+          </el-checkbox>
         </el-form-item>
       </el-form>
       <div
@@ -86,6 +107,9 @@
 </template>
 
 <script>
+import {
+  reqTimingPublishMsg
+} from "@/api/myProject"
 export default {
   name: "PushChannelPage",
   data() {
@@ -104,6 +128,19 @@ export default {
           children: 'channels',
           publishList:[],
           multiple: true 
+        },
+        checkbox: false,
+        publishTime: '',
+        publishTimeED: false,
+        form: {
+          name: '',
+          region: '',
+          date1: '',
+          date2: '',
+          delivery: false,
+          type: [],
+          resource: '',
+          desc: '',
         },
         tableData: [{
           date: '2016-05-02',
@@ -137,6 +174,18 @@ export default {
             } 
         })
       },
+      dialogForm() {
+        this.sendMsg();
+        this.dialogFormVisible= false;
+      },
+      //给后台推送选择的频道频道信息
+      sendMsg(){
+        this.projectKey = this.$route.query.key
+        reqTimingPublishMsg({key: this.projectKey,publishList: this.publishList}).then((res)=> {
+          console.log(res);
+        })
+        // this.sendResult();
+      },
       add() {
         this.dialogFormVisible = true
       },
@@ -146,11 +195,18 @@ export default {
             this.publishList=[];
             for (var i = 0;i<sizes;i++) {
                 let obj=this.$refs.myCascader.getCheckedNodes()[i].data
+                obj = Object.assign(obj, {publishTime: this.publishTime})
                 this.publishList.push(obj)
                 console.log("存储",this.publishList)
             }
           //  this.sendResult();
         }
+      },
+      checkboxCheage(val) {
+          this.publishTimeED = val
+          if (val) {
+            this.publishTime = ""
+          }
       }
     }
 };
@@ -161,6 +217,7 @@ export default {
   .post-item {
     margin-top: 30px;
     border: 1px solid #ccc;
+    background-color: #fff;
     p {
       height: 40px;
       line-height: 40px;

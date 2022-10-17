@@ -37,7 +37,7 @@ export default [
                 path: 'publish',
                 name: 'publish',
                 meta: {requireLogin: true},
-                component: () => import(/* webpackChunkName: 'root' */ '@/views/form/publish')
+                component: () => import(/* webpackChunkName: 'root' */ '@/views/form/postQuestionnaire')
             },
             {
                 path: 'theme',

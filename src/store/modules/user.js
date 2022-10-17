@@ -6,7 +6,8 @@ const state = {
     username: '',
     useravatar: '',
     user_id: '',
-    fbtoken: ''
+    fbtoken: '',
+    redirect: ''
 }
 
 const getters = {
@@ -39,10 +40,11 @@ const actions = {
         })
     },
     login(context, payload) {
-        api.get('/fanbook/login', {params: {code: payload}}).then(res => {
+        api.get('/fanbook/login', {params: {code: payload.data}}).then(res => {
             if (res.data) {
                 console.log('res.data----------------', res.data)
                 context.commit('setAuth', res.data.token)
+                context.commit('setRedirect', {path: payload.redirect, query: payload.query})
                 context.commit('getInfo', res.data)
                 // 这个api返回的数据来空，需要查看api
                 api.get('/fanbook/getMe').then(res => {
@@ -59,6 +61,9 @@ const actions = {
 }
 
 const mutations = {
+    setRedirect(state, data) {
+        state.redirect = data
+    },
     setAuth(state, data) {
         localStorage.setItem('fanbookToken', data)
         localStorage.setItem('token', data)
@@ -71,7 +76,14 @@ const mutations = {
         state.username = data.name  
         state.avatar = data.avatar
         state.fbtoken = data.fbtoken
+        
         if(state.token) {
+          // 重定向页面
+          if(state.redirect) {
+            console.log(state.redirect, 'state.redirect');
+            router.push(state.redirect)
+            return
+          }
             console.log('台哦转 /home')
             router.push('/home')
         }
