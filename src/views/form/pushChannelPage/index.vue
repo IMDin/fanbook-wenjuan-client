@@ -161,6 +161,7 @@ export default {
   .post-item {
     margin-top: 30px;
     border: 1px solid #ccc;
+    background-color: #fff;
     p {
       height: 40px;
       line-height: 40px;
