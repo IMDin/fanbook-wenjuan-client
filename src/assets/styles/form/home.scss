@@ -13,9 +13,10 @@ $lighterBlue: #1890ff;
     height: 100%;
     .components-item {
         display: inline-block;
-        width: 48%;
+        width: 45%;
         margin: 1%;
         transition: transform 0ms !important;
+        
     }
 }
 .components-draggable {
@@ -32,10 +33,11 @@ $lighterBlue: #1890ff;
 }
 .components-body {
     padding: 8px 10px;
-    background: $selectedColor;
+    // background: $selectedColor;
     font-size: 12px;
     cursor: move;
-    border: 1px dashed $selectedColor;
+    // border: 1px dashed $selectedColor;
+    border: 1px solid rgba(213, 213, 213, 0.8) ;
     border-radius: 3px;
     .svg-icon {
         color: #777;
@@ -70,7 +72,8 @@ $lighterBlue: #1890ff;
     border-radius: 7px;
 }
 .center-scrollbar {
-    height: calc(100vh - 60px);
+    // height: calc(100vh - 60px);
+    height: calc(90vh - 250px);
     overflow: hidden;
     width: 90%;
     margin: 20px auto 0;
@@ -98,7 +101,7 @@ $lighterBlue: #1890ff;
 
     border: 1px dashed #7b7b7b;
     margin: 10px;
-    padding: 80px;
+    padding: 160px;
 }
 .action-bar {
     position: relative;
@@ -114,7 +117,8 @@ $lighterBlue: #1890ff;
     }
 }
 .center-board-row {
-    padding: 12px 12px 15px 12px;
+    // padding: 12px 12px 15px 12px;
+    padding-bottom: 15px;
     box-sizing: border-box;
     overflow-y: hidden;
     & > .el-form {
@@ -156,6 +160,9 @@ $lighterBlue: #1890ff;
         & > .el-form-item {
             background: $selectedColor;
             border-radius: 6px;
+
+            border-left: 5px solid #1890ff;
+            box-shadow: 0px 0px 10px #808080;
         }
         & > .drawing-item-copy,
         & > .drawing-item-delete {
@@ -177,7 +184,13 @@ $lighterBlue: #1890ff;
     }
     .el-form-item {
         padding: 12px 10px;
+
+        min-height: 220px;
+        // display: flex;
+        // align-items: center;
     }
+
+    padding-right: 50px;
 }
 .drawing-row-item {
     position: relative;
@@ -240,23 +253,39 @@ $lighterBlue: #1890ff;
         z-index: 1;
     }
     & > .drawing-item-copy {
-        right: 56px;
-        border-color: $lighterBlue;
-        color: $lighterBlue;
-        background: #fff;
+        // right: 56px;
+        // border-color: $lighterBlue;
+        // color: $lighterBlue;
+        // background: #fff;
         &:hover {
             background: $lighterBlue;
             color: #fff;
         }
+
+        top: 80%;
+        right: 100px;
+        border: none;
+        color: #7b7b7b;
+        .el-icon-copy-document {
+          font-size: 20px;
+        }
     }
     & > .drawing-item-delete {
-        right: 24px;
-        border-color: #f56c6c;
-        color: #f56c6c;
-        background: #fff;
+        // right: 24px;
+        // border-color: #f56c6c;
+        // color: #f56c6c;
+        // background: #fff;
         &:hover {
             background: #f56c6c;
             color: #fff;
+        }
+
+        top: 80%;
+        right: 50px;
+        border: none;
+        color: #7b7b7b;
+        .el-icon-delete {
+          font-size: 20px;
         }
     }
 }

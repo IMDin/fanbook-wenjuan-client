@@ -9,7 +9,7 @@
           >
             <div class="components-title">
               <!-- 大图标 -->
-              <svg-icon name="component" />
+              <!-- <svg-icon name="component" /> -->
               {{ item.title }}
             </div>
             <draggable
@@ -30,7 +30,7 @@
                 <div class="components-body">
                   <!-- 小图标tagIcon -->
                   <svg-icon :name="element.__config__.tagIcon" />
-                  {{ element.__config__.label }}
+                  {{ element.__config__.labelDescription }}
                 </div>
               </div>
             </draggable>
@@ -132,27 +132,33 @@
                 style="width: 20%"
                 src="@/assets/images/form-bg.png"
               > -->
-                  <svg-icon name="component" />
+                  <svg-icon
+                    style="color: #409eff"
+                    name="component"
+                  />
                   <span>点击左侧题型</span>
                   <span>&nbsp;或&nbsp;</span>
-                  <svg-icon name="component" />
+                  <svg-icon
+                    style="color: #409eff"
+                    name="component"
+                  />
                   <span>拖拽题型到这里</span>
                 </div>
               </div>
               <!-- <div class="publishResult">
-                <span @click="setCommit">设置提交结果页</span>
-                <svg-icon name="component" />
-              </div> -->
+                  <span @click="setCommit">设置提交结果页</span>
+                  <svg-icon name="component" />
+                </div> -->
             </draggable>
           </el-form>
         </el-row>
-        <div style="padding: 10px">
-          <div class="publishResult">
-            <span @click="setCommit">设置提交结果页</span>
-            <svg-icon name="component" />
-          </div>
-        </div>
       </el-scrollbar>
+      <div style="padding: 10px">
+        <div class="publishResult">
+          <span @click="setCommit">设置提交结果页</span>
+          <svg-icon name="component" />
+        </div>
+      </div>
     </div>
     <right-panel
       v-if="activeData"
@@ -265,7 +271,8 @@
 <script>
 import draggable from "vuedraggable";
 import { debounce } from "throttle-debounce";
-import RightPanel from "./RightPanel";
+// import RightPanel from "./RightPanel";
+import RightPanel from "./newRightPanel.vue";
 
 import {
   // imageComponents,
@@ -663,7 +670,8 @@ export default {
   .center-board-row {
     margin-right: 10px;
 
-    background-color: rgb(242, 242, 242);
+    // background-color: rgb(242, 242, 242);
+    background-color: #fff;
   }
 
   .form-head-title {
@@ -711,11 +719,19 @@ export default {
     padding: 30px 10px;
   }
 }
+.topBar {
+  height: 20px;
+  background-color: #f2f2f2;
+}
+.bottomBar {
+  height: 50px;
+  background-color: #f2f2f2;
+}
 .publishResult {
   color: #7b7b7b;
   border: 1px solid #fff;
   background-color: #fff;
-  margin: 30px 10px 0;
+  margin: 0 50px;
   padding: 20px;
   text-align: center;
   font-size: 20px;

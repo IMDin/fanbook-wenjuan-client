@@ -51,6 +51,7 @@
         <el-button
           icon="el-icon-view"
           @click="previewDialogVisible = true"
+          style="border: none"
         >
           预览
         </el-button>
@@ -219,6 +220,7 @@ export default {
           //   message: "发布成功!",
           // });
           this.$router.push({ path: "/project/form/publish" });
+          this.currentTab = "publish";
         })
         .catch(() => {
           this.$message({
@@ -231,7 +233,11 @@ export default {
     //更改问卷名称
     changeTitle(val) {
       console.log(val);
-      this.projectTitle = val;
+      if (val && val !== "问卷标题") {
+        this.projectTitle = val;
+      } else {
+        this.projectTitle = "问卷名称";
+      }
     },
 
     //控制tab页签
@@ -309,7 +315,7 @@ export default {
   .activeClass {
     ::v-deep .el-breadcrumb__inner {
       border-bottom: 2px solid rgb(77, 166, 255);
-      padding-bottom: 10px;
+      padding-bottom: 15px;
     }
     font-size: 16px;
   }
@@ -374,5 +380,15 @@ export default {
 }
 ::v-deep .el-breadcrumb__item:last-child :hover {
   color: rgb(64, 158, 255);
+}
+::v-deep .el-menu-item {
+  display: inline-grid;
+  height: 80px;
+  i {
+    margin: 15px 0 0 2px;
+  }
+  span {
+    margin-top: -10px;
+  }
 }
 </style>
