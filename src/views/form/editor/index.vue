@@ -170,99 +170,103 @@
     />
     <!-- 提交结果弹出框 -->
     <el-dialog
-      title="提交设置"
+      title="设置提交结果页"
       :visible.sync="dialogVisible"
-      width="30%"
-      center
+      width="35%"
+      right
     >
-      <div class="commitOption">
-        <div class="dialogShowTip">
-          <span>显示提示图片</span>
-          <el-switch
-            v-model="showTipPhoto"
-            active-color="rgb(2, 129, 255)"
-            inactive-color="#7b7b7b"
-          />
+      <div class="dialogContent">
+        <div class="leftPart">
+          <p>效果预览</p>
+          <img
+            src="../../../assets/images/blue.png"
+            class="showTipPhoto"
+          >
+          <div class="previewText">
+            <p>{{ dialogForm.mainText }}</p>
+            <p>{{ dialogForm.description }}</p>
+          </div>
         </div>
-        <div v-show="showTipPhoto">
-          <div v-if="uploadPhoto">
-            <img
-              src="../../../assets/images/blue.png"
-              class="showTipPhoto"
-            >
-            <el-button
+        <div class="commitOption">
+          <el-form
+            ref="dialogForm"
+            :model="dialogForm"
+            label-width="80px"
+            label-position="left"
+          >
+            <el-form-item label="主文案">
+              <el-input v-model="dialogForm.mainText" />
+            </el-form-item>
+            <el-form-item label="描述">
+              <el-input v-model="dialogForm.description" />
+            </el-form-item>
+          </el-form>
+          <div class="dialogShowTip">
+            <span>替换提示图片</span>
+            <el-switch
+              v-model="showTipPhoto"
+              active-color="rgb(2, 129, 255)"
+              inactive-color="#7b7b7b"
               @click="clickUploadPhoto"
-              type="text"
-              style="margin-left: 40%; font-size: 16px"
-            >
-              请上传显示图片
-            </el-button>
+            />
           </div>
-          <div v-else>
-            <el-upload
-              class="avatar-uploader"
-              action="https://jsonplaceholder.typicode.com/posts/"
-              :show-file-list="false"
-              :on-success="handleAvatarSuccess"
-              :before-upload="beforeAvatarUpload"
+          <div v-show="showTipPhoto">
+            <div
+              v-if="uploadPhoto"
+              class="uploadPhotoClass"
             >
-              <img
-                v-if="imageUrl"
-                :src="imageUrl"
-                class="avatar"
+              <el-upload
+                class="avatar-uploader"
+                action="https://jsonplaceholder.typicode.com/posts/"
+                :show-file-list="false"
+                :on-success="handleAvatarSuccess"
+                :before-upload="beforeAvatarUpload"
               >
-              <i
-                v-else
-                class="el-icon-plus avatar-uploader-icon"
-              />
-            </el-upload>
-            <el-button
-              @click="cancelUploadPhoto"
-              type="text"
-              style="margin-left: 45%; font-size: 16px"
-            >
-              取消
-            </el-button>
+                <img
+                  v-if="imageUrl"
+                  :src="imageUrl"
+                  class="avatar"
+                >
+                <i
+                  v-else
+                  class="el-icon-plus avatar-uploader-icon"
+                />
+              </el-upload>
+              <i class="el-icon-warning-outline" />
+              <span
+                style="margin-left: 10px; color: #7b7b7b; font-size: 14px"
+              >单张图片大小不超过30M</span>
+            </div>
           </div>
-        </div>
-        <div class="dialogShowTip">
-          <span>显示提示文字</span>
-          <el-switch
-            v-model="showTipText"
-            active-color="rgb(2, 129, 255)"
-            inactive-color="#7b7b7b"
+          <div class="dialogShowTip">
+            <span>跳转网址</span>
+            <el-switch
+              v-model="showTipUrl"
+              active-color="rgb(2, 129, 255)"
+              inactive-color="#7b7b7b"
+            />
+          </div>
+          <el-input
+            v-show="showTipUrl"
+            placeholder="请输入跳转网址"
+            v-model="inputTipUrl"
+            clearable
           />
         </div>
-        <el-input
-          v-show="showTipText"
-          placeholder="请输入显示提示文字"
-          v-model="inputTipText"
-          clearable
-        />
-        <div class="dialogShowTip">
-          <span>跳转网页地址</span>
-          <el-switch
-            v-model="showTipUrl"
-            active-color="rgb(2, 129, 255)"
-            inactive-color="#7b7b7b"
-          />
-        </div>
-        <el-input
-          v-show="showTipUrl"
-          placeholder="请输入跳转网页地址"
-          v-model="inputTipUrl"
-          clearable
-        />
       </div>
       <span
         slot="footer"
         class="dialog-footer"
       >
         <el-button
+          @click="dialogVisible = false"
+          style="width: 80px"
+        >取消</el-button>
+        <el-button
           type="primary"
           @click="commitSave"
-        >保 存</el-button>
-        <el-button @click="dialogVisible = false">取 消</el-button>
+          style="width: 80px"
+        >确定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -367,14 +371,16 @@ export default {
         },
       ],
       // 新增字段
-      showTipPhoto: false,
-      showTipText: false,
-      showTipUrl: false,
+      showTipPhoto: true,
+      showTipUrl: true,
       inputTipPhoto: "",
-      inputTipText: "",
       inputTipUrl: "",
       uploadPhoto: true,
       imageUrl: "",
+      dialogForm: {
+        mainText: "太棒了！终于填完了",
+        description: "感谢你的支持",
+      },
     };
   },
   computed: {},
@@ -628,18 +634,12 @@ export default {
     setCommit() {
       console.log(111);
       this.dialogVisible = true;
-      this.showTipPhoto = false;
-      this.showTipText = false;
-      this.showTipUrl = false;
     },
     commitSave() {
       this.dialogVisible = false;
     },
     clickUploadPhoto() {
-      this.uploadPhoto = false;
-    },
-    cancelUploadPhoto() {
-      this.uploadPhoto = true;
+      // this.uploadPhoto = false;
     },
     //上传组件方法
     handleAvatarSuccess(res, file) {
@@ -740,26 +740,62 @@ export default {
 ::v-deep .el-dialog__header {
   text-align: left;
   font-weight: bold;
+  padding-bottom: 0;
+}
+::v-deep .el-dialog__body {
+  padding: 0 20px 20px;
+}
+.dialogContent {
+  display: flex;
+  color: #000;
+}
+.leftPart {
+  width: 50%;
+  border-right: 1px solid #f2f2f2;
+  padding-right: 20px;
+  .previewText {
+    p:nth-child(1) {
+      margin-bottom: 10px;
+      text-align: center;
+      font-size: 24px;
+      color: #000;
+    }
+    p:nth-last-child(1) {
+      margin-top: 0;
+      text-align: center;
+      color: #7b7b7b;
+    }
+  }
 }
 .commitOption {
   padding: 0 30px;
-  font-size: 16px;
+  font-size: 14px;
   input {
     width: 100%;
     opacity: 0.3;
   }
+  ::v-deep .el-form-item__label {
+    color: #000;
+    font-weight: normal;
+  }
 }
 .dialogShowTip {
-  margin: 10px;
+  margin: 20px 0 20px;
   display: flex;
   justify-content: space-between;
 }
 .showTipPhoto {
+  height: 50%;
   width: 100%;
+  padding: 30px 0 0;
+}
+.uploadPhotoClass {
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f2f2f2;
 }
 //上传组件样式
 .avatar-uploader {
-  text-align: center;
+  text-align: left;
 }
 .avatar-uploader .el-upload {
   border: 1px dashed #d9d9d9;
@@ -774,10 +810,12 @@ export default {
 .avatar-uploader-icon {
   font-size: 28px;
   color: #8c939d;
-  width: 178px;
-  height: 178px;
-  line-height: 178px;
+  width: 100px;
+  height: 100px;
+  line-height: 100px;
   text-align: center;
+  border: 1px solid #d9d9d9;
+  margin-bottom: 10px;
 }
 .avatar {
   width: 178px;
