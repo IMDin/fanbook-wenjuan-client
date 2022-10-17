@@ -69,7 +69,7 @@
         </template>
       </el-table-column>
       <el-table-column
-        prop="mun"
+        prop="answerNum"
         label="答卷数量"
       />
       <el-table-column

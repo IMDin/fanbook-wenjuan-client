@@ -434,6 +434,7 @@ export default {
           key: this.projectKey,
           name: this.formConf.title,
           describe: this.formConf.description,
+          fbUser: localStorage.getItem("user_id")
         })
         .then(() => {});
     }),

@@ -190,7 +190,7 @@
           <el-col
             :xs="24"
             :md="6"
-            :offset=6
+            :offset="6"
             data-aos="fade-up"
             data-aos-delay="100"
           >
@@ -258,6 +258,8 @@ export default {
             "linear-gradient( 163deg, rgba(32, 84, 241, 0.67), rgba(34, 78, 243, 0.67), rgba(56, 234, 255, 0.67))",
           marginTop: "100px",
         },
+        redirect:'',
+        otherQuery: {}
       },
     };
   },
@@ -278,6 +280,16 @@ export default {
       }
       console.log("this.screenWidth", this.screenWidth);
     },
+    $route: {
+      handler: function(route) {
+        const query = route.query
+        if (query) {
+          this.redirect = query.redirect
+          this.otherQuery = this.getOtherQuery(query)
+        }
+      },
+      immediate: true
+    }
   },
   mounted() {
     window.addEventListener("scroll", this.handleScroll, true);
@@ -350,9 +362,16 @@ export default {
       // window.location.href = 'https://gitee.com/TDuckApp/tduck-platform'
       window.open("https://gitee.com/TDuckApp/tduck-platform", "_blank");
     },
-
+    getOtherQuery(query) {
+      return Object.keys(query).reduce((acc, cur) => {
+        if (cur !== 'redirect') {
+          acc[cur] = query[cur]
+        }
+        return acc
+      }, {})
+    },
     getFanbookLoginToken(data) {
-        this.$store.dispatch('user/login', data)
+        this.$store.dispatch('user/login', {data, redirect: this.redirect, query: this.otherQuery})
         // this.$api.get('/fanbook/login', {params: {code: data}}).then(res => {
         //     if (res.data) {
         //       // console.log('res.data----------------', res.data)
