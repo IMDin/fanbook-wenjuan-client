@@ -8,3 +8,4 @@ src/components/render/
 src/components/verifition/
 src/components/tinymce/
 src/views/form/editor/RightPanel.vue
+src/views/form/editor/newRightPanel.vue

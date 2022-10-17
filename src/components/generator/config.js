@@ -9,7 +9,7 @@ export const formConf = {
   gutter: 20,
   disabled: false,
   span: 24,
-  title: '问卷名称',
+  title: '问卷标题',
   description: '为了给您提供更好的服务，希望您能抽出几分钟时间，将您的感受和建议告诉我们，我们非常重视每位\n' +
     '用户的宝贵意见，期待您的参与！现在我们就马上开始吧！',
   formBtns: true,
@@ -89,7 +89,8 @@ export const inputComponents = [
     // 组件的自定义配置
     typeId: 'INPUT',
     __config__: {
-      label: '单行文本',
+      label: '请输入题目标题',
+      labelDescription: '单行文本',
       labelWidth: null,
       showLabel: true,
       changeTag: true,
@@ -122,7 +123,8 @@ export const inputComponents = [
   {
     typeId: 'TEXTAREA',
     __config__: {
-      label: '多行文本',
+      label: '请输入题目标题',
+      labelDescription: '多行文本',
       labelWidth: null,
       showLabel: true,
       tag: 'el-input',
@@ -179,7 +181,8 @@ export const selectComponents = [
   {
     typeId: 'RADIO',
     __config__: {
-      label: '单选题',
+      label: '请选择一个选项',
+      labelDescription: '单选题',
       labelWidth: null,
       showLabel: true,
       showRegList: false,
@@ -211,7 +214,8 @@ export const selectComponents = [
   {
     typeId: 'CHECKBOX',
     __config__: {
-      label: '多选题',
+      label: '请选择以下选项（多选）',
+      labelDescription: '多选题',
       tag: 'el-checkbox-group',
       tagIcon: 'checkbox',
       defaultValue: [],
@@ -245,7 +249,8 @@ export const selectComponents = [
   {
     typeId: 'SELECT',
     __config__: {
-      label: '下拉题',
+      label: '请选择一个选项',
+      labelDescription: '下拉题',
       showLabel: true,
       labelWidth: null,
       tag: 'el-select',
@@ -276,7 +281,8 @@ export const selectComponents = [
   {
     typeId: 'IMAGE_SELECT',
     __config__: {
-      label: '图片选择',
+      label: '请选择以下图片',
+      labelDescription: '图片选择',
       showLabel: true,
       labelWidth: null,
       defaultValue: null,
@@ -769,7 +775,8 @@ export const personalInfoComponents = [
   {
     typeId: 'DATE',
     __config__: {
-      label: '日期',
+      label: '请输入题目标题',
+      labelDescription: '日期',
       tag: 'el-date-picker',
       tagIcon: 'date',
       defaultValue: null,
@@ -794,7 +801,8 @@ export const personalInfoComponents = [
   {
     typeId: 'TIME',
     __config__: {
-      label: '时间',
+      label: '请输入题目标题',
+      labelDescription: '时间',
       tag: 'el-time-picker',
       tagIcon: 'time',
       defaultValue: null,
@@ -929,7 +937,8 @@ export const personalInfoComponents = [
   {
     typeId: 'PROVINCE_CITY',
     __config__: {
-      label: '省/市/区',
+      label: '请输入题目标题',
+      labelDescription: '省/市/区',
       labelWidth: null,
       showLabel: true,
       changeTag: false,
@@ -1017,7 +1026,8 @@ export const otherComponents = [
   {
     typeId: 'UPLOAD',
     __config__: {
-      label: '上传图片',
+      label: '请上传图片',
+      labelDescription: '上传图片',
       tag: 'el-upload',
       tagIcon: 'upload',
       layout: 'colFormItem',
@@ -1050,9 +1060,10 @@ export const otherComponents = [
   {
     typeId: 'UPLOAD',
     __config__: {
-      label: '上传文件',
+      label: '请上传文件',
+      labelDescription: '上传文件',
       tag: 'el-upload',
-      tagIcon: 'upload',
+      tagIcon: 'file-upload',
       layout: 'colFormItem',
       defaultValue: null,
       showLabel: true,
@@ -1081,9 +1092,35 @@ export const otherComponents = [
     multiple: false
   },
   {
+    typeId: 'RATE',
+    __config__: {
+      label: '请选择评分',
+      labelDescription: '评分',
+      tag: 'el-rate',
+      tagIcon: 'rate',
+      defaultValue: 0,
+      span: 24,
+      showLabel: true,
+      showRegList: false,
+      labelWidth: null,
+      layout: 'colFormItem',
+      required: true,
+      regList: [],
+      changeTag: true,
+      document: 'https://element.eleme.cn/#/zh-CN/component/rate'
+    },
+    style: {},
+    max: 5,
+    'allow-half': false,
+    'show-text': false,
+    'show-score': false,
+    disabled: false
+  },
+  {
     typeId: 'PAGINATION',
     __config__: {
       label: '分页',
+      labelDescription: '分页',
       defaultValue: '分页',
       displayType: true,
       showLabel: false,
