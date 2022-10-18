@@ -31,7 +31,8 @@
     <el-dialog
       title="提示"
       :visible.sync="dialogVisible"
-      width="40%"
+      width="610px"
+      style="min-width: 610px"
       :before-close="() => dialogVisible = false"
     >
       <el-transfer
