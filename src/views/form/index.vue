@@ -25,14 +25,14 @@
           <el-breadcrumb separator-class="el-icon-arrow-right">
             <el-breadcrumb-item
               :class="currentTab == 'editor' ? 'activeClass' : 'normalClass'"
-              :to="{ path: '/project/form/editor' }"
+              :to="{ path: '/project/form/editor', query: { key: this.projectKey } }"
               @click.native="editorBreadClick"
             >
               编辑问卷
             </el-breadcrumb-item>
             <el-breadcrumb-item
               :class="currentTab == 'publish' ? 'activeClass' : 'normalClass'"
-              :to="{ path: '/project/form/publish' }"
+              :to="{ path: '/project/form/publish', query: { key: this.projectKey } }"
               @click.native="publishBreadClick"
             >
               发布问卷
@@ -41,7 +41,7 @@
               :class="
                 currentTab == 'statistics' ? 'activeClass' : 'normalClass'
               "
-              :to="{ path: '/project/form/statistics' }"
+              :to="{ path: '/project/form/statistics', query: { key: this.projectKey } }"
               @click.native="statisticsBreadClick"
             >
               数据统计
@@ -120,6 +120,7 @@
 <script>
 import PreView from "@/views/form/preview";
 // import store from "@/store";
+import { reqPublishProject } from "@/api/myProject"
 
 export default {
   name: "NewIndex",
@@ -208,17 +209,11 @@ export default {
         type: "warning",
       })
         .then(() => {
-          // this.$api.post('/user/project/publish', {key: this.projectKey,publishList:this.publishList}).then(() => {
-          //     this.publishStatus = true;
-          //     this.ksfb=true;
-          //     // this.sendMsg();
-          //     this.msgSuccess('发布成功')
-          // })
-          // this.$message({
-          //   type: "success",
-          //   message: "发布成功!",
-          // });
-          this.$router.push({ path: "/project/form/publish" });
+          reqPublishProject({key: this.previewKey}).then(res => {
+            console.log(res);
+            this.msgSuccess('发布成功')
+            this.$router.push({ path: "/project/form/publish", query: { key: this.projectKey } });
+          })
         })
         .catch(() => {
           this.$message({
