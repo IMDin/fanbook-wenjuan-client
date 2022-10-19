@@ -234,7 +234,7 @@ export default {
         type: "warning",
       })
         .then(() => {
-          reqPublishProject({key: this.previewKey}).then(res => {
+          reqPublishProject({key: this.projectKey}).then(res => {
             console.log(res);
             this.msgSuccess('发布成功')
             this.$router.push({ path: "/project/form/publish", query: { key: this.projectKey } });
