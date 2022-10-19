@@ -191,7 +191,13 @@ export default {
       sendMsg(){
         reqTimingPublishMsg({key: this.projectKey,publishList: this.publishList, publishTime: this.publishTime}).then((res)=> {
           console.log(res);
-          this.sendResult2()
+          if (res.code == 200) {
+            this.msgSuccess('推送成功')
+            const that =  this
+            setTimeout(() => {
+              that.sendResult2()
+            }, 1000);
+          }
         })
         // this.sendResult();
       },
