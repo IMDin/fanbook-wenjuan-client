@@ -5,6 +5,7 @@
         align="middle"
         type="flex"
         :gutter="5"
+        v-if="path !== '/project/form/pushChannelPage'"
       >
         <i
           class="el-icon-back"
@@ -68,11 +69,26 @@
           保存为模板
         </el-button> -->
       </el-row>
+      <el-row
+        align="middle"
+        type="flex"
+        :gutter="5"
+        v-else
+        style="margin-top:10px"
+      >
+        <i
+          class="el-icon-back"
+          @click="$router.back(-1)"
+        />
+        <div class="textTip2">
+          <span>返回</span>
+        </div>
+      </el-row>
     </el-card>
     <div class="main-container">
       <div
         class="left-menu-container"
-        v-if="currentTab !== 'publish' && currentTab !== 'statistics'"
+        v-if="currentTab !== 'publish' && currentTab !== 'statistics' && path !== '/project/form/pushChannelPage' && path !== '/project/form/publish'"
       >
         <el-menu
           :collapse="isCollapse"
@@ -169,6 +185,14 @@ export default {
       //当前页面
       currentTab: "editor",
     };
+  },
+  watch: {
+    $route: {
+      handler: function(route) {
+        this.path = route.path
+      },
+      immediate: true
+    }
   },
   created() {
     this.projectKey = this.$route.query.key;
@@ -287,7 +311,9 @@ export default {
     // width: 200px;
     padding: 5px;
   }
-
+  .textTip2 {
+    font-size: 18px;
+  }
   .textTip {
     flex: none;
     :nth-last-child(1) {
