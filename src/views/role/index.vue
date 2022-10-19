@@ -41,7 +41,7 @@
         filter-placeholder="请输入用户名称"
         :titles="['可选成员', '已选成员']"
         v-model="value"
-        :data="membersList"
+        :data="newMembersList"
       />
       <span 
         slot="footer" 
@@ -75,12 +75,27 @@ export default {
       },
       dialogVisible: false,
       membersList: [],
+      newMembersList: [],
       list:[],
       FbPullroles: [],
     }
   },
   mounted() {
     this.getFbPullroles()
+  },
+  watch:{
+    "membersList":{
+      handler(newVal) {
+        let hasObj= {};
+        const obj = newVal.reduce((cur,next) => {
+            hasObj[next.key] ? "" : (hasObj[next.key] = true && cur.push(next)); 
+            return cur;
+        },[])
+        this.newMembersList = obj
+        console.log(obj, 'obj');
+      },
+      deep: true
+    }
   },
   methods: {
     getFbPullroles() {
@@ -96,7 +111,6 @@ export default {
               lable: item.name
             })
           })
-          console.log(this.FbPullroles);
           this.getUserList()
         }
       })

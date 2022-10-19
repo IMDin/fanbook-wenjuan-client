@@ -228,13 +228,13 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         }).then(() => {
-          reqPublishProject({ key }).then((res) => {
+          reqPublishProject({ key, fbUser: localStorage.getItem("user_id") }).then((res) => {
           console.log( res )
           // this.publishStatus = true;
           // this.ksfb=true;
           // this.sendMsg();
           this.msgSuccess('发布成功')
-          this.$router.push({path: `/project/form/postQuestionnaire`, query: {key: key, active: name}})
+          this.$router.push({path: `/project/form/publish`, query: {key: key, active: name}})
           this.getData()
         })
         }).catch(() => {

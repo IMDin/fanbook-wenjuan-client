@@ -25,21 +25,25 @@
             border
           >
             <el-table-column
-              prop="date"
+              prop="name"
               label="推送频道"
               width="180"
             />
             <el-table-column
-              prop="name"
+              prop="publishTime"
               label="推送时间"
               width="180"
             />
             <el-table-column
-              prop="address"
+              prop="status"
               label="状态"
-            />
+            >
+              <template slot-scope="{row}">
+                {{ row.status == 1 ? '推送成功' : '推送失败' }}
+              </template>
+            </el-table-column>
             <el-table-column
-              prop="num"
+              prop="answerNum"
               label="答卷数量"
             />
           </el-table>
@@ -142,29 +146,25 @@ export default {
           resource: '',
           desc: '',
         },
-        tableData: [{
-          date: '2016-05-02',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-04',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1517 弄'
-        }, {
-          date: '2016-05-01',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1519 弄'
-        }, {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄'
-        }]
+        tableData: [],
+        projectKey: ''
       }
     },
     mounted() {
+      this.projectKey = this.$route.query.key
       this.getGuilds()
+      this.sendResult2()
     },
     methods: {
+      sendResult2(){
+        //停止发布则回显 上次保存的数据
+        const key = this.projectKey;
+        this.$api.get(`/user/project/getPublishList?key=${key}`).then(res => {
+            if (res.data) {
+                this.tableData=res.data.publishList
+            }
+        })
+      },
       //初始化服务器频道信息
       getGuilds() {
         this.$api.get(`/fanbook/getGuilds`).then(res => {
@@ -175,18 +175,36 @@ export default {
         })
       },
       dialogForm() {
+        let sizes=this.$refs.myCascader.getCheckedNodes().length;
+        if(sizes === 0) {
+          this.msgInfo('请选择频道')
+          return;
+        }
+        if (this.publishTime == "" && this.publishTimeED == false) {
+          this.msgInfo('请选择发送时间')
+          return
+        }
         this.sendMsg();
         this.dialogFormVisible= false;
       },
       //给后台推送选择的频道频道信息
       sendMsg(){
-        this.projectKey = this.$route.query.key
-        reqTimingPublishMsg({key: this.projectKey,publishList: this.publishList}).then((res)=> {
+        reqTimingPublishMsg({key: this.projectKey,publishList: this.publishList, publishTime: this.publishTime}).then((res)=> {
           console.log(res);
+          this.sendResult2()
         })
         // this.sendResult();
       },
       add() {
+        this.publishTime = ""
+        this.publishTimeED = false
+        this.checkbox = false
+        this.guildsValue = [
+          {
+          value: 'guild_id',
+          label: 'name'
+          }
+        ]
         this.dialogFormVisible = true
       },
       handleChange2() {
@@ -195,7 +213,6 @@ export default {
             this.publishList=[];
             for (var i = 0;i<sizes;i++) {
                 let obj=this.$refs.myCascader.getCheckedNodes()[i].data
-                obj = Object.assign(obj, {publishTime: this.publishTime})
                 this.publishList.push(obj)
                 console.log("存储",this.publishList)
             }
