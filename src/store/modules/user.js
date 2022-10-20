@@ -76,21 +76,20 @@ const mutations = {
         state.username = data.name  
         state.avatar = data.avatar
         state.fbtoken = data.fbtoken
+    },
+    userId(state, data) {
+        localStorage.setItem("user_id", data)
+        state.user_id = data 
         
         if(state.token) {
           // 重定向页面
           if(state.redirect) {
-            console.log(state.redirect, 'state.redirect');
             router.push(state.redirect)
             return
           }
             console.log('台哦转 /home')
             router.push('/home')
         }
-    },
-    userId(state, data) {
-        localStorage.setItem("user_id", data)
-        state.user_id = data 
     },
     delAuth() {
         localStorage.removeItem('fanbookToken')

@@ -33,7 +33,6 @@
             </el-breadcrumb-item>
             <el-breadcrumb-item
               :class="currentTab == 'publish' ? 'activeClass' : 'normalClass'"
-              :to="{ path: '/project/form/publish', query: { key: this.projectKey } }"
               @click.native="publishBreadClick"
             >
               发布问卷
@@ -184,6 +183,7 @@ export default {
       projectTitle: "问卷名称",
       //当前页面
       currentTab: "editor",
+      isPublish: 0
     };
   },
   watch: {
@@ -195,6 +195,7 @@ export default {
     }
   },
   created() {
+    this.isPublish = this.$route.query.status
     this.projectKey = this.$route.query.key;
     this.defaultActiveMenu = this.$route.path;
     this.isCollapse = this.$store.state.form.isCollapse;
@@ -226,6 +227,11 @@ export default {
 
     //新增发布问卷按钮
     publishProject() {
+      if( this.isPublish == 2 ) {
+        this.msgInfo('该问卷已发布')
+        this.$router.push({ path: "/project/form/publish", query: { key: this.projectKey } });
+        return;
+      }
       console.log("点击发布按钮");
       this.$confirm("请确认是否发布问卷?", "提示", {
         confirmButtonText: "确定",
@@ -264,6 +270,8 @@ export default {
       if (this.$route.name == "publish") {
         this.currentTab = "publish";
       }
+      this.publishProject()
+      // this.$router.push({ path: '/project/form/publish', query: { key: this.projectKey } })
     },
     statisticsBreadClick() {
       if (this.$route.name == "statistics") {
