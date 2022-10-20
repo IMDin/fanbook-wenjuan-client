@@ -43,6 +43,7 @@
       :data="tableData"
       style="width: 100%"
       class="my-table"
+      v-loading="loading"
     >
       <el-table-column
         prop="name"
@@ -97,7 +98,7 @@
           <el-button
             type="text" 
             class="btn-befo" 
-            @click="toProjectHandle(row.key, 'editor')"
+            @click="toProjectHandle(row.key, 'editor', row.status)"
           >
             编辑
           </el-button>
@@ -170,6 +171,7 @@ import {
 export default {
   data() {
     return {
+      loading: true,
       queryParams: {
           current: 1,
           size: 10,
@@ -177,7 +179,7 @@ export default {
           beginDateTime: null,
           endDateTime: null,
           status: null,
-          fbUser:'',
+          fbUser: localStorage.getItem("user_id"),
       },
       options: [{
         value: '1',
@@ -194,11 +196,11 @@ export default {
     };
   },
   mounted() {
-      this.queryParams.fbUser= localStorage.getItem("user_id")
       this.getData()
   },
   methods: {
     getData() {
+      this.loading = true
       getMyProjectPage(this.queryParams).then(res => {
           let {records, total, size} = res.data
           if (records && records.length) {
@@ -209,10 +211,11 @@ export default {
           this.tableData = records
           this.total = total
           this.queryParams.size = size
+          this.loading = false
       })
     },
-    toProjectHandle(key, type) {// 编辑
-      this.$router.push({path: `/project/form/${type}`, query: {key: key, active: type}})
+    toProjectHandle(key, type, status) {// 编辑
+      this.$router.push({path: `/project/form/${type}`, query: {key: key, active: type, status} })
     },
     publishProject(key, name, status) {
       //    if(this.guilds.length<1){
