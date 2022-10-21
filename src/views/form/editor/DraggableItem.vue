@@ -2,6 +2,7 @@
 import draggable from "vuedraggable";
 import render from "@/components/render/render";
 import MatrixScale from "@/components/matrix/matrix-scale";
+import MatrixSelect from "@/components/matrix/matrix-select";
 
 const components = {
   itemBtns(h, currentItem, index, list) {
@@ -68,7 +69,13 @@ const layouts = {
             }}
           >
             {child}
-            {config.tag == "matrix-scale" ? <MatrixScale /> : ""}
+            {config.tag == "matrix-scale" ? (
+              <MatrixScale />
+            ) : config.tag == "matrix-select" ? (
+              <MatrixSelect />
+            ) : (
+              ""
+            )}
           </render>
         </el-form-item>
         {components.itemBtns.apply(this, arguments)}

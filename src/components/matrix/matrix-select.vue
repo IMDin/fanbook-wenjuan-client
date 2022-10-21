@@ -37,7 +37,7 @@
           <i
             v-if="scope.column.label"
             @click="dd(scope)"
-            class="el-icon-star-off iconStyle"
+            class="el-icon-star-on iconStyle"
           />
           {{ scope.column.label ? "" : scope.row.colName }}
         </template>
@@ -48,7 +48,7 @@
 
 <script>
 export default {
-  name: "MatrixScale",
+  name: "MatrixSelect",
   props: {},
   data() {
     return {
