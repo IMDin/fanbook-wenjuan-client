@@ -105,7 +105,7 @@
             <span slot="title">{{ menuItem.title }}</span>
           </el-menu-item>
         </el-menu>
-        <i
+        <!-- <i
           v-if="!isCollapse"
           class="el-icon-d-arrow-left"
           @click="collapseHandle"
@@ -114,7 +114,7 @@
           v-else
           class="el-icon-d-arrow-right"
           @click="collapseHandle"
-        />
+        /> -->
       </div>
       <div class="right-content-container">
         <router-view @getProjectTitle="changeTitle" />

@@ -324,6 +324,7 @@
                       <el-upload
                         ref="logoUpload"
                         :action="getUploadUrl"
+                        :data="uploadData"
                         :headers="getUploadHeader"
                         :on-progress="uploadProgressHandle"
                         :on-success="
@@ -461,17 +462,17 @@
             </div>
 
             <!-- 上传图片 -->
-            <div v-if="activeData.__config__.tagIcon == 'upload'">
+            <div v-if="activeData.__config__.tagIcon == 'image-upload'">
               <el-form-item label="最多上传图片数量">
                 <el-input-number v-model="activeData.limit" />
               </el-form-item>
               <el-form-item
                 v-if="activeData.__config__.fileSize !== undefined"
-                label="文件大小"
+                label="单张图片限制"
               >
                 <el-input
                   v-model.number="activeData.__config__.fileSize"
-                  placeholder="请输入文件大小"
+                  placeholder="请输入图片大小"
                 >
                   <el-select
                     slot="append"
@@ -769,6 +770,13 @@ export default {
     },
     getUploadUrl() {
       return `${process.env.VUE_APP_API_ROOT}/user/file/upload`;
+    },
+    uploadData() {
+      let fbuser = localStorage.getItem("user_id");
+      console.log(999, fbuser);
+      return {
+        fbuser: JSON.stringify(fbuser),
+      };
     },
   },
   watch: {

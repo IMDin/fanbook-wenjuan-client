@@ -49,6 +49,7 @@ let typeMap = new Map()
  * @param data
  */
 export function dbDataConvertForItemJson(data) {
+  console.log('dbDataConvertForItemJson',data)
     let {required, placeholder} = data
     if (required && !placeholder) { // 必填项目验证未填默认提示语
         data.placeholder = '此题为必填项目'
@@ -93,6 +94,7 @@ export function dbDataConvertForItemJson(data) {
     jsonItem.placeholder = data.placeholder
     jsonItem.formItemId = data.formItemId
     jsonItem.__vModel__ = 'field' + data.formItemId
+    console.log('jsonItem',jsonItem)
     return jsonItem
 }
 
@@ -182,6 +184,17 @@ const dataParams = {
         'multiple': 'multiple',
         'accept': 'accept'
     },
+    // 图片上传
+    'IMAGE_UPLOAD': {
+      'buttonText': '__config__.buttonText',
+      'showTip': '__config__.showTip',
+      'fileSize': '__config__.fileSize',
+      'sizeUnit': '__config__.sizeUnit',
+      'listType': 'list-type',
+      'limit': 'limit',
+      'multiple': 'multiple',
+      'accept': 'accept'
+  },
     // 图片
     'IMAGE': {
         'src': 'src',
@@ -210,6 +223,14 @@ const dataParams = {
         'type': 'type',
         'format': 'format',
         'valueFormat': 'value-format'
+    },
+    // 矩阵量表
+    'MATRIX_SCALE': {
+      'table': '__slot__.table'
+    },
+    // 矩阵选择
+    'MATRIX_SELECT': {
+      'table': 'table'
     }
 }
 
