@@ -955,26 +955,26 @@ export const personalInfoComponents = [
     placeholder: '请选择省市县',
     style: { width: '100%' }
   },
-  // {
-  //   typeId: 'INPUT_MAP',
-  //   __config__: {
-  //     label: '地理位置',
-  //     labelWidth: null,
-  //     showLabel: true,
-  //     changeTag: false,
-  //     tag: 'input-map',
-  //     tagIcon: 'input',
-  //     defaultValue: undefined,
-  //     required: true,
-  //     layout: 'colFormItem',
-  //     span: 24,
-  //     showRegList: false,
-  //     regList: [],
-  //     document: 'https://element.eleme.cn/#/zh-CN/component/input'
-  //   },
-  //   placeholder: '请选择位置',
-  //   style: { width: '100%' }
-  // },
+  {
+    typeId: 'INPUT_MAP',
+    __config__: {
+      label: '地理位置',
+      labelWidth: null,
+      showLabel: true,
+      changeTag: false,
+      tag: 'input-map',
+      tagIcon: 'input',
+      defaultValue: undefined,
+      required: true,
+      layout: 'colFormItem',
+      span: 24,
+      showRegList: false,
+      regList: [],
+      document: 'https://element.eleme.cn/#/zh-CN/component/input'
+    },
+    placeholder: '请选择位置',
+    style: { width: '100%' }
+  },
   // {
   //   typeId: 'PHONE_VERIFICATION',
   //   __config__: {
@@ -1000,24 +1000,92 @@ export const personalInfoComponents = [
 //矩阵组件
 export const matrixComponents = [
   {
-    typeId: 'PHONE_VERIFICATION',
+    typeId: 'MATRIX_SCALE',
     __config__: {
-      label: '手机号验证',
+      label: '请输入题目标题',
+      labelDescription: '矩阵量表',
       labelWidth: null,
       showLabel: true,
       changeTag: false,
-      tag: 'phone-verification',
-      tagIcon: 'input',
-      defaultValue: undefined,
-      required: true,
+      tag: 'matrix-scale',
+      tagIcon: 'matrix-scale',
       layout: 'colFormItem',
+      defaultValue: {},
+      required: true,
       span: 24,
       showRegList: false,
-      regList: [],
-      document: 'https://element.eleme.cn/#/zh-CN/component/input'
+      regList: []
     },
-    placeholder: '请验证手机号',
-    style: { width: '100%' }
+    __slot__: {
+      table: {
+        rows: [{
+          label: '矩阵行1',
+          id: 1
+        }, {
+          label: '矩阵行2',
+          id: 2
+        }, {
+          label: '矩阵行3',
+          id: 3
+        }],
+        copyWriting: {
+          max: '非常不满意',
+          min: '非常满意'
+        },
+        level: 5
+      },
+    },
+    icon: 'tduck-star',
+    placeholder: '',
+    style: {
+      width: '100%'
+    }
+  },
+  {
+    typeId: 'MATRIX_SELECT',
+    __config__: {
+      label: '请输入题目标题',
+      labelDescription: '矩阵选择',
+      labelWidth: null,
+      showLabel: true,
+      changeTag: false,
+      tag: 'matrix-select',
+      tagIcon: 'matrix-select',
+      layout: 'colFormItem',
+      defaultValue: {},
+      required: true,
+      span: 24,
+      showRegList: false,
+      regList: []
+    },
+    table: {
+      rows: [{
+        label: '矩阵行1',
+        id: 1
+      }, {
+        label: '矩阵行2',
+        id: 2
+      }, {
+        label: '矩阵行3',
+        id: 3
+      }],
+      columns: [{
+        label: '选项1',
+        id: 1
+      }, {
+        label: '选项2',
+        id: 2
+      }, {
+        label: '选项3',
+        id: 3
+      }]
+    },
+
+    multiple: false,
+    placeholder: '',
+    style: {
+      width: '100%'
+    }
   }
 ]
 
@@ -1029,7 +1097,7 @@ export const otherComponents = [
       label: '请上传图片',
       labelDescription: '上传图片',
       tag: 'el-upload',
-      tagIcon: 'upload',
+      tagIcon: 'image-upload',
       layout: 'colFormItem',
       defaultValue: null,
       showLabel: true,
@@ -1063,7 +1131,7 @@ export const otherComponents = [
       label: '请上传文件',
       labelDescription: '上传文件',
       tag: 'el-upload',
-      tagIcon: 'file-upload',
+      tagIcon: 'upload',
       layout: 'colFormItem',
       defaultValue: null,
       showLabel: true,

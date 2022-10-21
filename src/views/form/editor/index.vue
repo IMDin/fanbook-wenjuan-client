@@ -731,7 +731,7 @@ export default {
   color: #7b7b7b;
   border: 1px solid #fff;
   background-color: #fff;
-  margin: 0 50px;
+  margin: 0 52px;
   padding: 20px;
   text-align: center;
   font-size: 20px;
