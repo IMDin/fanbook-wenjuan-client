@@ -31,7 +31,7 @@ export default [
                 path: 'setting',
                 name: 'setting',
                 meta: {requireLogin: true},
-                component: () => import(/* webpackChunkName: 'root' */ '@/views/form/setting')
+                component: () => import(/* webpackChunkName: 'root' */ '@/views/form/setting/setting')
             },
             {
                 path: 'publish',

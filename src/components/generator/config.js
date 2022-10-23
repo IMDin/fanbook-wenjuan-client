@@ -955,26 +955,26 @@ export const personalInfoComponents = [
     placeholder: '请选择省市县',
     style: { width: '100%' }
   },
-  {
-    typeId: 'INPUT_MAP',
-    __config__: {
-      label: '地理位置',
-      labelWidth: null,
-      showLabel: true,
-      changeTag: false,
-      tag: 'input-map',
-      tagIcon: 'input',
-      defaultValue: undefined,
-      required: true,
-      layout: 'colFormItem',
-      span: 24,
-      showRegList: false,
-      regList: [],
-      document: 'https://element.eleme.cn/#/zh-CN/component/input'
-    },
-    placeholder: '请选择位置',
-    style: { width: '100%' }
-  },
+  // {
+  //   typeId: 'INPUT_MAP',
+  //   __config__: {
+  //     label: '地理位置',
+  //     labelWidth: null,
+  //     showLabel: true,
+  //     changeTag: false,
+  //     tag: 'input-map',
+  //     tagIcon: 'input',
+  //     defaultValue: undefined,
+  //     required: true,
+  //     layout: 'colFormItem',
+  //     span: 24,
+  //     showRegList: false,
+  //     regList: [],
+  //     document: 'https://element.eleme.cn/#/zh-CN/component/input'
+  //   },
+  //   placeholder: '请选择位置',
+  //   style: { width: '100%' }
+  // },
   // {
   //   typeId: 'PHONE_VERIFICATION',
   //   __config__: {
