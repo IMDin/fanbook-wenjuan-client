@@ -775,7 +775,7 @@ export default {
       let fbuser = localStorage.getItem("user_id");
       console.log(999, fbuser);
       return {
-        fbuser: JSON.stringify(fbuser),
+        fbuser: fbuser,
       };
     },
   },
