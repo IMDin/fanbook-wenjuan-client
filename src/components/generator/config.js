@@ -1008,6 +1008,8 @@ export const matrixComponents = [
     __config__: {
       label: '请输入题目标题',
       labelDescription: '矩阵量表',
+      titleTip: false,
+      titleTipText: '请输入题目说明',
       labelWidth: null,
       showLabel: true,
       changeTag: false,
@@ -1050,6 +1052,8 @@ export const matrixComponents = [
     __config__: {
       label: '请输入题目标题',
       labelDescription: '矩阵选择',
+      titleTip: false,
+      titleTipText: '请输入题目说明',
       labelWidth: null,
       showLabel: true,
       changeTag: false,
@@ -1062,27 +1066,29 @@ export const matrixComponents = [
       showRegList: false,
       regList: []
     },
-    table: {
-      rows: [{
-        label: '矩阵行1',
-        id: 1
-      }, {
-        label: '矩阵行2',
-        id: 2
-      }, {
-        label: '矩阵行3',
-        id: 3
-      }],
-      columns: [{
-        label: '选项1',
-        id: 1
-      }, {
-        label: '选项2',
-        id: 2
-      }, {
-        label: '选项3',
-        id: 3
-      }]
+    __slot__: {
+      table: {
+        rows: [{
+          label: '矩阵行1',
+          id: 1
+        }, {
+          label: '矩阵行2',
+          id: 2
+        }, {
+          label: '矩阵行3',
+          id: 3
+        }],
+        columns: [{
+          label: '选项1',
+          id: 1
+        }, {
+          label: '选项2',
+          id: 2
+        }, {
+          label: '选项3',
+          id: 3
+        }]
+      }
     },
 
     multiple: false,

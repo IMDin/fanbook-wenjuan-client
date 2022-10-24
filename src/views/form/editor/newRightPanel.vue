@@ -105,13 +105,19 @@
               </div>
               <el-divider />
               <el-form-item label="选项随机排列">
-                <el-switch v-model="activeData.__config__.selectRandom" @click="randomSelect" />
+                <el-switch
+                  v-model="activeData.__config__.selectRandom"
+                  @click="randomSelect"
+                />
               </el-form-item>
               <el-form-item
                 v-if="activeData.__config__.selectRandom === true"
                 label="固定最后一个选项"
               >
-                <el-switch v-model="activeData.__config__.fixLastSelect" @click="selectFix" />
+                <el-switch
+                  v-model="activeData.__config__.fixLastSelect"
+                  @click="selectFix"
+                />
               </el-form-item>
             </div>
 
@@ -439,11 +445,189 @@
               </el-form-item>
             </div>
 
-            <!-- 矩阵选择 -->
-            <div v-if="activeData.__config__.tagIcon == ''"></div>
-
             <!-- 矩阵量表 -->
-            <div v-if="activeData.__config__.tagIcon == ''"></div>
+            <div v-if="activeData.__config__.tagIcon == 'matrix-scale'">
+              <p>行设置</p>
+              <draggable
+                :animation="340"
+                :list="activeData.__slot__.table"
+                group="selectItem"
+                handle=".option-drag"
+              >
+                <div
+                  v-for="(item, index) in activeData.__slot__.table"
+                  :key="index"
+                  class="select-item"
+                >
+                  <div class="select-line-icon option-drag">
+                    <i class="el-icon-s-operation" />
+                  </div>
+                  <el-input
+                    v-model="item.label"
+                    placeholder="选项名"
+                    size="small"
+                  />
+                  <div
+                    class="close-btn select-line-icon"
+                    @click="activeData.__slot__.options.splice(index, 1)"
+                  >
+                    <i class="el-icon-remove-outline" />
+                  </div>
+                </div>
+              </draggable>
+              <div style="margin-left: 20px">
+                <el-button
+                  icon="el-icon-circle-plus-outline"
+                  style="padding-bottom: 0"
+                  type="text"
+                  @click="addSelectItem"
+                >
+                  添加选项
+                </el-button>
+                <el-button
+                  icon="el-icon-circle-plus-outline"
+                  style="padding-bottom: 0"
+                  type="text"
+                  @click="addSelectOtherItem"
+                >
+                  批量添加
+                </el-button>
+              </div>
+              <p>量表设置</p>
+              <el-form-item label="极值标签">
+                <el-select v-model="activeData.justify">
+                  <el-option
+                    v-for="(item, index) in justifyOptions"
+                    :key="index"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </el-select>
+              </el-form-item>
+              <el-form-item label="量级设置">
+                <el-select v-model="activeData.justify">
+                  <el-option
+                    v-for="(item, index) in justifyOptions"
+                    :key="index"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </el-select>
+              </el-form-item>
+              <el-form-item label="显示样式">
+                <el-select v-model="activeData.justify">
+                  <el-option
+                    v-for="(item, index) in justifyOptions"
+                    :key="index"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </el-select>
+              </el-form-item>
+            </div>
+
+            <!-- 矩阵选择 -->
+            <div v-if="activeData.__config__.tagIcon == 'matrix-select'">
+              <p>行设置</p>
+              <draggable
+                :animation="340"
+                :list="activeData.__slot__.table"
+                group="selectItem"
+                handle=".option-drag"
+              >
+                <div
+                  v-for="(item, index) in activeData.__slot__.table"
+                  :key="index"
+                  class="select-item"
+                >
+                  <div class="select-line-icon option-drag">
+                    <i class="el-icon-s-operation" />
+                  </div>
+                  <el-input
+                    v-model="item.label"
+                    placeholder="选项名"
+                    size="small"
+                  />
+                  <div
+                    class="close-btn select-line-icon"
+                    @click="activeData.__slot__.options.splice(index, 1)"
+                  >
+                    <i class="el-icon-remove-outline" />
+                  </div>
+                </div>
+              </draggable>
+              <div style="margin-left: 20px">
+                <el-button
+                  icon="el-icon-circle-plus-outline"
+                  style="padding-bottom: 0"
+                  type="text"
+                  @click="addSelectItem"
+                >
+                  添加选项
+                </el-button>
+                <el-button
+                  icon="el-icon-circle-plus-outline"
+                  style="padding-bottom: 0"
+                  type="text"
+                  @click="addSelectOtherItem"
+                >
+                  批量添加
+                </el-button>
+              </div>
+              <p>选项设置</p>
+              <draggable
+                :animation="340"
+                :list="activeData.__slot__.table"
+                group="selectItem"
+                handle=".option-drag"
+              >
+                <div
+                  v-for="(item, index) in activeData.__slot__.table"
+                  :key="index"
+                  class="select-item"
+                >
+                  <div class="select-line-icon option-drag">
+                    <i class="el-icon-s-operation" />
+                  </div>
+                  <el-input
+                    v-model="item.label"
+                    placeholder="选项名"
+                    size="small"
+                  />
+                  <div
+                    class="close-btn select-line-icon"
+                    @click="activeData.__slot__.options.splice(index, 1)"
+                  >
+                    <i class="el-icon-remove-outline" />
+                  </div>
+                </div>
+              </draggable>
+              <div style="margin-left: 20px">
+                <el-button
+                  icon="el-icon-circle-plus-outline"
+                  style="padding-bottom: 0"
+                  type="text"
+                  @click="addSelectItem"
+                >
+                  添加选项
+                </el-button>
+                <el-button
+                  icon="el-icon-circle-plus-outline"
+                  style="padding-bottom: 0"
+                  type="text"
+                  @click="addSelectOtherItem"
+                >
+                  批量添加
+                </el-button>
+              </div>
+              <el-divider />
+              <el-form-item label="选择类型">
+                <el-radio-group v-model="radio1">
+                  <el-radio-button label="单选"></el-radio-button>
+                  <el-radio-button label="多选"></el-radio-button>
+                </el-radio-group>
+              </el-form-item>
+            </div>
 
             <!-- 日期 -->
             <div v-if="activeData.__config__.tagIcon == 'date'"></div>
@@ -1027,13 +1211,9 @@ export default {
       this.selectType = e;
     },
     //选项随机排列
-    randomSelect() {
-
-    },
+    randomSelect(arr) {},
     //固定最后一个选项
-    selectFix() {
-
-    }
+    selectFix() {},
   },
 };
 </script>
@@ -1138,5 +1318,9 @@ export default {
   ::v-deep .el-radio__label {
     font-size: 16px;
   }
+}
+::v-deep .el-radio-button__orig-radio:checked+.el-radio-button__inner {
+  color: initial;
+  background-color: #fff;
 }
 </style>

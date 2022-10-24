@@ -174,7 +174,7 @@
                               <div>
                                 <el-radio
                                   v-model="item.value"
-                                  :label="define"
+                                  label="define"
                                 >
                                   自定义
                                   <div
@@ -374,6 +374,112 @@
         ><i class="el-icon-date" /> &nbsp;&nbsp;角色设置</span>
         <div class="roleConfig">
           <p>角色设置</p>
+          <el-form
+            ref="roleForm"
+            :model="roleForm"
+            label-width="80px"
+          >
+            <el-form-item label="分配方式">
+              <el-select
+                v-model="roleForm.distributionType"
+                placeholder="请选择"
+              >
+                <el-option
+                  v-for="item in distributionTypeOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item
+              label="分配角色"
+              v-if="roleForm.distributionType == 'different'"
+            >
+              <el-select
+                v-model="roleForm.distributionRole"
+                placeholder="请选择"
+              >
+                <el-option
+                  v-for="item in distributionRoleOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item
+              label="分配规则"
+              v-else
+            >
+              <div class="roleSet">
+                <div class="roleSetScroll">
+                  <div
+                    v-for="(item, index) in roleForm.distributionRule"
+                    :key="index"
+                  >
+                    <div class="roleItem">
+                      <div
+                        v-for="(logicItem, logicIndex) in item.logic"
+                        :key="logicIndex"
+                      >
+                        <span style="margin-right: 10px">如果</span>
+                        <el-select
+                          v-model="logicItem.question"
+                          placeholder="请选择题目"
+                        >
+                          <el-option
+                            v-for="item in mockOptions"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                          />
+                        </el-select>
+                        <el-select
+                          v-model="logicItem.result"
+                          placeholder="请选择"
+                        >
+                          <el-option
+                            v-for="item in mockOptions"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                          />
+                        </el-select>
+                        <i
+                          class="el-icon-circle-plus-outline addIcon"
+                          style="color: #409eff"
+                          @click="addLogicItem(index)"
+                        />
+                      </div>
+                    </div>
+                    <div class="roleItemBottom">
+                      <span style="margin-right: 10px">则分配</span>
+                      <el-select
+                        v-model="item.role"
+                        placeholder="请选择"
+                      >
+                        <el-option
+                          v-for="item in mockOptions"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"
+                        />
+                      </el-select>
+                      <span>,否则不分配</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <el-button
+                type="text"
+                icon="el-icon-circle-plus-outline"
+                @click="addDistributionRule"
+              >
+                添加
+              </el-button>
+            </el-form-item>
+          </el-form>
         </div>
       </el-tab-pane>
     </el-tabs>
@@ -438,6 +544,28 @@ export default {
           phone: "1252648256",
         },
       ],
+      roleForm: {
+        distributionType: "allFix",
+        distributionRole: "",
+        distributionRule: [{ logic: [{ question: "", result: "" }], role: "" }],
+      },
+      distributionTypeOptions: [
+        {
+          label: "所有参与者分配固定角色",
+          value: "allFix",
+        },
+        {
+          label: "按答题选项分配不同角色",
+          value: "different",
+        },
+      ],
+      distributionRoleOptions: [],
+      mockOptions: [
+        {
+          label: "sss",
+          value: "ggg",
+        },
+      ],
     };
   },
   methods: {
@@ -454,6 +582,19 @@ export default {
           value: "",
         });
       }
+    },
+    exportData() {},
+    addDistributionRule() {
+      this.roleForm.distributionRule.push({
+        logic: [{ question: "", result: "" }],
+        role: "",
+      });
+    },
+    addLogicItem(index) {
+      this.roleForm.distributionRule[index].logic.push({
+        question: "",
+        result: "",
+      });
     },
   },
 };
@@ -513,6 +654,13 @@ export default {
   right: 5px;
 }
 /* 奖品设置 */
+.giftConfig
+  ::v-deep
+  .el-radio-button__orig-radio:checked
+  + .el-radio-button__inner {
+  background-color: #fff;
+  color: initial;
+}
 .giftConfig ::v-deep .el-tabs__item.is-active {
   border-bottom: 1px solid #409eff;
   padding: 0;
@@ -526,16 +674,44 @@ export default {
 .giftConfig .el-input {
   width: 80px;
 }
-.coreSet {
+.coreSet,
+.roleSet {
   width: 100%;
   background-color: #f2f2f2;
   padding: 15px 15px 0;
 }
-.coreSetScroll {
+.coreSetScroll,
+.roleSetScroll {
   height: 135px;
   overflow: auto;
 }
 ::v-deep .el-radio__input.is-checked + .el-radio__label {
   color: #606266;
+}
+.roleConfig ::v-deep .el-form-item__label {
+  text-align: left;
+}
+.roleItem {
+  padding: 10px;
+  border-bottom: 1px solid #e4e7ed;
+}
+.roleItem .el-select,
+.roleItemBottom .el-select {
+  margin-right: 10px;
+}
+.roleItem .el-select:nth-child(2) {
+  width: 162px;
+}
+.roleItem .el-select:nth-child(3) {
+  width: 100px;
+}
+.roleItemBottom {
+  padding: 10px;
+}
+.roleItemBottom .el-select:nth-child(2) {
+  width: 150px;
+}
+.addIcon {
+  cursor: pointer;
 }
 </style>
