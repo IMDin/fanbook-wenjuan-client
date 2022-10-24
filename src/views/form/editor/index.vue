@@ -737,6 +737,7 @@ export default {
   text-align: center;
   font-size: 20px;
   cursor: pointer;
+  width: 91.5%;
 }
 ::v-deep .el-dialog__header {
   text-align: left;
