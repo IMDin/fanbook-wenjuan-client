@@ -34,11 +34,18 @@
           <span>{{ scope.column.label }}</span>
         </template>
         <template slot-scope="scope">
-          <i
+          <!-- <i
             v-if="scope.column.label"
             @click="dd(scope)"
             class="el-icon-star-on iconStyle"
-          />
+          /> -->
+          <el-radio
+            v-model="radio"
+            :label="scope.row.colName + scope.column.label"
+            v-if="scope.column.label"
+          >
+            {{ "" }}
+          </el-radio>
           {{ scope.column.label ? "" : scope.row.colName }}
         </template>
       </el-table-column>

@@ -144,7 +144,10 @@
                   </el-form-item>
                   <el-form-item label="积分设置">
                     <div class="coreSet">
-                      <div v-if="giftForm.giftType == '积分'">
+                      <div
+                        v-if="giftForm.giftType == '积分'"
+                        class="coreSetScroll"
+                      >
                         <div
                           v-for="(item, index) in giftForm.coreSet"
                           :key="index"
@@ -190,7 +193,10 @@
                           </el-form>
                         </div>
                       </div>
-                      <div v-if="giftForm.giftType == 'CDK'">
+                      <div
+                        v-if="giftForm.giftType == 'CDK'"
+                        class="coreSetScroll"
+                      >
                         <div
                           v-for="(item, index) in giftForm.cdkSet"
                           :key="index"
@@ -476,7 +482,7 @@ export default {
 ::v-deep .el-tabs__content {
   padding: 0 50px 0 15px;
 }
-.questionConfig,
+.questionConfig p,
 .roleConfig p {
   font-weight: bold;
 }
@@ -523,7 +529,11 @@ export default {
 .coreSet {
   width: 100%;
   background-color: #f2f2f2;
-  padding: 15px;
+  padding: 15px 15px 0;
+}
+.coreSetScroll {
+  height: 135px;
+  overflow: auto;
 }
 ::v-deep .el-radio__input.is-checked + .el-radio__label {
   color: #606266;
