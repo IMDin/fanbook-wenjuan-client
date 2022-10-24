@@ -10,8 +10,8 @@ export const formConf = {
   disabled: false,
   span: 24,
   title: '问卷标题',
-  description: '为了给您提供更好的服务，希望您能抽出几分钟时间，将您的感受和建议告诉我们，我们非常重视每位\n' +
-    '用户的宝贵意见，期待您的参与！现在我们就马上开始吧！',
+  description: '<p>为了给您提供更好的服务，希望您能抽出几分钟时间，将您的感受和建议告诉我们，我们非常重视每位\n' +
+    '用户的宝贵意见，期待您的参与！现在我们就马上开始吧！</p>',
   formBtns: true,
   unFocusedComponentBorder: true
 }
@@ -183,6 +183,10 @@ export const selectComponents = [
     __config__: {
       label: '请选择一个选项',
       labelDescription: '单选题',
+      titleTip: false,
+      titleTipText: '请输入题目说明',
+      selectRandom: false,
+      fixLastSelect: false,
       labelWidth: null,
       showLabel: true,
       showRegList: false,

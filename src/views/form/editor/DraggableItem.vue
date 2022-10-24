@@ -38,7 +38,6 @@ const layouts = {
     const { activeItem, changeLabel } = this.$listeners;
     const config = currentItem.__config__;
     const child = renderChildren.apply(this, arguments);
-    console.log("666draggable/child", config, currentItem, child);
     let className =
       this.activeId === config.formId
         ? "drawing-item active-from-item"
@@ -58,9 +57,19 @@ const layouts = {
       >
         <el-form-item
           label-width={labelWidth}
-          label={config.showLabel ? config.label : ""}
+          label={
+            config.showLabel
+              ? changeNumber(index, config) + " " + config.label
+              : ""
+          }
           required={config.required}
         >
+          <div class="questionType">{config.labelDescription}</div>
+          {config.titleTip ? (
+            <div class="titleTip">{config.titleTipText}</div>
+          ) : (
+            ""
+          )}
           <render
             key={config.renderKey}
             conf={currentItem}
@@ -77,6 +86,13 @@ const layouts = {
               ""
             )}
           </render>
+          {config.titleTip ? (
+            <div>
+              <input placeholder="请输入" value=""></input>
+            </div>
+          ) : (
+            ""
+          )}
         </el-form-item>
         {components.itemBtns.apply(this, arguments)}
       </el-col>
@@ -161,6 +177,15 @@ function layoutIsNotFound() {
   throw new Error(`没有与${this.currentItem.__config__.layout}匹配的layout`);
 }
 
+function changeNumber(num, e) {
+  console.log(e);
+  if (num + 1 < 10) {
+    return "0" + String(num + 1);
+  } else {
+    return num + 1;
+  }
+}
+
 export default {
   components: {
     render,
@@ -234,5 +259,15 @@ export default {
   width: 178px;
   height: 178px;
   display: block;
+}
+.questionType {
+  position: absolute;
+  top: -70px;
+  background-color: #dcdfe6;
+  padding: 0 5px;
+}
+.titleTip {
+  color: #dcdfe6;
+  margin-top: -10px;
 }
 </style>

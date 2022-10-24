@@ -28,7 +28,7 @@
               <el-switch v-model="activeData.__config__.required" />
             </el-form-item>
             <el-form-item label="题目说明">
-              <el-switch v-model="activeData.__config__.explanation" />
+              <el-switch v-model="activeData.__config__.titleTip" />
             </el-form-item>
           </div>
           <!-- 个性化配置 -->
@@ -105,13 +105,13 @@
               </div>
               <el-divider />
               <el-form-item label="选项随机排列">
-                <el-switch v-model="activeData.__config__.selectRandom" />
+                <el-switch v-model="activeData.__config__.selectRandom" @click="randomSelect" />
               </el-form-item>
               <el-form-item
                 v-if="activeData.__config__.selectRandom === true"
                 label="固定最后一个选项"
               >
-                <el-switch v-model="activeData.__config__.fixLastSelect" />
+                <el-switch v-model="activeData.__config__.fixLastSelect" @click="selectFix" />
               </el-form-item>
             </div>
 
@@ -1021,12 +1021,19 @@ export default {
     },
 
     clickSingle(e) {
-      console.log(111, e);
       this.selectType = e;
     },
     clickMore(e) {
       this.selectType = e;
     },
+    //选项随机排列
+    randomSelect() {
+
+    },
+    //固定最后一个选项
+    selectFix() {
+
+    }
   },
 };
 </script>

@@ -633,7 +633,6 @@ export default {
 
     //新增方法
     setCommit() {
-      console.log(111);
       this.dialogVisible = true;
     },
     commitSave() {

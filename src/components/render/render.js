@@ -72,11 +72,9 @@ function vModel(dataObject, defaultValue) {
 
 function mountSlotFlies(h, confClone, children) {
   const childObjs = componentChild[confClone.__config__.tag]
-  console.log(444, componentChild, childObjs)
   if (childObjs) {
     Object.keys(childObjs).forEach(key => {
       const childFunc = childObjs[key]
-      console.log(555, childFunc, confClone)
       if (confClone.__slot__ && confClone.__slot__[key]) {
         children.push(childFunc(h, confClone, key, this))
       }
@@ -145,7 +143,6 @@ export default {
     const children = this.$slots.default || []
     // 如果slots文件夹存在与当前tag同名的文件，则执行文件中的代码
     mountSlotFlies.call(this, h, confClone, children)
-    console.log(333, children)
 
     // 将字符串类型的事件，发送为消息
     emitEvents.call(this, confClone)
@@ -156,7 +153,6 @@ export default {
     // if (this.conf.__config__.tag == 'matrix-scale') {
     //   this.conf.__config__.tag = 'div'
     // }
-    console.log(111, this.conf.__config__.tag, children)
     return h(this.conf.__config__.tag, dataObject, children)
   }
 }

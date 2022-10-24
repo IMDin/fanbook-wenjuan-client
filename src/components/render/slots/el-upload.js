@@ -2,7 +2,6 @@ export default {
   'list-type': (h, conf, key) => {
     const list = []
     const config = conf.__config__
-    console.log(666, config)
     let imageFlag
     if (false) {
       imageFlag = <img src="imageUrl" class="avatar"></img>
