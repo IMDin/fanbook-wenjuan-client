@@ -172,6 +172,7 @@ function deleteUpload(config, scheme, file, fileList) {
 }
 
 function setValue(event, config, scheme) {
+  console.log(event, config, scheme, 'event, config, scheme');
     this.$set(config, 'defaultValue', event)
     this.$set(this[this.formConf.formModel], scheme.__vModel__, event)
     setValueLabel.call(this, event, config, scheme)
@@ -185,6 +186,9 @@ function setValue(event, config, scheme) {
         rules.forEach(r => {
             // 成立让该对应的问题显示出来
             let flag = evalExpression(this[this.formConf.formModel], r.logicExpression)
+            if (r.type == 2) {
+              flag = !flag
+            }
             // 参与逻辑设置的表单项
             let logicItem = this.formConf.fields.find(a => a.formItemId == r.triggerFormItemId)
             if (flag) {
@@ -195,7 +199,7 @@ function setValue(event, config, scheme) {
                 // 重置逻辑校验
                 logicItem.logicShow = true
                 this[this.formConf.formRules] = {}
-                this.logicRules(this.formConfCopy.fields, this[this.formConf.formRules])
+                this.logicRules(this.formConfCopy.fields, this[this.formConf.formRules], r.arr, true)
             } else {
                 _.remove(this.logicTriggerItemList, function(n) {
                     return n == r.triggerFormItemId
@@ -204,7 +208,7 @@ function setValue(event, config, scheme) {
                 // 隐藏表单校验
                 logicItem.logicShow = false
                 this[this.formConf.formRules] = {}
-                this.logicRules(this.formConfCopy.fields, this[this.formConf.formRules])
+                this.logicRules(this.formConfCopy.fields, this[this.formConf.formRules], r.arr, false)
                 // 默认值
                 let resetValConfig = componentDefaultValue[logicItem.typeId]
                 if (resetValConfig) {
@@ -480,12 +484,13 @@ export default {
             })
         },
         // 重建逻辑规则的表单校验
-        logicRules(componentList, rules) {
+        logicRules(componentList, rules, arr = [], isShow) {
             componentList.forEach(cur => {
                 let triggerShow = _.indexOf(this.logicTriggerItemList, cur.formItemId) > -1
                 let flag = cur.logicShow || triggerShow ? '' : 'display:none'
                 const config = cur.__config__
-                if (!flag) {
+                let flagTwo = arr.includes(cur.formItemId) && isShow == false
+                if (!flag && !flagTwo) {
                     rules[cur.__vModel__] = config.regList.map(item => {
                         item.pattern && (item.pattern = eval(item.pattern))
                         item.trigger = ruleTrigger && ruleTrigger[config.tag]
