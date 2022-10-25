@@ -1,36 +1,47 @@
 <template>
-    <div class="project-form"
-         :style="{backgroundColor:projectTheme.backgroundColor,
-                  background:projectTheme.backgroundImg?'url('+projectTheme.backgroundImg+')  no-repeat center':''}"
-    >
-        <div class="">
-            <div :style="{textAlign:projectTheme.logoPosition}">
-                <img
-                    :src="projectTheme.logoImg" class="logo-img"
-                >
-            </div>
-            <el-image
-                v-if="projectTheme.headImgUrl"
-                :src="projectTheme.headImgUrl"
-                style="width: 100%;"
-                fit="scale-down"
-            />
-            <h4 v-if="projectTheme.showTitle" class="form-name-text" style="text-align: center;">
-                {{ formConf.title }}
-            </h4>
-            <div
-                v-show="projectTheme.showDescribe"
-                class="form-name-text describe-html" v-html="formConf.description"
-            />
-            <el-divider />
-            <parser v-if="startParser"
-                    :key="parserKey"
-                    :form-model="formModel"
-                    :label-form-model="labelFormModel"
-                    :form-conf="formConf" @next="nextPage" @prev="prevPage" @submit="submitForm"
-            />
-        </div>
+  <div
+    class="project-form"
+    :style="{backgroundColor:projectTheme.backgroundColor,
+             background:projectTheme.backgroundImg?'url('+projectTheme.backgroundImg+')  no-repeat center':''}"
+  >
+    <div class="">
+      <div :style="{textAlign:projectTheme.logoPosition}">
+        <img
+          :src="projectTheme.logoImg"
+          class="logo-img"
+        >
+      </div>
+      <el-image
+        v-if="projectTheme.headImgUrl"
+        :src="projectTheme.headImgUrl"
+        style="width: 100%;"
+        fit="scale-down"
+      />
+      <h4
+        v-if="projectTheme.showTitle"
+        class="form-name-text"
+        style="text-align: center;"
+      >
+        {{ formConf.title }}
+      </h4>
+      <div
+        v-show="projectTheme.showDescribe"
+        class="form-name-text describe-html"
+        v-html="formConf.description"
+      />
+      <el-divider />
+      <parser
+        v-if="startParser"
+        :key="parserKey"
+        :form-model="formModel"
+        :label-form-model="labelFormModel"
+        :form-conf="formConf"
+        @next="nextPage"
+        @prev="prevPage"
+        @submit="submitForm"
+      />
     </div>
+  </div>
 </template>
 
 <script>
@@ -143,11 +154,14 @@ export default {
         }
         let logicItemMap = new Map()
         logicItemList.forEach(item => {
-            logicItemMap.set(item.formItemId, item)
+            if(item.type == 1) { // type 2 跳题逻辑
+              logicItemMap.set(item.formItemId, item)
+            }
             this.logicShowTriggerHandle(item)
         })
         this.$api.get(url).then(res => {
             if (res.data) {
+              console.log(res.data, '1234');
                 let serialNumber = 1
                 let fields = res.data.projectItems.map(item => {
                     let projectItem = dbDataConvertForItemJson(item)
@@ -230,11 +244,13 @@ export default {
        * 处理逻辑显示数据
        */
         logicShowTriggerHandle(logicItem) {
+          // 处理显示逻辑， 处理跳题逻辑
             if (!logicItem) {
                 return
             }
             // 建立触发关系 该字段值发生变化时 哪些问题需要进行逻辑判断 确定是否显示
-            logicItem.conditionList.forEach(item => {
+            if (logicItem.type == 1 ) {
+              logicItem.conditionList.forEach(item => {
                 if (Object.keys(item).length === 0) {
                     return
                 }
@@ -248,7 +264,39 @@ export default {
                     logicExpression: getExpression(logicItem.conditionList, logicItem.expression)
                 })
                 this.logicShowTriggerRule[item.formItemId] = rules
-            })
+              })
+            }else if(logicItem.type == 2) {
+              logicItem.conditionList.forEach(item => {
+                if (Object.keys(item).length === 0) {
+                    return
+                }
+                // console.log(logicItem, 'item');
+                // console.log(logicItem.formItemId + "目标题-相当于想要到的题目104", item.formItemId + "判断题目-准确选择这个才能跳102" );
+                if ((logicItem.formItemId - item.formItemId) > 1) {
+                  const lenght = logicItem.formItemId - item.formItemId
+                  let arr = [] // 需要隐藏的题目
+                  for(let i = 1; i < lenght; i++) {
+                    arr.push(item.formItemId + i)
+                  }
+                  arr.forEach(ele => {
+                    let rules = this.logicShowTriggerRule[item.formItemId]
+                      if (!rules) {
+                        rules = new Array()
+                      }
+                     rules.push({
+                      logicExpression:  getExpression(logicItem.conditionList, logicItem.expression),//"field102 ne 2  ",
+                      triggerFormItemId: ele,
+                      type: 2,
+                      arr
+                    })
+                    this.logicShowTriggerRule[item.formItemId] = rules
+                  })
+                }
+             
+              })
+              // console.log(this.logicShowTriggerRule, 'this.logicShowTriggerRule[');
+            }
+            
         },
         // 统一处理axios请求
         queryLogicItemList() {
