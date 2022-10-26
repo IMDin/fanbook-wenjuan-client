@@ -452,6 +452,7 @@ export default {
         .then(() => {});
     }),
     updateProjectItemInfo(val) {
+      console.log('dd',val)
       let data = formItemConvertData(val, this.projectKey);
       this.$api.post("/user/project/item/update", data).then(() => {});
     },

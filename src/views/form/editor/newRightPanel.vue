@@ -107,7 +107,7 @@
               <el-form-item label="选项随机排列">
                 <el-switch
                   v-model="activeData.__config__.selectRandom"
-                  @click="randomSelect"
+                  @change="randomSelect"
                 />
               </el-form-item>
               <el-form-item
@@ -116,7 +116,7 @@
               >
                 <el-switch
                   v-model="activeData.__config__.fixLastSelect"
-                  @click="selectFix"
+                  @change="selectFix"
                 />
               </el-form-item>
             </div>
@@ -450,12 +450,12 @@
               <p>行设置</p>
               <draggable
                 :animation="340"
-                :list="activeData.__slot__.table"
+                :list="activeData.__slot__.table.rows"
                 group="selectItem"
                 handle=".option-drag"
               >
                 <div
-                  v-for="(item, index) in activeData.__slot__.table"
+                  v-for="(item, index) in activeData.__slot__.table.rows"
                   :key="index"
                   class="select-item"
                 >
@@ -469,7 +469,7 @@
                   />
                   <div
                     class="close-btn select-line-icon"
-                    @click="activeData.__slot__.options.splice(index, 1)"
+                    @click="activeData.__slot__.table.rows.splice(index, 1)"
                   >
                     <i class="el-icon-remove-outline" />
                   </div>
@@ -480,7 +480,7 @@
                   icon="el-icon-circle-plus-outline"
                   style="padding-bottom: 0"
                   type="text"
-                  @click="addSelectItem"
+                  @click="addSelectItem(activeData.__config__.tagIcon, 'rows')"
                 >
                   添加选项
                 </el-button>
@@ -488,40 +488,61 @@
                   icon="el-icon-circle-plus-outline"
                   style="padding-bottom: 0"
                   type="text"
-                  @click="addSelectOtherItem"
+                  @click="
+                    addBatchButton(activeData.__slot__.table.rows, 'rows')
+                  "
                 >
                   批量添加
                 </el-button>
               </div>
               <p>量表设置</p>
               <el-form-item label="极值标签">
-                <el-select v-model="activeData.justify">
+                <el-select v-model="activeData.__config__.maxTip">
                   <el-option
-                    v-for="(item, index) in justifyOptions"
+                    v-for="(item, index) in maxTipOptions"
                     :key="index"
                     :label="item.label"
                     :value="item.value"
                   />
                 </el-select>
+              </el-form-item>
+              <el-form-item
+                v-if="activeData.__config__.maxTip !== 'satisfaction'"
+              >
+                <div style="display: flex; margin-top: 10px; margin-left: 0">
+                  <el-input
+                    v-model="activeData.__config__.maxTipData.min"
+                    placeholder="最低分标签"
+                    style="width: 150px"
+                  >
+                  </el-input>
+                  <span>&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;</span>
+                  <el-input
+                    v-model="activeData.__config__.maxTipData.max"
+                    placeholder="最高分标签"
+                    style="width: 150px"
+                  >
+                  </el-input>
+                </div>
               </el-form-item>
               <el-form-item label="量级设置">
-                <el-select v-model="activeData.justify">
-                  <el-option
-                    v-for="(item, index) in justifyOptions"
-                    :key="index"
-                    :label="item.label"
-                    :value="item.value"
-                  />
-                </el-select>
+                <el-input
+                  v-model="activeData.__slot__.table.level"
+                  type="number"
+                  placeholder="请输入量级"
+                >
+                </el-input>
               </el-form-item>
               <el-form-item label="显示样式">
-                <el-select v-model="activeData.justify">
+                <el-select v-model="activeData.__config__.showIcon">
                   <el-option
-                    v-for="(item, index) in justifyOptions"
+                    v-for="(item, index) in showIconOptions"
                     :key="index"
                     :label="item.label"
                     :value="item.value"
-                  />
+                  >
+                    <i :class="item.value" />
+                  </el-option>
                 </el-select>
               </el-form-item>
             </div>
@@ -531,12 +552,12 @@
               <p>行设置</p>
               <draggable
                 :animation="340"
-                :list="activeData.__slot__.table"
+                :list="activeData.__slot__.table.rows"
                 group="selectItem"
                 handle=".option-drag"
               >
                 <div
-                  v-for="(item, index) in activeData.__slot__.table"
+                  v-for="(item, index) in activeData.__slot__.table.rows"
                   :key="index"
                   class="select-item"
                 >
@@ -550,7 +571,7 @@
                   />
                   <div
                     class="close-btn select-line-icon"
-                    @click="activeData.__slot__.options.splice(index, 1)"
+                    @click="activeData.__slot__.table.rows.splice(index, 1)"
                   >
                     <i class="el-icon-remove-outline" />
                   </div>
@@ -561,7 +582,7 @@
                   icon="el-icon-circle-plus-outline"
                   style="padding-bottom: 0"
                   type="text"
-                  @click="addSelectItem"
+                  @click="addSelectItem(activeData.__config__.tagIcon, 'rows')"
                 >
                   添加选项
                 </el-button>
@@ -569,7 +590,9 @@
                   icon="el-icon-circle-plus-outline"
                   style="padding-bottom: 0"
                   type="text"
-                  @click="addSelectOtherItem"
+                  @click="
+                    addBatchButton(activeData.__slot__.table.rows, 'rows')
+                  "
                 >
                   批量添加
                 </el-button>
@@ -577,12 +600,12 @@
               <p>选项设置</p>
               <draggable
                 :animation="340"
-                :list="activeData.__slot__.table"
+                :list="activeData.__slot__.table.columns"
                 group="selectItem"
                 handle=".option-drag"
               >
                 <div
-                  v-for="(item, index) in activeData.__slot__.table"
+                  v-for="(item, index) in activeData.__slot__.table.columns"
                   :key="index"
                   class="select-item"
                 >
@@ -596,7 +619,7 @@
                   />
                   <div
                     class="close-btn select-line-icon"
-                    @click="activeData.__slot__.options.splice(index, 1)"
+                    @click="activeData.__slot__.table.columns.splice(index, 1)"
                   >
                     <i class="el-icon-remove-outline" />
                   </div>
@@ -607,7 +630,9 @@
                   icon="el-icon-circle-plus-outline"
                   style="padding-bottom: 0"
                   type="text"
-                  @click="addSelectItem"
+                  @click="
+                    addSelectItem(activeData.__config__.tagIcon, 'columns')
+                  "
                 >
                   添加选项
                 </el-button>
@@ -615,16 +640,18 @@
                   icon="el-icon-circle-plus-outline"
                   style="padding-bottom: 0"
                   type="text"
-                  @click="addSelectOtherItem"
+                  @click="
+                    addBatchButton(activeData.__slot__.table.columns, 'columns')
+                  "
                 >
                   批量添加
                 </el-button>
               </div>
               <el-divider />
               <el-form-item label="选择类型">
-                <el-radio-group v-model="radio1">
-                  <el-radio-button label="单选"></el-radio-button>
-                  <el-radio-button label="多选"></el-radio-button>
+                <el-radio-group v-model="activeData.multiple">
+                  <el-radio-button label="false">单选</el-radio-button>
+                  <el-radio-button label="true">多选</el-radio-button>
                 </el-radio-group>
               </el-form-item>
             </div>
@@ -755,6 +782,24 @@
         </el-form>
       </el-scrollbar>
     </div>
+    <el-dialog
+      title="批量编辑"
+      :visible.sync="matrixRowDialogVisible"
+      width="30%"
+    >
+      <span>每行对应一个选项</span>
+      <el-input
+        type="textarea"
+        :rows="15"
+        placeholder="请输入内容"
+        v-model="matrixTextarea"
+      >
+      </el-input>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="matrixRowDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="addBatchData">确 定</el-button>
+      </span>
+    </el-dialog>
 
     <treeNode-dialog
       :visible.sync="dialogVisible"
@@ -902,6 +947,33 @@ export default {
 
       selectType: "单选",
       provinceRadio: "1",
+      matrixRowDialogVisible: false,
+      matrixTextarea: "",
+      maxTipOptions: [
+        {
+          label: "满意度",
+          value: "satisfaction",
+        },
+        {
+          label: "其他",
+          value: "other",
+        },
+      ],
+      showIconOptions: [
+        {
+          label: "Start",
+          value: "el-icon-star-off",
+        },
+        {
+          label: "Moon",
+          value: "el-icon-moon",
+        },
+        {
+          label: "Sunny",
+          value: "el-icon-sunny",
+        },
+      ],
+      colOrRow: "",
     };
   },
   computed: {
@@ -975,6 +1047,7 @@ export default {
         // 切换选中时不触发
         if (newValue.__config__.formId === oldValue.__config__.formId) {
           if (newValue) {
+            console.log(101, newValue);
             this.dataChange(newValue);
           }
         }
@@ -989,17 +1062,19 @@ export default {
         message: "",
       });
     },
-    addSelectItem() {
-      let lastItem = _.last(this.activeData.__slot__.options);
-      this.activeData.__slot__.options.push({
+    addSelectItem(tagIcon, position) {
+      let arr = [];
+      if (tagIcon == "matrix-scale" || tagIcon == "matrix-select") {
+        arr = this.activeData.__slot__.table[position];
+      } else {
+        arr = this.activeData.__slot__.options;
+      }
+      let lastItem = _.last(arr);
+      arr.push({
         label: "",
         value: lastItem
           ? lastItem.value === 0
-            ? _.max(
-                _.values(
-                  this.activeData.__slot__.options.map((item) => item.value)
-                )
-              ) + 1
+            ? _.max(_.values(arr.map((item) => item.value))) + 1
             : lastItem.value + 1
           : 1,
       });
@@ -1203,7 +1278,7 @@ export default {
         this.activeData.__config__.renderKey = +new Date();
       }
     },
-
+    //新增方法
     clickSingle(e) {
       this.selectType = e;
     },
@@ -1211,9 +1286,54 @@ export default {
       this.selectType = e;
     },
     //选项随机排列
-    randomSelect(arr) {},
+    randomSelect(e) {
+      if (this.activeData.__config__.selectRandom) {
+        let arr = e
+          ? JSON.parse(JSON.stringify(e))
+          : JSON.parse(JSON.stringify(this.activeData.__slot__.options));
+        let m = arr.length;
+        while (m > 1) {
+          let index = Math.floor(Math.random() * m--);
+          [arr[m], arr[index]] = [arr[index], arr[m]];
+        }
+        console.log(222, arr, this.activeData.__slot__.options);
+        return arr;
+      } else {
+        this.activeData.__config__.fixLastSelect = false;
+      }
+    },
     //固定最后一个选项
-    selectFix() {},
+    selectFix() {
+      if (this.activeData.__config__.fixLastSelect) {
+        let options = JSON.parse(
+          JSON.stringify(this.activeData.__slot__.options)
+        );
+        let lastItem = options.pop();
+        let arr = this.randomSelect(options).concat(lastItem);
+        console.log(444, lastItem, arr);
+        return options;
+      }
+    },
+    //批量编辑
+    addBatchButton(data, position) {
+      this.colOrRow = position;
+      this.matrixTextarea = "";
+      data.forEach((item) => {
+        this.matrixTextarea += item.label + "\n";
+      });
+      this.matrixRowDialogVisible = true;
+    },
+    addBatchData() {
+      let flag = this.colOrRow == "rows" ? "rows" : "columns";
+      this.matrixRowDialogVisible = false;
+      let arr = this.matrixTextarea.split("\n");
+      this.activeData.__slot__.table[flag] = arr.map((item, index) => {
+        return {
+          label: item,
+          id: index + 1,
+        };
+      });
+    },
   },
 };
 </script>
@@ -1319,7 +1439,7 @@ export default {
     font-size: 16px;
   }
 }
-::v-deep .el-radio-button__orig-radio:checked+.el-radio-button__inner {
+::v-deep .el-radio-button__orig-radio:checked + .el-radio-button__inner {
   color: initial;
   background-color: #fff;
 }
