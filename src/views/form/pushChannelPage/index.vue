@@ -39,7 +39,7 @@
               label="状态"
             >
               <template slot-scope="{row}">
-                {{ row.status == 1 ? '推送成功' : '推送失败' }}
+                {{ row.status == 1 ? '推送成功' : row.status == 2 ? '推送失败' : '推送中' }}
               </template>
             </el-table-column>
             <el-table-column
