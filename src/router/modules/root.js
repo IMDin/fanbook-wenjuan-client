@@ -50,6 +50,11 @@ export default [
                 component: () => import(/* webpackChunkName: 'root' */ '@/views/account/member')
             }
         ]
+    },
+    {
+      path: '/isMobile',
+      meta: {requireLogin: false},
+      component: () => import(/* webpackChunkName: 'root' */ '@/views/official/isMobile')
     }
 
 ]

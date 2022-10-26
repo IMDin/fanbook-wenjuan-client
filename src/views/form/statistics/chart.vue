@@ -402,7 +402,7 @@ export default {
 <style lang="scss" scoped>
 .dashboard-container {
   margin: 0;
-  padding: 0;
+  padding: 15px;
   overflow-x: hidden !important;
 }
 .tag-title {
@@ -411,8 +411,11 @@ export default {
   margin-left: 20px;
 }
 .project-index-view {
-  padding: 10px;
+  border: 1px solid #efefef;
   .project-index-view-top{
+    height: 50px;
+    line-height: 50px;
+    padding: 0 15px;
     background-color: #FAFAFA;
   }
   .project-index-view-main {
