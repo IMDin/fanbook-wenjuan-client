@@ -78,10 +78,16 @@ export default {
       newMembersList: [],
       list:[],
       FbPullroles: [],
+      guildId: "420861300550139904",
+      token: localStorage.getItem('token')
     }
   },
   mounted() {
     this.getFbPullroles()
+    // eslint-disable-next-line no-undef
+    fb.getCurrentGuild().then(res => {
+      this.guildId  = res.id 
+    })
   },
   watch:{
     "membersList":{
@@ -100,8 +106,8 @@ export default {
   methods: {
     getFbPullroles() {
       const data = {
-        "token": "93d4029fc9e80eb3b3415c560419f6f0fb0506ba320bdec5f5aa96980fd7d9b7bb2b697976ba3197fc659424a765f961",
-        "guildId": "420861300550139904",
+        "token": this.token,
+        "guildId": this.guildId,
       }
       getFbPullroles(data).then(res => {
         if (res.code === 200) {
@@ -117,8 +123,8 @@ export default {
     },
     getUserList() { // 获取fb服务器成员列表
       Promise.all(this.FbPullroles.map(item => getPullMembers({
-        "token": "93d4029fc9e80eb3b3415c560419f6f0fb0506ba320bdec5f5aa96980fd7d9b7bb2b697976ba3197fc659424a765f961",
-        "guildId": "420861300550139904",
+        "token": this.token,
+        "guildId": this.guildId,
         "roleId": item.id
       })))
       .then(res => {
@@ -155,6 +161,10 @@ export default {
       getFbAdminUp({members: data}).then(res => {
         if (res.code === 200) {
           this.msgSuccess('添加成功')
+          setTimeout(() => {
+            // eslint-disable-next-line no-undef
+            fb.closeWindow();
+          }, 1000);
           this.dialogVisible = false
         }
       })
