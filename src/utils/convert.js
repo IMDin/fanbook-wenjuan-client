@@ -29,7 +29,12 @@ export function formItemConvertData(item, projectKey) {
     'showLabel': item.__config__.showLabel,
     'span': item.__config__.span,
     'displayType': item.__config__.displayType,
-    'projectKey': projectKey
+    'projectKey': projectKey,
+    'selectRandom': item.__config__.selectRandom,
+    'fixLastSelect': item.__config__.fixLastSelect,
+    'multiple': item.multiple,
+    'titleTip': item.__config__.titleTip,
+    'titleTipText': item.__config__.titleTipText,
   }
   let expand = {}
   let param = dataParams[item.typeId]
@@ -57,7 +62,6 @@ export function dbDataConvertForItemJson(data) {
     data.placeholder = '此题为必填项目'
   }
   if (!typeMap.size > 0) {
-    console.log('dd')
     // 根据类型获取默认数据
     _.concat(inputComponents, selectComponents, imageComponents, assistComponents, personalInfoComponents, matrixComponents, otherComponents).forEach(item => {
       typeMap.set(item.typeId, item)
@@ -233,7 +237,7 @@ const dataParams = {
   },
   // 矩阵选择
   'MATRIX_SELECT': {
-    'table': 'table'
+    'table': '__slot__.table'
   }
 }
 

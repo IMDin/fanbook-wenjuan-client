@@ -1010,6 +1010,9 @@ export const matrixComponents = [
       labelDescription: '矩阵量表',
       titleTip: false,
       titleTipText: '请输入题目说明',
+      maxTip: 'satisfaction',
+      maxTipData:{min: '非常不满意',max: '非常满意'},
+      showIcon: 'el-icon-star-off',
       labelWidth: null,
       showLabel: true,
       changeTag: false,
@@ -1034,10 +1037,10 @@ export const matrixComponents = [
           label: '矩阵行3',
           id: 3
         }],
-        copyWriting: {
-          max: '非常不满意',
-          min: '非常满意'
-        },
+        // copyWriting: {
+        //   max: '非常不满意',
+        //   min: '非常满意'
+        // },
         level: 5
       },
     },

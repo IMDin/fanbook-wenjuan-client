@@ -66,7 +66,7 @@ const layouts = {
         >
           <div class="questionType">{config.labelDescription}</div>
           {config.titleTip ? (
-            <div class="titleTip">{config.titleTipText}</div>
+            <div class="titleTip" domPropsInnerHTML={config.titleTipText}></div>
           ) : (
             ""
           )}
@@ -79,17 +79,36 @@ const layouts = {
           >
             {child}
             {config.tag == "matrix-scale" ? (
-              <MatrixScale />
+              <MatrixScale
+                data={currentItem}
+                update={(e) => {
+                  this.$set(config, "defaultValue", e);
+                  activeItem(currentItem);
+                }}
+              />
             ) : config.tag == "matrix-select" ? (
-              <MatrixSelect />
+              <MatrixSelect
+                data={currentItem}
+                update={(e) => {
+                  console.log(777, e, config.defaultValue);
+                  this.$set(config, "defaultValue", e);
+                  activeItem(currentItem);
+                }}
+              />
             ) : (
               ""
             )}
           </render>
           {config.titleTip ? (
-            <div>
-              <input placeholder="请输入" value=""></input>
-            </div>
+            // <div>
+            //   <input placeholder="请输入" value=""></input>
+            // </div>
+            <Tinymce
+              placeholder="请输入题目说明"
+              onInput={(event) => {
+                this.$set(config, "titleTipText", event);
+              }}
+            />
           ) : (
             ""
           )}

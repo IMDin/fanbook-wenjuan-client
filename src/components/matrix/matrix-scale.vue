@@ -19,25 +19,24 @@
           slot-scope="scope"
         >
           <p
-            @click="dd(scope)"
             style="margin: 0"
             v-if="scope.$index == 1"
           >
-            非常不满意
+            {{ data.__config__.maxTipData.min }}
           </p>
           <p
             style="margin: 0"
-            v-if="scope.$index == tableData.length"
+            v-if="scope.$index == data.__slot__.table.level"
           >
-            非常满意
+            {{ data.__config__.maxTipData.max }}
           </p>
           <span>{{ scope.column.label }}</span>
         </template>
         <template slot-scope="scope">
           <i
             v-if="scope.column.label"
-            @click="dd(scope)"
-            class="el-icon-star-off iconStyle"
+            class="iconStyle"
+            :class="data.__config__.showIcon"
           />
           {{ scope.column.label ? "" : scope.row.colName }}
         </template>
@@ -49,47 +48,11 @@
 <script>
 export default {
   name: "MatrixScale",
-  props: {},
+  props: ["data", "update"],
   data() {
     return {
-      trData: [
-        {
-          prop: "colName",
-          label: "",
-        },
-        {
-          prop: "date",
-          label: "1",
-        },
-        {
-          prop: "name",
-          label: "2",
-        },
-        {
-          prop: "address",
-          label: "3",
-        },
-      ],
-      tableData: [
-        {
-          colName: "矩阵行1",
-          date: "",
-          name: "",
-          address: "",
-        },
-        {
-          colName: "矩阵行2",
-          date: "",
-          name: "",
-          address: "",
-        },
-        {
-          colName: "矩阵行3",
-          date: "",
-          name: "",
-          address: "",
-        },
-      ],
+      trData: [],
+      tableData: [],
       class: {
         color: "",
       },
@@ -98,10 +61,33 @@ export default {
       selectedData: {},
     };
   },
-  methods: {
-    dd(e) {
-      console.log(e);
+  watch: {
+    data: {
+      handler(newV) {
+        console.log("newV", newV);
+        //行处理
+        this.trData = [
+          {
+            prop: "colName",
+            label: "",
+          },
+        ];
+        for (let i = 1; i <= newV.__slot__.table.level; i++) {
+          this.trData.push({ prop: String(i), label: String(i) });
+        }
+        //列处理
+        this.tableData = [];
+        newV.__slot__.table.rows.forEach((item) => {
+          this.tableData.push({
+            colName: item.label,
+          });
+        });
+      },
+      deep: true,
+      immediate: true,
     },
+  },
+  methods: {
     cellClick(row, column) {
       if (Object.keys(this.selectedData).length !== this.tableData.length) {
         this.tableData.forEach((item) => {
@@ -109,7 +95,9 @@ export default {
         });
       }
       this.selectedData[row.colName] = column.label;
-      console.log(1111, this.selectedData);
+      let value = JSON.stringify(this.selectedData);
+      console.log(1111, value, this.selectedData);
+      this.update(value);
     },
     hoverEnterClass(row, column) {
       this.currentRow = row.colName;
