@@ -291,6 +291,15 @@ export default {
       immediate: true
     }
   },
+  created() {
+    const isMobile = this.isMobileNavigator()
+    if (isMobile) {
+      // alert('isMobile')
+      let flag = this.$route.query.redirect == "/role"
+      if(flag) return
+      this.$router.push('/isMobile')
+    }
+  },
   mounted() {
     window.addEventListener("scroll", this.handleScroll, true);
     const that = this;
@@ -303,6 +312,11 @@ export default {
   },
   methods: {
     ...mapActions('user', ['auth']),
+     // 测试移动端环境
+    isMobileNavigator() {
+        let flag = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i)
+        return flag;
+    },
     // 屏幕滚动方法
     handleScroll() {
       // 滚动时收起菜单栏
