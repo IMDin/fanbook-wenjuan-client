@@ -84,6 +84,7 @@ const layouts = {
                 update={(e) => {
                   this.$set(config, "defaultValue", e);
                   activeItem(currentItem);
+                  e.stopPropagation();
                 }}
               />
             ) : config.tag == "matrix-select" ? (
@@ -93,6 +94,7 @@ const layouts = {
                   console.log(777, e, config.defaultValue);
                   this.$set(config, "defaultValue", e);
                   activeItem(currentItem);
+                  e.stopPropagation();
                 }}
               />
             ) : (

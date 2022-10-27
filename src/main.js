@@ -8,6 +8,7 @@ import dayjs from 'dayjs'
 import Cookies from 'js-cookie'
 import router from './router/index'
 
+import axios from 'axios'
 import api from './api'
 import store from './store/index'
 import '@/assets/styles/index.scss' // global css
@@ -24,6 +25,7 @@ import VConsole from 'vconsole'
 
 import  "@/utils/time.js"
 
+Vue.prototype.$axios = axios
 Vue.prototype.$api = api
 Vue.prototype.$dayjs = dayjs
 Vue.prototype.$store = store

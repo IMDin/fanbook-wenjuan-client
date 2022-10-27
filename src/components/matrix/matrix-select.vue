@@ -28,15 +28,14 @@
               </el-radio>
             </div>
             <div v-else>
-              <el-checkbox-group v-model="tableItem.colName">
-                <el-checkbox
-                  v-if="
-                    scope.column.label && scope.row.colName == tableItem.colName
-                  "
-                >
-                  {{ "" }}
-                </el-checkbox>
-              </el-checkbox-group>
+              <el-checkbox
+                v-if="
+                  scope.column.label && scope.row.colName == tableItem.colName
+                "
+                @change="dd(1)"
+              >
+                {{ "" }}
+              </el-checkbox>
             </div>
           </div>
           {{ scope.column.label ? "" : scope.row.colName }}
@@ -89,15 +88,22 @@ export default {
   },
   methods: {
     cellClick(row, column) {
-      if (Object.keys(this.selectedData).length !== this.tableData.length) {
-        this.tableData.forEach((item) => {
-          this.selectedData[item.colName] = "";
-        });
+      if (this.data.multiple) {
+        console.log('dddd',this.data.multiple);
+      } else {
+        if (Object.keys(this.selectedData).length !== this.tableData.length) {
+          this.tableData.forEach((item) => {
+            this.selectedData[item.colName] = "";
+          });
+        }
+        this.selectedData[row.colName] = column.label;
+        let value = JSON.stringify(this.selectedData);
+        console.log(1111, value, this.selectedData);
+        // this.update(value);
       }
-      this.selectedData[row.colName] = column.label;
-      let value = JSON.stringify(this.selectedData);
-      console.log(1111, value, this.selectedData);
-      this.update(value);
+    },
+    dd(e) {
+      console.log(111, e);
     },
   },
 };

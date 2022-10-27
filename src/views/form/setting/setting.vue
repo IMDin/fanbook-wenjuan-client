@@ -1,7 +1,11 @@
 <template>
   <div class="setting">
-    <el-tabs tab-position="left">
-      <el-tab-pane>
+    <el-tabs
+      tab-position="left"
+      @tab-click="tabChange"
+      v-model="activeName"
+    >
+      <el-tab-pane name="answer">
         <span
           slot="label"
         ><i class="el-icon-date" /> &nbsp;&nbsp;答题设置</span>
@@ -10,7 +14,10 @@
           <div class="questionItem">
             <div class="itemHeader">
               <span>只在Fanbook中填写</span>
-              <el-switch v-model="inputInFanbook" />
+              <el-switch
+                v-model="wxWrite"
+                @change="saveUserProjectSetting"
+              />
             </div>
           </div>
           <div class="questionItem">
@@ -27,13 +34,19 @@
                   />
                 </el-tooltip>
               </div>
-              <el-switch v-model="authFanbookId" />
+              <el-switch
+                v-model="empower"
+                @change="saveUserProjectSetting"
+              />
             </div>
           </div>
           <div class="questionItem">
             <div class="itemHeader">
               <span>每个Fanbook ID仅填写一次</span>
-              <el-switch v-model="inputFanbookIdOnce" />
+              <el-switch
+                v-model="inputFanbookIdOnce"
+                @change="saveUserProjectSetting"
+              />
             </div>
           </div>
           <div class="questionItem">
@@ -58,8 +71,8 @@
             >
               <el-select v-model="inputTimesValue">
                 <el-option
-                  v-for="item in inputTimesOptions"
-                  :key="item.value"
+                  v-for="(item, index) in inputTimesOptions"
+                  :key="index"
                   :label="item.label"
                   :value="item.value"
                 />
@@ -69,6 +82,7 @@
                 v-model="inputTimesNum"
                 placeholder="请输入次数"
                 type="number"
+                @change="saveUserProjectSetting"
               />
               <span
                 style="
@@ -93,30 +107,40 @@
               style="padding-bottom: 15px"
             >
               <div style="margin-bottom: 20px">
-                <el-checkbox v-model="timeStart">
+                <el-checkbox
+                  v-model="timeStart"
+                  @change="saveUserProjectSetting"
+                >
                   开始时间
                 </el-checkbox>
                 <el-date-picker
                   v-model="startTime"
                   type="datetime"
                   placeholder="请选择时间"
+                  @change="saveUserProjectSetting"
+                  value-format="yyyy-MM-dd HH:mm:ss"
                 />
               </div>
               <div>
-                <el-checkbox v-model="timeEnd">
+                <el-checkbox
+                  v-model="timeEnd"
+                  @change="saveUserProjectSetting"
+                >
                   结束时间
                 </el-checkbox>
                 <el-date-picker
                   v-model="endTime"
                   type="datetime"
                   placeholder="请选择时间"
+                  @change="saveUserProjectSetting"
+                  value-format="yyyy-MM-dd HH:mm:ss"
                 />
               </div>
             </div>
           </div>
         </div>
       </el-tab-pane>
-      <el-tab-pane>
+      <el-tab-pane name="gift">
         <span
           slot="label"
         ><i class="el-icon-date" /> &nbsp;&nbsp;奖品设置</span>
@@ -137,87 +161,137 @@
                   label-width="80px"
                 >
                   <el-form-item label="奖品类型">
-                    <el-radio-group v-model="giftForm.giftType">
-                      <el-radio-button label="积分" />
-                      <el-radio-button label="CDK" />
+                    <el-radio-group
+                      v-model="giftForm.giftType"
+                      @change="queryGiftSetting(giftForm.giftType)"
+                    >
+                      <el-radio-button :label="1">
+                        积分
+                      </el-radio-button>
+                      <el-radio-button :label="0">
+                        CDK
+                      </el-radio-button>
                     </el-radio-group>
                   </el-form-item>
                   <el-form-item label="积分设置">
                     <div class="coreSet">
                       <div
-                        v-if="giftForm.giftType == '积分'"
+                        v-if="giftForm.giftType"
                         class="coreSetScroll"
                       >
                         <div
                           v-for="(item, index) in giftForm.coreSet"
                           :key="index"
+                          class="coreSetClass"
                         >
                           <el-form
                             :model="item"
                             label-width="80px"
+                            :disabled="item.disabled"
                           >
                             <el-form-item label="奖励积分">
                               <el-input
                                 type="number"
-                                v-model="item.label"
+                                v-model="item.desc"
+                                @change="addScore(item, index)"
                               />
                             </el-form-item>
                             <el-form-item label="发放数量">
                               <div>
                                 <el-radio
-                                  v-model="item.value"
-                                  label="unlimited"
+                                  v-model="item.flag"
+                                  :label="1"
+                                  @change="addScore(item, index)"
                                 >
                                   <span>不限</span>
                                 </el-radio>
                               </div>
                               <div>
                                 <el-radio
-                                  v-model="item.value"
-                                  label="define"
+                                  v-model="item.flag"
+                                  :label="0"
                                 >
                                   自定义
                                   <div
                                     style="display: inline; margin-left: 10px"
                                   >
                                     <el-input
+                                      @input="changeInput(item, index)"
+                                      min="1"
                                       type="number"
-                                      v-model="giftSendNumber"
+                                      v-model="item.count"
                                       placeholder="请输入数值"
                                       style="width: 115px"
+                                      @change="addScore(item, index)"
                                     />
                                   </div>
                                 </el-radio>
                               </div>
                             </el-form-item>
                           </el-form>
+                          <el-button
+                            @click="deletePercentage(item, index)"
+                            type="text"
+                            icon="el-icon-delete"
+                            style="
+                              font-size: 16px;
+                              color: #f56c6c;
+                              position: absolute;
+                              right: 40px;
+                              top: 20px;
+                            "
+                          />
                         </div>
                       </div>
                       <div
-                        v-if="giftForm.giftType == 'CDK'"
+                        v-if="!giftForm.giftType"
                         class="coreSetScroll"
                       >
                         <div
                           v-for="(item, index) in giftForm.cdkSet"
                           :key="index"
+                          class="cdkSetClass"
                         >
                           <el-form
                             :model="item"
                             label-width="80px"
+                            :disabled="item.disabled"
                           >
                             <el-form-item label="奖品名称">
-                              <el-input v-model="item.label" />
+                              <el-input
+                                v-model="item.desc"
+                                clearable
+                                style="width: 150px"
+                                placeholder="请输入奖品名称"
+                              />
                             </el-form-item>
                             <el-form-item label="兑换码">
                               <div>
-                                <el-button
-                                  type="plain"
-                                  icon="el-icon-upload2"
-                                  @click="loadFile"
-                                  style="color: #606266"
+                                <el-upload
+                                  class="upload-demo"
+                                  action="https://jsonplaceholder.typicode.com/posts/"
+                                  :on-success="
+                                    (response, file, fileList) => {
+                                      return uploadFile(
+                                        response,
+                                        file,
+                                        fileList,
+                                        item
+                                      );
+                                    }
+                                  "
+                                  :on-error="handleError"
+                                  :limit="1"
+                                  :file-list="item.fileList"
                                 >
-                                  上传文件
-                                </el-button>
+                                  <el-button
+                                    type="plain"
+                                    icon="el-icon-upload2"
+                                    style="color: #606266"
+                                  >
+                                    上传文件
+                                  </el-button>
+                                </el-upload>
                               </div>
                               <div>
                                 <i
@@ -229,13 +303,25 @@
                                 >为保证成功导入，请点击</span>
                                 <el-button
                                   type="text"
-                                  @click="loadFile"
+                                  @click="downloadFile"
                                 >
                                   下载模板
                                 </el-button>
                               </div>
                             </el-form-item>
                           </el-form>
+                          <el-button
+                            @click="deletePercentage(item, index)"
+                            type="text"
+                            icon="el-icon-delete"
+                            style="
+                              font-size: 16px;
+                              color: #f56c6c;
+                              position: absolute;
+                              right: 40px;
+                              top: 20px;
+                            "
+                          />
                         </div>
                       </div>
                     </div>
@@ -251,10 +337,11 @@
                     <el-select
                       v-model="giftForm.sendGiftType"
                       placeholder="请选择"
+                      @change="saveGiftSetting"
                     >
                       <el-option
-                        v-for="item in sendGiftTypeOptions"
-                        :key="item.value"
+                        v-for="(item, index) in sendGiftTypeOptions"
+                        :key="index"
                         :label="item.label"
                         :value="item.value"
                       />
@@ -265,10 +352,11 @@
                       <el-radio
                         v-model="giftForm.percentage"
                         label="must"
+                        @change="saveGiftSetting"
                       >
                         <span>100%中奖</span>
                         <el-tooltip
-                          content="Top center"
+                          content="当奖品全部发放完毕，问卷自动停止，后来参与问卷的用户无法访问问卷"
                           placement="top"
                         >
                           <i
@@ -282,6 +370,7 @@
                       <el-radio
                         v-model="giftForm.percentage"
                         label="other"
+                        @change="saveGiftSetting"
                       >
                         其他
                         <div
@@ -291,14 +380,20 @@
                           <el-input
                             type="number"
                             v-model="giftPercentage"
+                            @change="saveGiftSetting"
                           />
                           <span
                             style="margin-left: 5px"
                           >个参与者有一个中奖</span>
-                          <i
-                            class="el-icon-question"
-                            style="margin-left: 10px"
-                          />
+                          <el-tooltip
+                            content="当奖品全部发放完毕，后来参与问卷的用户可正常填写问卷，默认不中奖"
+                            placement="top"
+                          >
+                            <i
+                              class="el-icon-question"
+                              style="margin-left: 10px"
+                            />
+                          </el-tooltip>
                         </div>
                       </el-radio>
                     </div>
@@ -311,15 +406,12 @@
               name="2"
             >
               <span slot="label">奖品领取情况</span>
-              <div v-if="false">
-                <img src="">
-              </div>
-              <div v-else>
+              <div>
                 <div style="text-align: right">
                   <el-button
                     type="plain"
                     icon="el-icon-download"
-                    @click="exportData"
+                    @click="exportGiftData"
                     style="color: #409eff"
                   >
                     导出数据
@@ -329,6 +421,7 @@
                   <el-table
                     :data="getGiftData"
                     style="width: 100%"
+                    height="500"
                   >
                     <el-table-column
                       type="index"
@@ -363,12 +456,23 @@
                     />
                   </el-table>
                 </div>
+                <el-pagination
+                  @size-change="handleSizeChange"
+                  @current-change="handleCurrentChange"
+                  background
+                  layout="total, sizes, prev, pager, next, jumper"
+                  :total="total"
+                  :page-sizes="[10, 20, 50, 100]"
+                  :page-size="pageSize"
+                  :current-page="currentPage"
+                  style="text-align: center; margin-top: 10px"
+                />
               </div>
             </el-tab-pane>
           </el-tabs>
         </div>
       </el-tab-pane>
-      <el-tab-pane>
+      <el-tab-pane name="role">
         <span
           slot="label"
         ><i class="el-icon-date" /> &nbsp;&nbsp;角色设置</span>
@@ -383,10 +487,11 @@
               <el-select
                 v-model="roleForm.distributionType"
                 placeholder="请选择"
+                @change="changeDistributionType"
               >
                 <el-option
-                  v-for="item in distributionTypeOptions"
-                  :key="item.value"
+                  v-for="(item, index) in distributionTypeOptions"
+                  :key="index"
                   :label="item.label"
                   :value="item.value"
                 />
@@ -394,15 +499,16 @@
             </el-form-item>
             <el-form-item
               label="分配角色"
-              v-if="roleForm.distributionType == 'different'"
+              v-if="roleForm.distributionType == 'fix'"
             >
               <el-select
                 v-model="roleForm.distributionRole"
                 placeholder="请选择"
+                @change="saveRoleLogic"
               >
                 <el-option
-                  v-for="item in distributionRoleOptions"
-                  :key="item.value"
+                  v-for="(item, index) in distributionRoleOptions"
+                  :key="index"
                   :label="item.label"
                   :value="item.value"
                 />
@@ -418,55 +524,87 @@
                     v-for="(item, index) in roleForm.distributionRule"
                     :key="index"
                   >
-                    <div class="roleItem">
-                      <div
-                        v-for="(logicItem, logicIndex) in item.logic"
-                        :key="logicIndex"
-                      >
-                        <span style="margin-right: 10px">如果</span>
-                        <el-select
-                          v-model="logicItem.question"
-                          placeholder="请选择题目"
+                    <div class="roleSetClass">
+                      <div class="roleItem">
+                        <div
+                          v-for="(logicItem, logicIndex) in item.logic"
+                          :key="logicIndex"
+                          style="margin-bottom: 10px"
                         >
-                          <el-option
-                            v-for="item in mockOptions"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
+                          <span style="margin-right: 10px">如果</span>
+                          <el-select
+                            v-model="logicItem.formItemId"
+                            placeholder="请选择题目"
+                          >
+                            <el-option
+                              v-for="questionItem in questionOptions"
+                              :key="questionItem.value"
+                              :label="questionItem.label"
+                              :value="questionItem.value"
+                            />
+                          </el-select>
+                          <el-select
+                            v-model="logicItem.expression"
+                            placeholder="请选择"
+                          >
+                            <el-option
+                              v-for="expressionItems in expressionOptions"
+                              :key="expressionItems.value"
+                              :label="expressionItems.label"
+                              :value="expressionItems.value"
+                            />
+                          </el-select>
+                          <el-select
+                            v-model="logicItem.optionValue"
+                            placeholder="请选择选项"
+                          >
+                            <el-option
+                              v-for="optionValueOptionsItem in optionValueOptions"
+                              :key="optionValueOptionsItem.value"
+                              :label="optionValueOptionsItem.label"
+                              :value="optionValueOptionsItem.value"
+                            />
+                          </el-select>
+                          <i
+                            class="el-icon-circle-plus-outline addIcon"
+                            style="color: #409eff"
+                            @click="addLogicItem(index)"
                           />
-                        </el-select>
-                        <el-select
-                          v-model="logicItem.result"
-                          placeholder="请选择"
-                        >
-                          <el-option
-                            v-for="item in mockOptions"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
+                          <i
+                            class="el-icon-delete addIcon"
+                            style="color: #f56c6c; margin-left: 10px"
+                            @click="deleteLogicItem(index, logicIndex, item)"
                           />
-                        </el-select>
-                        <i
-                          class="el-icon-circle-plus-outline addIcon"
-                          style="color: #409eff"
-                          @click="addLogicItem(index)"
-                        />
+                        </div>
                       </div>
-                    </div>
-                    <div class="roleItemBottom">
-                      <span style="margin-right: 10px">则分配</span>
-                      <el-select
-                        v-model="item.role"
-                        placeholder="请选择"
-                      >
-                        <el-option
-                          v-for="item in mockOptions"
-                          :key="item.value"
-                          :label="item.label"
-                          :value="item.value"
-                        />
-                      </el-select>
-                      <span>,否则不分配</span>
+                      <div class="roleItemBottom">
+                        <span style="margin-right: 10px">则分配</span>
+                        <el-select
+                          v-model="item.role"
+                          placeholder="请选择"
+                          @change="selectRoleLogic(item, index)"
+                        >
+                          <el-option
+                            v-for="itemf in distributionRoleOptions"
+                            :key="itemf.value"
+                            :label="itemf.label"
+                            :value="itemf.value"
+                          />
+                        </el-select>
+                        <span>,否则不分配</span>
+                      </div>
+                      <el-button
+                        @click="deleteRoleItem(item, index)"
+                        type="text"
+                        icon="el-icon-delete"
+                        style="
+                          font-size: 16px;
+                          color: #f56c6c;
+                          position: absolute;
+                          right: 40px;
+                          top: 20px;
+                        "
+                      />
                     </div>
                   </div>
                 </div>
@@ -488,10 +626,13 @@
 
 <script>
 export default {
+  name: "ProjectSetting",
   data() {
     return {
-      inputInFanbook: false,
-      authFanbookId: false,
+      activeName: "answer",
+      projectKey: null,
+      wxWrite: false,
+      empower: false,
       inputFanbookIdOnce: false,
       inputTimes: false,
       setTime: false,
@@ -503,56 +644,65 @@ export default {
         },
       ],
       inputTimesNum: 1,
-      timeStart: Boolean,
-      timeEnd: true,
+      timeStart: false,
+      timeEnd: false,
       startTime: "",
       endTime: "",
       // 礼物设置
       giftActiveName: "1",
       giftForm: {
-        giftType: "积分",
-        sendGiftType: [],
+        //积分1 ;CDK 0
+        giftType: 1,
+        sendGiftType: 1,
         percentage: "other",
         coreSet: [
           {
-            label: 10,
-            value: "",
+            desc: 10,
+            count: "",
+            flag: 0, //判断不限还是自定义数量
+            id: "",
+            disabled: false,
           },
         ],
         cdkSet: [
           {
-            label: "",
-            value: "",
+            desc: "",
+            count: "",
+            id: "",
+            disabled: false,
+            //上传配置
+            fileList: [],
           },
         ],
       },
       sendGiftTypeOptions: [
         {
           label: "单份问卷填完即发",
-          value: "single",
+          value: 1,
+        },
+        {
+          label: "问卷收集截止后发",
+          value: 0,
         },
       ],
       giftPercentage: "",
-      giftSendNumber: Number,
-      getGiftData: [
-        {
-          type: "CDK",
-          gift: "玩具",
-          time: "2022-10-15",
-          id: "20125",
-          name: "good",
-          phone: "1252648256",
-        },
-      ],
+      getGiftData: [],
       roleForm: {
-        distributionType: "allFix",
+        roleId: "",
+        distributionType: "fix",
         distributionRole: "",
-        distributionRule: [{ logic: [{ question: "", result: "" }], role: "" }],
+        distributionRule: [
+          {
+            logic: [{ formItemId: "", expression: "", optionValue: "" }],
+            role: "",
+            id: "",
+          },
+        ],
       },
       distributionTypeOptions: [
         {
           label: "所有参与者分配固定角色",
-          value: "allFix",
+          value: "fix",
         },
         {
           label: "按答题选项分配不同角色",
@@ -560,41 +710,437 @@ export default {
         },
       ],
       distributionRoleOptions: [],
-      mockOptions: [
+      questionOptions: [
         {
           label: "sss",
           value: "ggg",
         },
       ],
+      expressionOptions: [
+        { label: "选中", value: "eq" },
+        { label: "未选中", value: "ne" },
+      ],
+      optionValueOptions: [],
+      //是否拥有积分商城
+      scoreShop: true,
+      //奖品查询分页
+      total: 0,
+      currentPage: 1,
+      pageSize: 10,
     };
   },
+  computed: {
+    getUploadHeader() {
+      return {
+        token: this.$store.getters["user/isLogin"],
+      };
+    },
+    getUploadUrl() {
+      return `${process.env.VUE_APP_API_ROOT}/user/file/upload`;
+    },
+    getUserInfo() {
+      return JSON.parse(this.$store.getters["user/userInfo"]);
+    },
+  },
+  mounted() {
+    this.projectKey = this.$route.query.key;
+    this.queryUserProjectSetting();
+  },
   methods: {
-    handleClick() {},
+    //自定义输入框格式处理
+    changeInput(item, index) {
+      let str = String(item.count).replace(".", "");
+      this.giftForm.coreSet[index].count = Number(str) == 0 ? "" : Number(str);
+    },
+    //切换奖品设置页签
+    handleClick(tab) {
+      if (tab.name == "1") {
+        if (this.giftForm.giftType) {
+          this.queryGiftSetting(true);
+        } else {
+          this.queryGiftSetting();
+        }
+      } else if (tab.name == "2") {
+        this.getReceiveGiftData();
+      }
+    },
+    //添加奖品规则
     addPercentage() {
-      if (this.giftForm.giftType == "积分") {
+      if (this.giftForm.giftType) {
         this.giftForm.coreSet.push({
-          label: 10,
-          value: "",
+          desc: 10,
+          count: "",
+          flag: 0,
+          disabled: false,
         });
-      } else if (this.giftForm.giftType == "CDK") {
+      } else if (!this.giftForm.giftType) {
         this.giftForm.cdkSet.push({
-          label: "",
-          value: "",
+          desc: "",
+          count: "",
+          disabled: false,
         });
       }
     },
-    exportData() {},
+    //删除奖品分配规则
+    deletePercentage(item, index) {
+      if (this.giftForm.giftType) {
+        this.giftForm.coreSet.splice(index, 1);
+        this.deleteScore(item, index);
+        if (this.giftForm.coreSet.length < 1) {
+          this.addPercentage();
+        }
+      } else if (!this.giftForm.giftType) {
+        this.giftForm.cdkSet.splice(index, 1);
+        this.deleteScore(item, index);
+        if (this.giftForm.cdkSet.length < 1) {
+          this.addPercentage();
+        }
+      }
+    },
+    //删除角色分配规则
+    deleteRoleItem(item, index) {
+      this.roleForm.distributionRule.splice(index, 1);
+      if (this.roleForm.distributionRule.length < 1) {
+        this.addDistributionRule();
+      }
+    },
+    //添加角色分配规则
     addDistributionRule() {
       this.roleForm.distributionRule.push({
-        logic: [{ question: "", result: "" }],
+        logic: [{ formItemId: "", expression: "", optionValue: "" }],
         role: "",
+        id: "",
       });
     },
+    //添加角色分配中题目规则
     addLogicItem(index) {
       this.roleForm.distributionRule[index].logic.push({
-        question: "",
-        result: "",
+        formItemId: "",
+        expression: "",
+        optionValue: "",
       });
+    },
+    //删除角色分配中题目规则
+    deleteLogicItem(index, logicIndex, item) {
+      this.roleForm.distributionRule[index].logic.splice(logicIndex, 1);
+      if (this.roleForm.distributionRule[index].logic.length < 1) {
+        this.addLogicItem(index);
+      }
+      this.selectRoleLogic(item, index);
+    },
+    //主页签切换
+    tabChange(tab) {
+      if (tab.name == "gift") {
+        console.log("tab");
+        this.queryGiftSetting(true);
+        this.giftForm.giftType = this.scoreShop ? 1 : 0;
+      } else if (tab.name == "answer") {
+        this.queryUserProjectSetting();
+      } else if (tab.name == "role") {
+        this.getRoleList();
+        this.getRoleLogic();
+      }
+    },
+    exchangeTime(time) {
+      var d = time ? new Date(time) : new Date();
+      var year = d.getFullYear();
+      var month = d.getMonth() + 1;
+      var day = d.getDate();
+      var hours = d.getHours();
+      var min = d.getMinutes();
+      var seconds = d.getSeconds();
+
+      if (month < 10) month = "0" + month;
+      if (day < 10) day = "0" + day;
+      if (hours < 0) hours = "0" + hours;
+      if (min < 10) min = "0" + min;
+      if (seconds < 10) seconds = "0" + seconds;
+
+      return (
+        year + "-" + month + "-" + day + " " + hours + ":" + min + ":" + seconds
+      );
+    },
+
+    //获取答题设置
+    queryUserProjectSetting() {
+      this.$api.get(`/user/project/setting/${this.projectKey}`).then((res) => {
+        console.log("ddd", res.data);
+        if (res.data) {
+          let data = res.data;
+          this.wxWrite = data.wxWrite;
+          this.empower = data.empower;
+          this.inputFanbookIdOnce = data.is_wx_write_once;
+          if (data.everyoneWriteOnce) {
+            this.inputTimes = true;
+            this.inputTimesNum = data.everyoneWriteOnce;
+          }
+          if (data.startTime || data.endTime) {
+            this.setTime = true;
+            if (data.startTime) {
+              this.timeStart = true;
+            }
+            if (data.endTime) {
+              this.timeEnd = true;
+            }
+            this.startTime = data.startTime;
+            this.endTime = data.endTime;
+          }
+        }
+      });
+    },
+    //保存答题配置
+    saveUserProjectSetting() {
+      let params = {
+        projectKey: this.projectKey,
+        wxWrite: this.wxWrite,
+        empower: this.empower,
+        is_wx_write_once: this.inputFanbookIdOnce,
+        everyoneWriteOnce: this.inputTimes ? this.inputTimesNum : 0,
+        startTime: this.setTime && this.timeStart ? this.startTime : "",
+        endTime: this.setTime && this.timeEnd ? this.endTime : "",
+      };
+      this.$api.post("/user/project/setting/save", params).then(() => {});
+    },
+    //获取奖品配置
+    queryGiftSetting(type) {
+      this.$api
+        .post(`/user/prize/setting/query?projectKey=${this.projectKey}`)
+        .then((res) => {
+          console.log(res);
+          this.giftForm.sendGiftType = res.data.type;
+          if (res.data.probability == 1) {
+            this.giftForm.percentage = "must";
+          } else {
+            this.giftPercentage = res.data.probability;
+          }
+          if (res.data.prizes && res.data.prizes.length > 0) {
+            let coreSetArr = res.data.prizes.filter((item) => {
+              if (item.type) {
+                return item;
+              }
+            });
+            let cdkSetArr = res.data.prizes.filter((item) => {
+              if (!item.type) {
+                return item;
+              }
+            });
+            if (type) {
+              this.giftForm.coreSet = coreSetArr.map((item) => {
+                return {
+                  desc: item.desc,
+                  count: item.count == 0 ? "" : item.count,
+                  flag: item.count == 0 ? 1 : 0,
+                  id: item.id,
+                  disabled: true,
+                };
+              });
+            } else {
+              this.giftForm.coreSet = cdkSetArr.map((item) => {
+                return {
+                  desc: item.desc,
+                  count: "",
+                  id: item.id,
+                  disabled: true,
+                };
+              });
+            }
+          }
+        });
+    },
+    //保存奖品设置
+    saveGiftSetting() {
+      let params = {
+        projectKey: this.projectKey,
+        type: this.giftForm.sendGiftType,
+        probability:
+          this.giftForm.percentage == "must" ? 1 : Number(this.giftPercentage),
+      };
+      this.$api.post(`/user/prize/setting/save`, params);
+    },
+    //获取奖品领取情况
+    getReceiveGiftData() {
+      this.$api
+        .post(
+          `/user/prize/win?projectKey=${this.projectKey}&page=${this.currentPage}&limit=${this.pageSize}`
+        )
+        .then((res) => {
+          this.total = res.data.count;
+          this.getGiftData = res.data.data.map((item) => {
+            return {
+              type: item.type == 1 ? "CDK" : "积分",
+              gift: item.prize,
+              time: this.exchangeTime(item.getTime),
+              id: item.fanbookid,
+              name: item.nickname,
+              phone: item.phoneNumber,
+            };
+          });
+        });
+    },
+    //分页方法
+    handleSizeChange(val) {
+      this.pageSize = val;
+      this.getReceiveGiftData();
+    },
+    handleCurrentChange(val) {
+      this.currentPage = val;
+      this.getReceiveGiftData();
+    },
+    //导出奖品领取情况
+    exportGiftData() {
+      this.$axios({
+        url: `http://192.168.2.131:8999/mofang-api/user/prize/export?projectKey=${this.projectKey}`,
+        method: "post",
+        responseType: "blob",
+        headers: { "Content-Type": "application/vnd.ms-excel" },
+      })
+        // .post(
+        //   process.env.VUE_APP_API_ROOT +
+        //     `/user/prize/export?projectKey=${this.projectKey}`,
+        //   {},
+        //   {
+        //     headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        //     responseType: "blob",
+        //   }
+        // )
+        .then((res) => {
+          console.log(111,res);
+          // let blob = new Blob([res.data]);
+          // let downloadElement = document.createElement("a");
+          // let href = window.URL.createObjectURL(blob); // 创建下载的链接
+          // downloadElement.href = href;
+          // downloadElement.download =
+          //   this.projectData.name +
+          //   this.$dayjs().format("YYYYMMDDHHMM") +
+          //   ".xls"; // 下载后文件名
+          // document.body.appendChild(downloadElement);
+          // downloadElement.click(); // 点击下载
+          // document.body.removeChild(downloadElement); // 下载完成移除元素
+          // window.URL.revokeObjectURL(href); // 释放掉blob对象
+        });
+    },
+    //上传文件(同CDK配置项保存)
+    uploadFile(response, file, fileList, item) {
+      console.log(222, item, response, file, fileList);
+      // this.$api.post(
+      //   `/user/prize/cdk/import?projectKey=${this.projectKey}&desc=${item.desc}`
+      // );
+    },
+    handleError(err, file, fileList) {
+      console.log(333, err, file, fileList);
+    },
+    //下载cdk模板
+    downloadFile() {},
+    //获取角色列表
+    getRoleList() {
+      this.$api.get(`/user/role/list`).then((res) => {
+        this.distributionRoleOptions = res.data.map((item) => {
+          return {
+            label: item.name,
+            value: item.id,
+          };
+        });
+      });
+    },
+    //添加积分奖励
+    addScore(item) {
+      if (item.desc && (item.flag || item.count)) {
+        let params = {
+          projectKey: this.projectKey,
+          desc: item.desc,
+          count: item.flag ? 0 : Number(item.count),
+        };
+        this.$api.post(`/user/prize/score/save`, params);
+        this.queryGiftSetting(true);
+      }
+    },
+    //删除积分奖励
+    deleteScore(item, index) {
+      console.log(index, item);
+      if (item.desc) {
+        let params = {
+          projectKey: this.projectKey,
+          id: item.id,
+          type: this.giftForm.giftType,
+          count: this.giftForm.giftType ? item.count : "",
+          desc: item.desc,
+        };
+        this.$api.post(`/user/prize/delete`, params);
+      }
+    },
+    //切换角色选项
+    changeDistributionType() {
+      this.getRoleLogic();
+      this.getRoleList();
+    },
+    //获取角色逻辑分配
+    getRoleLogic() {
+      this.$api.post(`/user/role/view`).then((res) => {
+        console.log(res);
+        let fixRole = res.data.filter((item) => {
+          if (!item.roleType) {
+            return item;
+          }
+        });
+        let differentRole = res.data.filter((item) => {
+          if (item.roleType) {
+            return item;
+          }
+        });
+        if (this.roleForm.distributionType == "fix") {
+          this.roleForm.distributionRole =
+            fixRole.length > 0 ? fixRole.formItemId : "";
+        }
+        if (
+          this.roleForm.distributionType == "different" &&
+          differentRole.length > 0
+        ) {
+          this.roleForm.distributionRule = differentRole.map((item) => {
+            return {
+              logic: item.conditionList,
+              role: item.formItemId,
+              id: item.id,
+            };
+          });
+        }
+      });
+    },
+    //保存角色逻辑
+    saveRoleLogic(item, index) {
+      let params = {};
+      if (this.roleForm.distributionType == "fix") {
+        params.id = this.roleForm.roleId;
+        params.formItemId = this.roleForm.distributionRole;
+        params.roleType = false;
+        params.projectKey = this.projectKey;
+        params.expression = 2;
+      }
+      if (this.roleForm.distributionType == "different") {
+        params.projectKey = this.projectKey;
+        params.roleType = true;
+        params.id = this.roleForm.distributionRule[index].id;
+        params.formItemId = this.roleForm.distributionRule[index].role;
+        params.conditionList = item;
+      }
+      this.$api.post(`/user/project/logic/save`, params).then((res) => {
+        if (this.roleForm.distributionType == "fix") {
+          this.roleForm.roleId = res.data.id;
+        }
+        if (this.roleForm.distributionType == "different") {
+          this.roleForm.distributionRule[index].id = res.data.id;
+        }
+      });
+    },
+    //选择分配规则分配角色
+    selectRoleLogic(item, index) {
+      let arr = item.logic.filter((items) => {
+        if (items.formItemId && items.expression && items.optionValue) {
+          return items;
+        }
+      });
+      if (arr.length > 0) {
+        this.saveRoleLogic(arr, index);
+      }
     },
   },
 };
@@ -680,9 +1226,16 @@ export default {
   background-color: #f2f2f2;
   padding: 15px 15px 0;
 }
+.coreSetClass,
+.cdkSetClass,
+.roleSetClass {
+  border-bottom: 3px solid #fff;
+  padding: 10px 0;
+  position: relative;
+}
 .coreSetScroll,
 .roleSetScroll {
-  height: 135px;
+  height: 325px;
   overflow: auto;
 }
 ::v-deep .el-radio__input.is-checked + .el-radio__label {

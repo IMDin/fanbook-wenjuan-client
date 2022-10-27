@@ -1047,7 +1047,7 @@ export default {
         // 切换选中时不触发
         if (newValue.__config__.formId === oldValue.__config__.formId) {
           if (newValue) {
-            console.log(101, newValue);
+            console.log(101, newValue,oldValue,this.activeData);
             this.dataChange(newValue);
           }
         }
