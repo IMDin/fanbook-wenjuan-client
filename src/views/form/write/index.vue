@@ -368,7 +368,6 @@ export default {
     submitForm(data) {
       // 完成时间
       let inActiveTime = document.getElementById("inActiveTime").innerText;
-      alert(`${this.$route.query.publishTime}, ${this.$route.query.chatId}`)
       this.$api
         .post("/user/project/result/create", {
           completeTime: inActiveTime,
@@ -384,7 +383,8 @@ export default {
           guildId: this.guildId,
           fbUsername: this.fbUsername,
           guildName:this.guildName,
-          query: this.$route.query
+          publishTime: this.$route.query?.publishTime,
+          chatId: this.$route.query?.chatId
         })
         .then(() => {
           this.writeStatus = 2;
