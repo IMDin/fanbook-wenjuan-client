@@ -5,7 +5,6 @@
         align="middle"
         type="flex"
         :gutter="5"
-        v-if="path !== '/project/form/pushChannelPage'"
       >
         <i
           class="el-icon-back"
@@ -69,26 +68,10 @@
           保存为模板
         </el-button> -->
       </el-row>
-      <el-row
-        align="middle"
-        type="flex"
-        :gutter="5"
-        v-else
-        style="margin-top:10px"
-      >
-        <i
-          class="el-icon-back"
-          @click="$router.back(-1)"
-        />
-        <div class="textTip2">
-          <span>返回</span>
-        </div>
-      </el-row>
     </el-card>
     <div class="main-container">
       <div
         class="left-menu-container"
-        v-if="currentTab !== 'publish' && currentTab !== 'statistics' && path !== '/project/form/pushChannelPage' && path !== '/project/form/publish'"
       >
         <el-menu
           :collapse="isCollapse"
@@ -97,7 +80,7 @@
           @select="menuSelectHandle"
         >
           <el-menu-item
-            v-for="menuItem in menuItemList"
+            v-for="menuItem in menuItemLists"
             :key="menuItem.route"
             :index="menuItem.route"
           >
@@ -148,6 +131,7 @@ export default {
       defaultActiveMenu: "editor",
       projectKey: null,
       isCollapse: false,
+      menuItemLists: [],
       menuItemList: [
         {
           title: "题目",
@@ -180,6 +164,18 @@ export default {
         //     route: '/project/form/statistics'
         // }
       ],
+      publishMenuItemList: [
+         {
+          title: "链接",
+          icon: "el-icon-edit",
+          route: "/project/form/publish",
+        },
+        {
+          title: "推送",
+          icon: "el-icon-edit",
+          route: "/project/form/pushChannelPage",
+        },
+      ],
       //新增问卷名称字段
       projectTitle: "问卷名称",
       //当前页面
@@ -191,6 +187,12 @@ export default {
     $route: {
       handler: function(route) {
         this.path = route.path
+        console.log(route.path, 'route.path');
+        if (route.path == '/project/form/publish' || route.path ==  '/project/form/pushChannelPage' ) {
+          this.menuItemLists = this.publishMenuItemList
+        }else{
+          this.menuItemLists = this.menuItemList
+        }
       },
       immediate: true
     }

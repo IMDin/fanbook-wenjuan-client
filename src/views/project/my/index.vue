@@ -168,6 +168,7 @@ import {
   reqCopyProject, 
   reqPublishProject 
 } from "@/api/myProject"
+import { getPrizeQuery } from "@/api/prize"
 export default {
   data() {
     return {
@@ -232,14 +233,14 @@ export default {
         cancelButtonText: '取消',
         }).then(() => {
           reqPublishProject({ key, fbUser: localStorage.getItem("user_id") }).then((res) => {
-          console.log( res )
-          // this.publishStatus = true;
-          // this.ksfb=true;
-          // this.sendMsg();
-          this.msgSuccess('发布成功')
-          this.$router.push({path: `/project/form/publish`, query: {key: key, active: name}})
-          this.getData()
-        })
+            console.log( res )
+            // this.publishStatus = true;
+            // this.ksfb=true;
+            // this.sendMsg();
+            this.msgSuccess('发布成功')
+            this.$router.push({path: `/project/form/publish`, query: {key: key, active: name}})
+            this.getData()
+          })
         }).catch(() => {
           this.$message({
             type: 'info',
@@ -250,7 +251,7 @@ export default {
     dataCharts(id) { // 查看数据
       console.log('查看数据', id)
     },
-    handleCommand(e) {
+    async handleCommand(e) {
       if (!e) return 
       const type = e.split('-')[0]
       const key = e.split('-')[1]
@@ -260,24 +261,13 @@ export default {
           this.openCopyBox(key, name)
           break;
         case 'stop':
-          this.$confirm(`确定停止发布《${name}》吗？该问卷所以数据采集将停止，答题链接将无法收集数据`, '停止确认', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-          }).then(() => {
-           reqStopProject({key}).then(res => {
-              if (res.data) {
-                  this.msgSuccess('停止成功')
-                  this.getData()
-              }
-            })
-          }).catch(() => {
-            this.$message({
-              type: 'info',
-              message: '已取消停止'
-            });          
-          });
-           
+          // eslint-disable-next-line no-case-declarations
+          const { code, data } = await getPrizeQuery(key)
+          if(code === 200 && data?.length === 0) {
+            this.stopHandleCommand(`确定停止发布《${name}》吗？该问卷所以数据采集将停止，答题链接将无法收集数据`, key)
+          } else {
+            this.stopHandleCommand(`识别当前问卷设置了奖励，确认停止将自动发放奖品。 确定停止发布《${name}》吗？`, key)
+          }
           break;
         case 'delete':
           this.$confirm(`确定要删除《${name}》吗？删除后问卷将移入回收站，可进行恢复`, '删除确认', {
@@ -299,6 +289,25 @@ export default {
           });
           break;
       }
+    },
+    stopHandleCommand(str, key) {
+      this.$confirm( str , '停止确认', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+      }).then(() => {
+      reqStopProject({key}).then(res => {
+          if (res.data) {
+              this.msgSuccess('停止成功')
+              this.getData()
+          }
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消停止'
+        });          
+      });
     },
     openCopyBox(key, name) {
       this.$prompt('副本名称', '复制为副本', {

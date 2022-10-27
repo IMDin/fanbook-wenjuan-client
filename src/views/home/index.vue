@@ -111,11 +111,12 @@ export default {
                     name: '我的项目',
                     icon: 'fa-pencil-square'
                 },
+                // {
+                //     route: '/project/template',
+                //     name: '模板中心',
+                //     icon: 'fa-caret-square-o-up'
+                // }, 
                 {
-                    route: '/project/template',
-                    name: '模板中心',
-                    icon: 'fa-caret-square-o-up'
-                }, {
                     route: '/project/recycle',
                     name: '回收站',
                     icon: 'fa-trash'

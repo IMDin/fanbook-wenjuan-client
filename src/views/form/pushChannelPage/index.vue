@@ -39,7 +39,7 @@
               label="状态"
             >
               <template slot-scope="{row}">
-                {{ row.status == 1 ? '推送成功' : '推送失败' }}
+                {{ row.status == 1 ? '推送成功' : row.status == 2 ? '推送失败' : '推送中' }}
               </template>
             </el-table-column>
             <el-table-column
@@ -242,8 +242,8 @@ export default {
     border: 1px solid #ccc;
     background-color: #fff;
     p {
-      height: 40px;
-      line-height: 40px;
+      height: 60px;
+      line-height: 60px;
       margin: 0;
       border-bottom: 1px solid #ccc;
       padding: 0 20px;

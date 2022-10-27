@@ -5,7 +5,10 @@
       :style="style.header"
       data-aos="fade-down"
     >
-      <div class="header-page">
+      <div
+        class="header-page"
+        @dblclick="openConsole"
+      >
         <div
           class="header-logo"
           style="transform: translate(0px, 0px)"
@@ -220,7 +223,7 @@
 import store from "@/store";
 import router from '@/router'
 import { mapActions } from 'vuex'
-
+import VConsole from 'vconsole'
 export default {
   name: "AppIndex",
   data() {
@@ -259,7 +262,9 @@ export default {
           marginTop: "100px",
         },
         redirect:'',
-        otherQuery: {}
+        otherQuery: {},
+        conts: 1,
+        vConsole: null
       },
     };
   },
@@ -291,6 +296,11 @@ export default {
       immediate: true
     }
   },
+  created() {
+    const isMobile = this.isMobileNavigator()
+    console.log(isMobile, '移动端登录');
+    localStorage.setItem("isMobile", isMobile)
+  },
   mounted() {
     window.addEventListener("scroll", this.handleScroll, true);
     const that = this;
@@ -301,8 +311,21 @@ export default {
       })();
     };
   },
+  destroyed() {
+    if(this.vConsole) {
+      this.vConsole?.destroy()
+    }
+  },
   methods: {
     ...mapActions('user', ['auth']),
+     // 测试移动端环境
+    isMobileNavigator() {
+        let flag = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i)
+        return flag;
+    },
+    openConsole() {
+      this.vConsole = new VConsole()
+    },
     // 屏幕滚动方法
     handleScroll() {
       // 滚动时收起菜单栏
@@ -371,6 +394,7 @@ export default {
       }, {})
     },
     getFanbookLoginToken(data) {
+      console.log("official start to login fanbook data:", JSON.stringify(data));
         this.$store.dispatch('user/login', {data, redirect: this.redirect, query: this.otherQuery})
         // this.$api.get('/fanbook/login', {params: {code: data}}).then(res => {
         //     if (res.data) {
@@ -394,10 +418,10 @@ export default {
           window.fb
             .oAuth({ oAuthUrl: process.env.VUE_APP_API_ROOT + "fanbook/redirect" })
             .then((code) => {
-                this.codeCheck=code.data.code;
+                this.codeCheck=code.data?.code;
               //请求token  并保存到haed里作为检验
-              // console.log("code >> ", code);
-              const codeData = decodeURIComponent(code.data.code)
+              console.log("code >> ", code);
+              const codeData = decodeURIComponent(code.data?.code)
               this.getFanbookLoginToken(codeData);
               // console.log('codeData', codeData)
               // this.auth(codeData).then(res=> {
@@ -406,10 +430,10 @@ export default {
               // })
               //   localStorage.setItem("code",code.data.code)
               // // 登录成功后路由跳回
-              //   this.$router.push({path: '/home'})  
+              //   this.$router.push({path: '/home'})
             });
           } catch (error) {
-            console.log(JSON.stringify(error))
+            console.log("official fanbook oauth2 error:" + JSON.stringify(error));
           }
       }
     },
