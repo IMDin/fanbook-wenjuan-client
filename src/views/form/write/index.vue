@@ -372,6 +372,7 @@ export default {
     submitForm(data) {
       // 完成时间
       let inActiveTime = document.getElementById("inActiveTime").innerText;
+      alert(`${this.$route.query.publishTime}, ${this.$route.query.chatId}`)
       this.$api
         .post("/user/project/result/create", {
           completeTime: inActiveTime,
