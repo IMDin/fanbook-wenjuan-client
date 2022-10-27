@@ -5,7 +5,6 @@
         align="middle"
         type="flex"
         :gutter="5"
-        v-if="path !== '/project/form/pushChannelPage'"
       >
         <i
           class="el-icon-back"
@@ -67,21 +66,6 @@
         >
           保存为模板
         </el-button> -->
-      </el-row>
-      <el-row
-        align="middle"
-        type="flex"
-        :gutter="5"
-        v-else
-        style="margin-top:10px"
-      >
-        <i
-          class="el-icon-back"
-          @click="$router.back(-1)"
-        />
-        <div class="textTip2">
-          <span>返回</span>
-        </div>
       </el-row>
     </el-card>
     <div class="main-container">
@@ -181,9 +165,14 @@ export default {
       ],
       publishMenuItemList: [
          {
-          title: "链接分享",
+          title: "链接",
           icon: "el-icon-edit",
           route: "/project/form/publish",
+        },
+        {
+          title: "推送",
+          icon: "el-icon-edit",
+          route: "/project/form/pushChannelPage",
         },
       ],
       //新增问卷名称字段
@@ -198,7 +187,7 @@ export default {
       handler: function(route) {
         this.path = route.path
         console.log(route.path, 'route.path');
-        if (route.path == '/project/form/publish' ) {
+        if (route.path == '/project/form/publish' || route.path ==  '/project/form/pushChannelPage' ) {
           this.menuItemLists = this.publishMenuItemList
         }else{
           this.menuItemLists = this.menuItemList

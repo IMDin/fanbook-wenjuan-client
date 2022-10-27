@@ -417,10 +417,10 @@ export default {
           window.fb
             .oAuth({ oAuthUrl: process.env.VUE_APP_API_ROOT + "fanbook/redirect" })
             .then((code) => {
-                this.codeCheck=code.data.code;
+                this.codeCheck=code.data?.code;
               //请求token  并保存到haed里作为检验
               console.log("code >> ", code);
-              const codeData = decodeURIComponent(code.data.code)
+              const codeData = decodeURIComponent(code.data?.code)
               this.getFanbookLoginToken(codeData);
               // console.log('codeData', codeData)
               // this.auth(codeData).then(res=> {
