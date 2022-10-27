@@ -262,7 +262,7 @@ export default {
           break;
         case 'stop':
           // eslint-disable-next-line no-case-declarations
-          const { code, data } = await getPrizeQuery({key})
+          const { code, data } = await getPrizeQuery(key)
           if(code === 200 && data?.length === 0) {
             this.stopHandleCommand(`确定停止发布《${name}》吗？该问卷所以数据采集将停止，答题链接将无法收集数据`, key)
           } else {

@@ -386,7 +386,8 @@ export default {
           fbUserid: this.fbUserid,
           guildId: this.guildId,
           fbUsername: this.fbUsername,
-          guildName:this.guildName
+          guildName:this.guildName,
+          query: this.$route.query
         })
         .then(() => {
           this.writeStatus = 2;

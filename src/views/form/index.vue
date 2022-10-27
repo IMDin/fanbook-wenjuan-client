@@ -96,7 +96,7 @@
           @select="menuSelectHandle"
         >
           <el-menu-item
-            v-for="menuItem in menuItemList"
+            v-for="menuItem in menuItemLists"
             :key="menuItem.route"
             :index="menuItem.route"
           >
@@ -147,6 +147,7 @@ export default {
       defaultActiveMenu: "editor",
       projectKey: null,
       isCollapse: false,
+      menuItemLists: [],
       menuItemList: [
         {
           title: "题目",
@@ -199,7 +200,9 @@ export default {
         this.path = route.path
         console.log(route.path, 'route.path');
         if (route.path == '/project/form/publish' ) {
-          this.menuItemList = this.publishMenuItemList
+          this.menuItemLists = this.publishMenuItemList
+        }else{
+          this.menuItemLists = this.menuItemList
         }
       },
       immediate: true
