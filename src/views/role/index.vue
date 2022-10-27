@@ -90,13 +90,13 @@ export default {
   },
   mounted() {
     // fanbook初始化
-    window.fb.init({
-      success: () => {
-          // 如果没有登录调起授权，并保存token到本地
-            console.log("未授权，需要拉起授权");
-            this.confirmOauth();
-      }
-    });
+    // window.fb.init({
+    //   success: () => {
+    //       // 如果没有登录调起授权，并保存token到本地
+    //         console.log("未授权，需要拉起授权");
+    //         this.confirmOauth();
+    //   }
+    // });
     const platform = window.fb.getPlatform();
     if (platform !== 1) {
       this.$message({
@@ -106,6 +106,12 @@ export default {
       });
       return;
     }
+    window.fb.getCurrentGuild().then(res => {
+      console.log("current guild", res.id, res.name)
+      this.guildId=res.id;
+      this.guildName=res.name;
+      this.getFbPullroles()
+    });
   },
   watch:{
     "membersList":{
@@ -122,26 +128,26 @@ export default {
     }
   },
   methods: {
-    confirmOauth () {
-      window.fb.oAuth({
-        oAuthUrl: process.env.VUE_APP_API_ROOT+ 'fanbook/redirect'
-      }).then(res => {
-        if (res.data && res.data.code) {
-          console.log("res.data.code",res.data.code);
-          // 此为异步，监听islogin的变化发送请求
-          window.fb.getCurrentGuild().then(res => {
-            console.log("current guild", res.id, res.name)
-            this.guildId=res.id;
-            this.guildName=res.name;
-            this.getFbPullroles()
-          });
-        }else{
-          this.needAuth = true;
-          // 授权失败，关闭小程序
-          window.fb.closeWindow();
-        }
-      });
-    },
+    // confirmOauth () {
+    //   window.fb.oAuth({
+    //     oAuthUrl: process.env.VUE_APP_API_ROOT+ 'fanbook/redirect'
+    //   }).then(res => {
+    //     if (res.data && res.data.code) {
+    //       console.log("res.data.code",res.data.code);
+    //       // 此为异步，监听islogin的变化发送请求
+    //       window.fb.getCurrentGuild().then(res => {
+    //         console.log("current guild", res.id, res.name)
+    //         this.guildId=res.id;
+    //         this.guildName=res.name;
+    //         this.getFbPullroles()
+    //       });
+    //     }else{
+    //       this.needAuth = true;
+    //       // 授权失败，关闭小程序
+    //       window.fb.closeWindow();
+    //     }
+    //   });
+    // },
     getFbPullroles() {
       const data = {
         "token": this.token,
