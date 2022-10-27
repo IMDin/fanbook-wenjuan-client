@@ -52,15 +52,21 @@ if (window.location.href.indexOf("debug") > -1) {
     new VConsole()
 }
 
+console.log("init step 1(fanbook) at:" + new Date());
 
 window.fb.init({
     success: async () => {
+        console.log("init step 2(vue) at:" + new Date());
+
         new Vue({
             router,
             store,
             render: h => h(App)
         }).$mount("#app")
+        console.log("init step 3(AOS) at:" + new Date());
+
         AOS.init()
+        console.log("init step over at:" + new Date());
     }
 })
 

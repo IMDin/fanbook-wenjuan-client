@@ -5,8 +5,8 @@
       :style="style.header"
       data-aos="fade-down"
     >
-      <div 
-        class="header-page" 
+      <div
+        class="header-page"
         @dblclick="openConsole"
       >
         <div
@@ -394,6 +394,7 @@ export default {
       }, {})
     },
     getFanbookLoginToken(data) {
+      console.log("official start to login fanbook data:", JSON.stringify(data));
         this.$store.dispatch('user/login', {data, redirect: this.redirect, query: this.otherQuery})
         // this.$api.get('/fanbook/login', {params: {code: data}}).then(res => {
         //     if (res.data) {
@@ -414,12 +415,10 @@ export default {
         router.replace('/home')
       }else{
         try {
-          window.fb
-            .oAuth({ oAuthUrl: process.env.VUE_APP_API_ROOT + "fanbook/redirect" })
-            .then((code) => {
-                this.codeCheck=code.data.code;
+          window.fb.oAuth({ oAuthUrl: process.env.VUE_APP_API_ROOT + "fanbook/redirect" }).then((code) => {
+              console.log("official fanbook oauth2 code:" + JSON.stringify(code));
+              this.codeCheck=code.data.code;
               //请求token  并保存到haed里作为检验
-              console.log("code >> ", code);
               const codeData = decodeURIComponent(code.data.code)
               this.getFanbookLoginToken(codeData);
               // console.log('codeData', codeData)
@@ -429,10 +428,10 @@ export default {
               // })
               //   localStorage.setItem("code",code.data.code)
               // // 登录成功后路由跳回
-              //   this.$router.push({path: '/home'})  
+              //   this.$router.push({path: '/home'})
             });
           } catch (error) {
-            console.log(JSON.stringify(error))
+            console.log("official fanbook oauth2 error:" + JSON.stringify(error));
           }
       }
     },

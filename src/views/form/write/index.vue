@@ -1,11 +1,20 @@
 <template>
   <div class="write-container">
-    <h1 id="inActiveTime" style="display: none" />
-    <div v-if="writeStatus == 0" class="title-icon-view">
+    <h1
+      id="inActiveTime"
+      style="display: none"
+    />
+    <div
+      v-if="writeStatus == 0"
+      class="title-icon-view"
+    >
       <div class="icon-view">
         <i class="el-icon-check success-icon" />
       </div>
-      <p v-if="writeNotStartPrompt" style="text-align: center">
+      <p
+        v-if="writeNotStartPrompt"
+        style="text-align: center"
+      >
         <span v-if="writeNotStartPrompt">{{ writeNotStartPrompt }}</span>
       </p>
     </div>
@@ -16,7 +25,10 @@
         @submit="submitForm"
       />
     </div>
-    <div v-if="writeStatus == 2" class="title-icon-view">
+    <div
+      v-if="writeStatus == 2"
+      class="title-icon-view"
+    >
       <div class="icon-view">
         <i class="el-icon-check success-icon" />
       </div>
@@ -98,15 +110,15 @@ export default {
       },
     ],
   },
- 
+
   async created() {
+    console.log("write create step 1(fanbook) at:" + new Date());
 	// fanbook初始化
-			fb.init({
+			window.fb.init({
 				success: () => {
-					// console.log('初始化成功');
 						// 如果没有登录调起授权，并保存token到本地
-							console.log("未授权，需要拉起授权");
-							this.confirmOauth();
+            console.log("create 未授权，需要拉起授权 at:" + new Date());
+            this.confirmOauth();
 				}
 			});
 
@@ -118,7 +130,6 @@ export default {
       this.wxAuthorizationCode = wxCode;
       await this.getWxAuthorizationUserInfo();
     }
-
 
     const platform = window.fb.getPlatform();
     if (platform !== 1) {
@@ -198,39 +209,44 @@ export default {
             this.wxAuthorizationUrl = res.data;
           }
         });
-    },   
+    },
 
     //未授权则拉起fanbook小程序授权
-     	confirmOauth () {
-				fb.oAuth({
+    confirmOauth () {
+      // eslint-disable-next-line no-case-declarations
+				window.fb.oAuth({
 					oAuthUrl: process.env.VUE_APP_API_ROOT+ 'fanbook/redirect'
 				}).then(res => {
+          console.log("write fanbook oauth2 code:" + JSON.stringify(res));
 					if (res.data && res.data.code) {
-            console.log("res.data.code",res.data.code);
+            console.log("write succ to get oauth2 code:",res.data.code);
             // 此为异步，监听islogin的变化发送请求
             this.getFanbookLoginToken(decodeURIComponent(res.data.code));
-           fb.getCurrentGuild().then(res => {
-             console.log("current guild", res.id, res.name)
+           window.fb.getCurrentGuild().then(res => {
+             console.log("write succ to login, get guild", res.id, res.name)
              this.guildId=res.id;
               this.guildName=res.name;
             });
 					}else{
+            console.log("write fail to get oauth2 code!");
 						this.needAuth = true;
             // 授权失败，关闭小程序
-            fb.closeWindow();
+            window.fb.closeWindow();
 					}
 				});
 			},
-          getFanbookLoginToken(data) {
+    getFanbookLoginToken(data) {
+      console.log("write start to login fanbook data:", JSON.stringify(data));
         this.$api.get('/fanbook/login', {params: {code: data}}).then(res => {
+            console.log("write login fanbook res:", JSON.stringify(res));
             if (res.data) {
-              console.log('res.data----------------', res.data)
-                 localStorage.setItem("fbtoken",res.data.fbtoken)
+              console.log("write login fanbook res data:", JSON.stringify(res.data));
+              localStorage.setItem("fbtoken",res.data.fbtoken)
               //获取用户信息
               this.$api.get('/fanbook/getMe').then(resw => {
-               console.log('res.data----------------', res.data)
-              this.fbUserid=resw.data.user_id;
-              this.fbUsername=resw.data.username;
+                console.log("write login fanbook getMe res:", JSON.stringify(resw));
+                this.fbUserid=resw.data.user_id;
+                this.fbUsername=resw.data.username;
             })
             }
         })

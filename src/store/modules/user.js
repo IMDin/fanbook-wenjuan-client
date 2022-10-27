@@ -40,19 +40,22 @@ const actions = {
         })
     },
     login(context, payload) {
+        console.log("official login fanbook payload:", JSON.stringify(payload));
         api.get('/fanbook/login', {params: {code: payload.data}}).then(res => {
+            console.log("offical login fanbook res:", JSON.stringify(res));
             if (res.data) {
-                console.log('res.data----------------', res.data)
+                console.log("offical login fanbook res data:", JSON.stringify(res.data));
                 context.commit('setAuth', res.data.token)
                 context.commit('setRedirect', {path: payload.redirect, query: payload.query})
                 context.commit('getInfo', res.data)
                 // 这个api返回的数据来空，需要查看api
                 api.get('/fanbook/getMe').then(res => {
-                    console.log('res---', res)
+                    console.log("write login fanbook getMe res:", JSON.stringify(res));
                     context.commit('userId', res.data?.user_id)
                 })
                 // this.login(res?.data.token).then(res=>console.log('res',res))
             }
+
         })
     },
     logout(context) {
@@ -73,14 +76,14 @@ const mutations = {
         localStorage.setItem("username", data.name)
         localStorage.setItem("useravatar", data.avatar)
         localStorage.setItem("fbtoken", data.fbtoken)
-        state.username = data.name  
+        state.username = data.name
         state.avatar = data.avatar
         state.fbtoken = data.fbtoken
     },
     userId(state, data) {
         localStorage.setItem("user_id", data)
-        state.user_id = data 
-        
+        state.user_id = data
+
         if(state.token) {
           // 重定向页面
           if(state.redirect) {
