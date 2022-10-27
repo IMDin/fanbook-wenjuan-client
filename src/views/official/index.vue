@@ -5,7 +5,10 @@
       :style="style.header"
       data-aos="fade-down"
     >
-      <div class="header-page">
+      <div 
+        class="header-page" 
+        @dblclick="openConsole"
+      >
         <div
           class="header-logo"
           style="transform: translate(0px, 0px)"
@@ -220,7 +223,7 @@
 import store from "@/store";
 import router from '@/router'
 import { mapActions } from 'vuex'
-
+import VConsole from 'vconsole'
 export default {
   name: "AppIndex",
   data() {
@@ -259,7 +262,9 @@ export default {
           marginTop: "100px",
         },
         redirect:'',
-        otherQuery: {}
+        otherQuery: {},
+        conts: 1,
+        vConsole: null
       },
     };
   },
@@ -293,12 +298,8 @@ export default {
   },
   created() {
     const isMobile = this.isMobileNavigator()
-    if (isMobile) {
-      // alert('isMobile')
-      let flag = this.$route.query.redirect == "/role"
-      if(flag) return
-      this.$router.push('/isMobile')
-    }
+    console.log(isMobile, '移动端登录');
+    localStorage.setItem("isMobile", isMobile)
   },
   mounted() {
     window.addEventListener("scroll", this.handleScroll, true);
@@ -310,12 +311,20 @@ export default {
       })();
     };
   },
+  destroyed() {
+    if(this.vConsole) {
+      this.vConsole?.destroy()
+    }
+  },
   methods: {
     ...mapActions('user', ['auth']),
      // 测试移动端环境
     isMobileNavigator() {
         let flag = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i)
         return flag;
+    },
+    openConsole() {
+      this.vConsole = new VConsole()
     },
     // 屏幕滚动方法
     handleScroll() {
@@ -410,7 +419,7 @@ export default {
             .then((code) => {
                 this.codeCheck=code.data.code;
               //请求token  并保存到haed里作为检验
-              // console.log("code >> ", code);
+              console.log("code >> ", code);
               const codeData = decodeURIComponent(code.data.code)
               this.getFanbookLoginToken(codeData);
               // console.log('codeData', codeData)

@@ -87,7 +87,6 @@
     <div class="main-container">
       <div
         class="left-menu-container"
-        v-if="currentTab !== 'publish' && currentTab !== 'statistics' && path !== '/project/form/pushChannelPage' && path !== '/project/form/publish'"
       >
         <el-menu
           :collapse="isCollapse"
@@ -179,6 +178,13 @@ export default {
         //     route: '/project/form/statistics'
         // }
       ],
+      publishMenuItemList: [
+         {
+          title: "链接分享",
+          icon: "el-icon-edit",
+          route: "/project/form/publish",
+        },
+      ],
       //新增问卷名称字段
       projectTitle: "问卷名称",
       //当前页面
@@ -190,6 +196,10 @@ export default {
     $route: {
       handler: function(route) {
         this.path = route.path
+        console.log(route.path, 'route.path');
+        if (route.path == '/project/form/publish' ) {
+          this.menuItemList = this.publishMenuItemList
+        }
       },
       immediate: true
     }
