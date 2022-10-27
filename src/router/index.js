@@ -56,9 +56,13 @@ router.beforeEach((to, from, next) => {
     // console.log("是否授权",localStorage.getItem("fanbookToken") )
     // store.getters['user/isLogin']
         // 判断是否登录
+        console.log(to, from);
         if (localStorage.getItem("fanbookToken")) { // 登录之后检测是否是移动的登录
           if (navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i)) {
-            if(to.path.indexOf('/isMobile') === -1) {
+            if(to.path === '/role') {
+              next()
+            }else {
+              if(to.path !== '/isMobile')
               next({path: '/isMobile'})
             }
           }
