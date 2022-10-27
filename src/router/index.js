@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import store from '@/store/index'
+// import store from '@/store/index'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css' // progress bar style
 
@@ -56,7 +56,12 @@ router.beforeEach((to, from, next) => {
     // console.log("是否授权",localStorage.getItem("fanbookToken") )
     // store.getters['user/isLogin']
         // 判断是否登录
-        if (localStorage.getItem("fanbookToken")) {
+        if (localStorage.getItem("fanbookToken")) { // 登录之后检测是否是移动的登录
+          if (navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i)) {
+            if(to.path.indexOf('/isMobile') === -1) {
+              next({path: '/isMobile'})
+            }
+          }
             next()
             NProgress.done()
         } else {

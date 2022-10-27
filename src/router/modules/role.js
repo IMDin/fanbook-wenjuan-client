@@ -1,12 +1,12 @@
 export default [
   {
       path: '/role',
-      meta: {requireLogin: true},
+      meta: {requireLogin: false},
       component: () => import(/* webpackChunkName: 'root' */ '@/views/home'),
       children: [
           {
               path: '/',
-              meta: {requireLogin: true},
+              meta: {requireLogin: false},
               component: () => import(/* webpackChunkName: 'root' */ '@/views/role/index')
           },
       ]

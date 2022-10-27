@@ -1,61 +1,66 @@
 <template>
   <div>
-    <el-row 
-      type="flex"
-      class="role-centent"
-    >
-      <el-col class="role-item">
-        <p>添加成员</p>
-        <p>添加或删除可以使用问卷管理的成员</p>
-      </el-col>
-      <el-col class="role-item">
-        <div class="butbox">
-          <span>当前可用成员</span>
-          <el-button 
-            type="primary"
-            @click="dialogVisible = true"
-          >
-            修改
-          </el-button>
-        </div>
-        <div class="textarr">
-          <span 
-            v-for="(item, index) in list" 
-            :key="index"
-          >
-            {{ item.user.first_name }},&nbsp;&nbsp;
-          </span>
-        </div>
-      </el-col>
-    </el-row>
-    <el-dialog
-      title="提示"
-      :visible.sync="dialogVisible"
-      width="610px"
-      style="min-width: 610px"
-      :before-close="() => dialogVisible = false"
-    >
-      <el-transfer
-        filterable
-        :filter-method="filterMethod"
-        filter-placeholder="请输入用户名称"
-        :titles="['可选成员', '已选成员']"
-        v-model="value"
-        :data="newMembersList"
-      />
-      <span 
-        slot="footer" 
-        class="dialog-footer"
+    <div v-if="!isMobile">
+      <el-row 
+        type="flex"
+        class="role-centent"
       >
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button 
-          type="primary" 
-          @click="confirm"
+        <el-col class="role-item">
+          <p>添加成员</p>
+          <p>添加或删除可以使用问卷管理的成员</p>
+        </el-col>
+        <el-col class="role-item">
+          <div class="butbox">
+            <span>当前可用成员</span>
+            <el-button 
+              type="primary"
+              @click="dialogVisible = true"
+            >
+              修改
+            </el-button>
+          </div>
+          <div class="textarr">
+            <span 
+              v-for="(item, index) in list" 
+              :key="index"
+            >
+              {{ item.user.first_name }},&nbsp;&nbsp;
+            </span>
+          </div>
+        </el-col>
+      </el-row>
+      <el-dialog
+        title="提示"
+        :visible.sync="dialogVisible"
+        width="610px"
+        style="min-width: 610px"
+        :before-close="() => dialogVisible = false"
+      >
+        <el-transfer
+          filterable
+          :filter-method="filterMethod"
+          filter-placeholder="请输入用户名称"
+          :titles="['可选成员', '已选成员']"
+          v-model="value"
+          :data="newMembersList"
+        />
+        <span 
+          slot="footer" 
+          class="dialog-footer"
         >
-          确 定
-        </el-button>
-      </span>
-    </el-dialog>
+          <el-button @click="dialogVisible = false">取 消</el-button>
+          <el-button 
+            type="primary" 
+            @click="confirm"
+          >
+            确 定
+          </el-button>
+        </span>
+      </el-dialog>
+    </div>
+    <div v-else>
+      移动端样式
+    </div>
   </div>
 </template>
 
@@ -79,15 +84,28 @@ export default {
       list:[],
       FbPullroles: [],
       guildId: "420861300550139904",
-      token: localStorage.getItem('token')
+      token: localStorage.getItem('token'),
+      isMobile: false
     }
   },
   mounted() {
-    this.getFbPullroles()
-    // eslint-disable-next-line no-undef
-    fb.getCurrentGuild().then(res => {
-      this.guildId  = res.id 
-    })
+    // fanbook初始化
+    window.fb.init({
+      success: () => {
+          // 如果没有登录调起授权，并保存token到本地
+            console.log("未授权，需要拉起授权");
+            this.confirmOauth();
+      }
+    });
+    const platform = window.fb.getPlatform();
+    if (platform !== 1) {
+      this.$message({
+        message: "该功能只支持Fanbook小程序使用",
+        type: "error",
+        center: true,
+      });
+      return;
+    }
   },
   watch:{
     "membersList":{
@@ -104,6 +122,26 @@ export default {
     }
   },
   methods: {
+    confirmOauth () {
+      window.fb.oAuth({
+        oAuthUrl: process.env.VUE_APP_API_ROOT+ 'fanbook/redirect'
+      }).then(res => {
+        if (res.data && res.data.code) {
+          console.log("res.data.code",res.data.code);
+          // 此为异步，监听islogin的变化发送请求
+          window.fb.getCurrentGuild().then(res => {
+            console.log("current guild", res.id, res.name)
+            this.guildId=res.id;
+            this.guildName=res.name;
+            this.getFbPullroles()
+          });
+        }else{
+          this.needAuth = true;
+          // 授权失败，关闭小程序
+          window.fb.closeWindow();
+        }
+      });
+    },
     getFbPullroles() {
       const data = {
         "token": this.token,
@@ -111,7 +149,7 @@ export default {
       }
       getFbPullroles(data).then(res => {
         if (res.code === 200) {
-          res.data.forEach(item => {
+          res.data && res.data.forEach(item => {
             this.FbPullroles.push({
               id: String(item.id),
               lable: item.name
