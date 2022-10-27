@@ -415,11 +415,13 @@ export default {
         router.replace('/home')
       }else{
         try {
-          window.fb.oAuth({ oAuthUrl: process.env.VUE_APP_API_ROOT + "fanbook/redirect" }).then((code) => {
-              console.log("official fanbook oauth2 code:" + JSON.stringify(code));
-              this.codeCheck=code.data.code;
+          window.fb
+            .oAuth({ oAuthUrl: process.env.VUE_APP_API_ROOT + "fanbook/redirect" })
+            .then((code) => {
+                this.codeCheck=code.data?.code;
               //请求token  并保存到haed里作为检验
-              const codeData = decodeURIComponent(code.data.code)
+              console.log("code >> ", code);
+              const codeData = decodeURIComponent(code.data?.code)
               this.getFanbookLoginToken(codeData);
               // console.log('codeData', codeData)
               // this.auth(codeData).then(res=> {

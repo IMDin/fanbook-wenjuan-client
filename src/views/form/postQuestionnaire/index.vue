@@ -8,7 +8,7 @@
       :span="18" 
       class="post-item"
     >
-      <p>发布问卷</p>
+      <p>链接分享</p>
       <div class="post-content">
         <div class="post-content-t">
           <el-form 
@@ -19,7 +19,7 @@
             <el-form-item label="分享链接">
               <el-input 
                 v-model="formInline.value" 
-                style="width:300px"
+                style="width:400px"
               />
             </el-form-item>
             <el-form-item>
@@ -31,15 +31,6 @@
               </el-button>
             </el-form-item>
           </el-form>
-        </div>
-        <div>
-          可将问卷推送至服务器内的任意频道 
-          <el-button 
-            type="text"
-            @click="setPublist"
-          >
-            >>设置频道推送
-          </el-button>
         </div>
       </div>
     </el-col>
@@ -95,22 +86,23 @@ export default {
     border: 1px solid #CCC;
     background-color: #fff;
     p {
-      height: 40px;
-      line-height: 40px;
+      height: 60px;
+      line-height: 60px;
       margin: 0;
       border-bottom:  1px solid #CCC;
       padding: 0 20px;
     }
     .post-content {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      height: 200px;
+      // display: flex;
+      // flex-direction: column;
+      // justify-content: center;
+      // align-items: center;
+      height: 100vh;
       .post-content-t {
+        padding: 15px;
         width: 100%;
         display: flex;
-        justify-content: center;
+        justify-content: flex-start;
       }
     }
   }
