@@ -84,7 +84,7 @@ export default {
       list:[],
       FbPullroles: [],
       guildId: "420861300550139904",
-      token: localStorage.getItem('token'),
+      token: process.env.VUE_APP_API_ROOT_TOKEN,
       isMobile: false
     }
   },

@@ -1,9 +1,8 @@
 import api from "./index"
 
-export const getPrizeQuery  = ( data ) => {
+export const getPrizeQuery  = ( key ) => {
   return api({
-    url: '/user/prize/setting/query', 
-    method: 'post',
-    data
+    url: `/user/prize/setting/query?projectKey=${key}`, 
+    method: 'post'
   })
 }
