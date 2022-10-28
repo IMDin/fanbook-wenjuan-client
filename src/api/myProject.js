@@ -45,3 +45,22 @@ export const reqTimingPublishMsg = ( data ) => {
     data
   })
 }
+
+// 统计查询 
+export const reqProjectData = ( data ) => {
+  return api({
+    url: '/user/project/result/data', 
+    method: 'get',
+    params: data
+  })
+}
+
+// 统计下载  user/project/result/export
+export const reqProjectExport = ( data ) => {
+  return api({
+    url: '/user/project/result/export', 
+    method: 'get',
+    responseType: 'blob',
+    params: data
+  })
+}
