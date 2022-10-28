@@ -263,6 +263,7 @@
                                 clearable
                                 style="width: 150px"
                                 placeholder="请输入奖品名称"
+                                @change="saveCdkConfig(item, index)"
                               />
                             </el-form-item>
                             <el-form-item label="兑换码">
@@ -278,7 +279,8 @@
                                         response,
                                         file,
                                         fileList,
-                                        item
+                                        item,
+                                        index
                                       );
                                     }
                                   "
@@ -734,7 +736,7 @@ export default {
       };
     },
     getUploadUrl() {
-      return `${process.env.VUE_APP_API_ROOT}/project/file/upload/${this.projectKey}`;
+      return `${process.env.VUE_APP_API_ROOT}project/file/upload/${this.projectKey}`;
     },
     getUserInfo() {
       return JSON.parse(this.$store.getters["user/userInfo"]);
@@ -862,7 +864,6 @@ export default {
     //获取答题设置
     queryUserProjectSetting() {
       this.$api.get(`/user/project/setting/${this.projectKey}`).then((res) => {
-        console.log("ddd", res.data);
         if (res.data) {
           let data = res.data;
           this.wxWrite = data.wxWrite;
@@ -901,49 +902,53 @@ export default {
     },
     //获取奖品配置
     queryGiftSetting(type) {
-      this.$api
-        .post(`/user/prize/setting/query?projectKey=${this.projectKey}`)
-        .then((res) => {
-          console.log(res);
-          this.giftForm.sendGiftType = res.data.type;
-          if (res.data.probability == 1) {
-            this.giftForm.percentage = "must";
-          } else {
-            this.giftPercentage = res.data.probability;
-          }
-          if (res.data.prizes && res.data.prizes.length > 0) {
-            let coreSetArr = res.data.prizes.filter((item) => {
-              if (item.type) {
-                return item;
-              }
-            });
-            let cdkSetArr = res.data.prizes.filter((item) => {
-              if (!item.type) {
-                return item;
-              }
-            });
-            if (type) {
-              this.giftForm.coreSet = coreSetArr.map((item) => {
-                return {
-                  desc: item.desc,
-                  count: item.count == 0 ? "" : item.count,
-                  flag: item.count == 0 ? 1 : 0,
-                  id: item.id,
-                  disabled: true,
-                };
-              });
-            } else {
-              this.giftForm.coreSet = cdkSetArr.map((item) => {
-                return {
-                  desc: item.desc,
-                  count: "",
-                  id: item.id,
-                  disabled: true,
-                };
-              });
+      this.$api(
+        // .post(`/user/prize/setting/query?projectKey=${this.projectKey}`)
+        {
+          url: `/user/prize/setting/query`,
+          method: "post",
+          params: { projectKey: this.projectKey },
+        }
+      ).then((res) => {
+        this.giftForm.sendGiftType = res.data.type;
+        if (res.data.probability == 1) {
+          this.giftForm.percentage = "must";
+        } else {
+          this.giftPercentage = res.data.probability;
+        }
+        if (res.data.prizes && res.data.prizes.length > 0) {
+          let coreSetArr = res.data.prizes.filter((item) => {
+            if (item.type) {
+              return item;
             }
+          });
+          let cdkSetArr = res.data.prizes.filter((item) => {
+            if (!item.type) {
+              return item;
+            }
+          });
+          if (type) {
+            this.giftForm.coreSet = coreSetArr.map((item) => {
+              return {
+                desc: item.desc,
+                count: item.count == 0 ? "" : item.count,
+                flag: item.count == 0 ? 1 : 0,
+                id: item.id,
+                disabled: true,
+              };
+            });
+          } else {
+            this.giftForm.coreSet = cdkSetArr.map((item) => {
+              return {
+                desc: item.desc,
+                count: "",
+                id: item.id,
+                disabled: true,
+              };
+            });
           }
-        });
+        }
+      });
     },
     //保存奖品设置
     saveGiftSetting() {
@@ -965,7 +970,7 @@ export default {
           this.total = res.data.count;
           this.getGiftData = res.data.data.map((item) => {
             return {
-              type: item.type == 1 ? "CDK" : "积分",
+              type: item.type == 1 ? "积分" : "CDK",
               gift: item.prize,
               time: this.exchangeTime(item.getTime),
               id: item.fanbookid,
@@ -984,59 +989,78 @@ export default {
       this.currentPage = val;
       this.getReceiveGiftData();
     },
+    //导出方法
+    exportFunction(res, name) {
+      let blob = new Blob([res.data]);
+      let downloadElement = document.createElement("a");
+      let href = window.URL.createObjectURL(blob); // 创建下载的链接
+      downloadElement.href = href;
+      downloadElement.download =
+        name + this.$dayjs().format("YYYYMMDDHHMM") + ".xls"; // 下载后文件名
+      document.body.appendChild(downloadElement);
+      downloadElement.click(); // 点击下载
+      document.body.removeChild(downloadElement); // 下载完成移除元素
+      window.URL.revokeObjectURL(href); // 释放掉blob对象
+    },
     //导出奖品领取情况
     exportGiftData() {
       this.$axios({
-        url: `http://192.168.2.131:8999/mofang-api/user/prize/export?projectKey=${this.projectKey}`,
+        url: `${process.env.VUE_APP_API_ROOT}user/prize/export?projectKey=${this.projectKey}`,
         method: "post",
         responseType: "blob",
-      })
-        // .post(
-        //   process.env.VUE_APP_API_ROOT +
-        //     `/user/prize/export?projectKey=${this.projectKey}`,
-        //   {},
-        //   {
-        //     headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        //     responseType: "blob",
-        //   }
-        // )
-        .then((res) => {
-          console.log(111, res);
-          // let blob = new Blob([res.data]);
-          // let downloadElement = document.createElement("a");
-          // let href = window.URL.createObjectURL(blob); // 创建下载的链接
-          // downloadElement.href = href;
-          // downloadElement.download =
-          //   this.projectData.name +
-          //   this.$dayjs().format("YYYYMMDDHHMM") +
-          //   ".xls"; // 下载后文件名
-          // document.body.appendChild(downloadElement);
-          // downloadElement.click(); // 点击下载
-          // document.body.removeChild(downloadElement); // 下载完成移除元素
-          // window.URL.revokeObjectURL(href); // 释放掉blob对象
-        });
+      }).then((res) => {
+        this.exportFunction(res, "奖品领取情况");
+      });
+    },
+    //下载cdk模板
+    downloadFile() {
+      this.$axios({
+        url: `${process.env.VUE_APP_API_ROOT}user/prize/model`,
+        method: "post",
+        responseType: "blob",
+      }).then((res) => {
+        this.exportFunction(res, "兑换码模板");
+      });
+    },
+    //保存CDK配置
+    saveCdkConfig(item, index) {
+      if (this.giftForm.cdkSet[index].fileList.length > 0) {
+        this.$api
+          .post(
+            `/user/prize/cdk/import?projectKey=${this.projectKey}&desc=${item.desc}`
+          )
+          .then(() => {
+            this.queryGiftSetting();
+          });
+      } else {
+        this.$message.warning("请上传CDK模板!");
+      }
     },
     //上传文件(同CDK配置项保存)
-    uploadFile(response, file, fileList, item) {
-      console.log(222, item, response, file, fileList);
-      // this.$api.post(
-      //   `/user/prize/cdk/import?projectKey=${this.projectKey}&desc=${item.desc}`
-      // );
+    uploadFile(response, file, fileList, item, index) {
+      console.log(response, file, fileList)
+      this.giftForm.cdkSet[index].fileList = fileList;
+      if (item.desc) {
+        this.$api
+          .post(
+            `/user/prize/cdk/import?projectKey=${this.projectKey}&desc=${item.desc}`
+          )
+          .then(() => {
+            this.queryGiftSetting();
+          });
+      } else {
+        this.$message.warning("请填写奖品名称!");
+      }
     },
     beforeUploadFile(file) {
       const extension = file.name.substring(file.name.lastIndexOf(".") + 1);
-      if (extension !== ".xls") {
-        this.$message.warning("只能上传excel的文件");
-      } else if (extension !== ".xlsx") {
-        this.$message.warning("只能上传excel的文件");
+      if (extension !== "xls" && extension !== "xlsx") {
+        this.$message.warning("只能上传excel文件");
       }
     },
-    handleError(err, file, fileList) {
-      console.log(333, err, file, fileList);
-      this.$message.error('文件上传失败')
+    handleError() {
+      this.$message.error("文件上传失败");
     },
-    //下载cdk模板
-    downloadFile() {},
     //获取角色列表
     getRoleList() {
       this.$api.get(`/user/role/list`).then((res) => {

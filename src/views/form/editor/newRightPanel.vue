@@ -175,16 +175,26 @@
               </div>
               <el-divider />
               <el-form-item label="最少要选">
-                <el-select
-                  v-model="activeData.__config__.selectRandom"
-                  style="width: 130px"
-                />
+                <el-select v-model="activeData.min" style="width: 130px">
+                  <el-option
+                    v-for="item in minOptions"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  >
+                  </el-option>
+                </el-select>
               </el-form-item>
               <el-form-item label="最多可选">
-                <el-select
-                  v-model="activeData.__config__.selectRandom"
-                  style="width: 130px"
-                />
+                <el-select v-model="activeData.max" style="width: 130px">
+                  <el-option
+                    v-for="item in maxOptions"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  >
+                  </el-option>
+                </el-select>
               </el-form-item>
               <el-divider />
               <el-form-item label="选项随机排列">
@@ -268,16 +278,26 @@
                 </div>
               </el-form-item>
               <el-form-item label="最少要选">
-                <el-select
-                  v-model="activeData.__config__.selectRandom"
-                  style="width: 130px"
-                />
+                <el-select v-model="activeData.min" style="width: 130px">
+                  <el-option
+                    v-for="item in minOptions"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  >
+                  </el-option>
+                </el-select>
               </el-form-item>
               <el-form-item label="最多可选">
-                <el-select
-                  v-model="activeData.__config__.selectRandom"
-                  style="width: 130px"
-                />
+                <el-select v-model="activeData.max" style="width: 130px">
+                  <el-option
+                    v-for="item in maxOptions"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  >
+                  </el-option>
+                </el-select>
               </el-form-item>
               <el-divider />
               <el-form-item label="选项随机排列">
@@ -973,10 +993,33 @@ export default {
           value: "el-icon-sunny",
         },
       ],
-      colOrRow: "",
+      colorRow: "",
     };
   },
   computed: {
+    minOptions() {
+      if (this.activeData.__slot__.options.length > 0) {
+        let arr = this.activeData.__slot__.options.map((item, index) => {
+          return {
+            label: index + 1 + "项",
+            value: index + 1,
+          };
+        });
+        arr.unshift({ label: "不限", value: 0 });
+        return arr;
+      }
+    },
+    maxOptions() {
+      if (this.activeData.__slot__.options.length > 0) {
+        let arr = this.activeData.__slot__.options.map((item, index) => {
+          return {
+            label: index + 1 + "项",
+            value: index + 1,
+          };
+        });
+        return arr;
+      }
+    },
     dateOptions() {
       if (
         this.activeData.type !== undefined &&
@@ -1047,7 +1090,7 @@ export default {
         // 切换选中时不触发
         if (newValue.__config__.formId === oldValue.__config__.formId) {
           if (newValue) {
-            console.log(101, newValue,oldValue,this.activeData);
+            console.log(101, newValue, oldValue, this.activeData);
             this.dataChange(newValue);
           }
         }
@@ -1281,9 +1324,11 @@ export default {
     //新增方法
     clickSingle(e) {
       this.selectType = e;
+      this.activeData.multiple = false;
     },
     clickMore(e) {
       this.selectType = e;
+      this.activeData.multiple = true;
     },
     //选项随机排列
     randomSelect(e) {
@@ -1316,7 +1361,7 @@ export default {
     },
     //批量编辑
     addBatchButton(data, position) {
-      this.colOrRow = position;
+      this.colorRow = position;
       this.matrixTextarea = "";
       data.forEach((item) => {
         this.matrixTextarea += item.label + "\n";
@@ -1324,7 +1369,7 @@ export default {
       this.matrixRowDialogVisible = true;
     },
     addBatchData() {
-      let flag = this.colOrRow == "rows" ? "rows" : "columns";
+      let flag = this.colorRow == "rows" ? "rows" : "columns";
       this.matrixRowDialogVisible = false;
       let arr = this.matrixTextarea.split("\n");
       this.activeData.__slot__.table[flag] = arr.map((item, index) => {
