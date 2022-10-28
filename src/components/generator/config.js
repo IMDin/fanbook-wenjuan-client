@@ -91,6 +91,8 @@ export const inputComponents = [
     __config__: {
       label: '请输入题目标题',
       labelDescription: '单行文本',
+      titleTip: false,
+      titleTipText: '请输入题目说明',
       labelWidth: null,
       showLabel: true,
       changeTag: true,
@@ -125,6 +127,8 @@ export const inputComponents = [
     __config__: {
       label: '请输入题目标题',
       labelDescription: '多行文本',
+      titleTip: false,
+      titleTipText: '请输入题目说明',
       labelWidth: null,
       showLabel: true,
       tag: 'el-input',
@@ -220,6 +224,8 @@ export const selectComponents = [
     __config__: {
       label: '请选择以下选项（多选）',
       labelDescription: '多选题',
+      titleTip: false,
+      titleTipText: '请输入题目说明',
       tag: 'el-checkbox-group',
       tagIcon: 'checkbox',
       defaultValue: [],
@@ -255,6 +261,8 @@ export const selectComponents = [
     __config__: {
       label: '请选择一个选项',
       labelDescription: '下拉题',
+      titleTip: false,
+      titleTipText: '请输入题目说明',
       showLabel: true,
       labelWidth: null,
       tag: 'el-select',
@@ -287,6 +295,8 @@ export const selectComponents = [
     __config__: {
       label: '请选择以下图片',
       labelDescription: '图片选择',
+      titleTip: false,
+      titleTipText: '请输入题目说明',
       showLabel: true,
       labelWidth: null,
       defaultValue: null,
@@ -781,6 +791,8 @@ export const personalInfoComponents = [
     __config__: {
       label: '请输入题目标题',
       labelDescription: '日期',
+      titleTip: false,
+      titleTipText: '请输入题目说明',
       tag: 'el-date-picker',
       tagIcon: 'date',
       defaultValue: null,
@@ -807,6 +819,8 @@ export const personalInfoComponents = [
     __config__: {
       label: '请输入题目标题',
       labelDescription: '时间',
+      titleTip: false,
+      titleTipText: '请输入题目说明',
       tag: 'el-time-picker',
       tagIcon: 'time',
       defaultValue: null,
@@ -943,6 +957,8 @@ export const personalInfoComponents = [
     __config__: {
       label: '请输入题目标题',
       labelDescription: '省/市/区',
+      titleTip: false,
+      titleTipText: '请输入题目说明',
       labelWidth: null,
       showLabel: true,
       changeTag: false,
@@ -1105,10 +1121,12 @@ export const matrixComponents = [
 //其他题型
 export const otherComponents = [
   {
-    typeId: 'UPLOAD',
+    typeId: 'IMAGE_UPLOAD',
     __config__: {
       label: '请上传图片',
       labelDescription: '上传图片',
+      titleTip: false,
+      titleTipText: '请输入题目说明',
       tag: 'el-upload',
       tagIcon: 'image-upload',
       layout: 'colFormItem',
@@ -1134,7 +1152,7 @@ export const otherComponents = [
     accept: '',
     name: 'file',
     'auto-upload': true,
-    'list-type': 'text',
+    'list-type': 'picture-card',
     limit: 2,
     multiple: false
   },
@@ -1143,6 +1161,8 @@ export const otherComponents = [
     __config__: {
       label: '请上传文件',
       labelDescription: '上传文件',
+      titleTip: false,
+      titleTipText: '请输入题目说明',
       tag: 'el-upload',
       tagIcon: 'upload',
       layout: 'colFormItem',
@@ -1177,6 +1197,8 @@ export const otherComponents = [
     __config__: {
       label: '请选择评分',
       labelDescription: '评分',
+      titleTip: false,
+      titleTipText: '请输入题目说明',
       tag: 'el-rate',
       tagIcon: 'rate',
       defaultValue: 0,

@@ -783,7 +783,7 @@
       </el-scrollbar>
     </div>
     <el-dialog
-      title="批量编辑"
+      title="批量添加"
       :visible.sync="matrixRowDialogVisible"
       width="30%"
     >

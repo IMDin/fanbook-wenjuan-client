@@ -269,7 +269,9 @@
                               <div>
                                 <el-upload
                                   class="upload-demo"
-                                  action="https://jsonplaceholder.typicode.com/posts/"
+                                  accept=".xls, .xlsx"
+                                  :action="getUploadUrl"
+                                  :before-upload="beforeUploadFile"
                                   :on-success="
                                     (response, file, fileList) => {
                                       return uploadFile(
@@ -540,7 +542,7 @@
                               v-for="questionItem in questionOptions"
                               :key="questionItem.value"
                               :label="questionItem.label"
-                              :value="questionItem.value"
+                              :value="questionItem.formItemId"
                             />
                           </el-select>
                           <el-select
@@ -559,7 +561,9 @@
                             placeholder="请选择选项"
                           >
                             <el-option
-                              v-for="optionValueOptionsItem in optionValueOptions"
+                              v-for="optionValueOptionsItem in getFormItemOptions(
+                                logicItem.formItemId
+                              )"
                               :key="optionValueOptionsItem.value"
                               :label="optionValueOptionsItem.label"
                               :value="optionValueOptionsItem.value"
@@ -710,17 +714,11 @@ export default {
         },
       ],
       distributionRoleOptions: [],
-      questionOptions: [
-        {
-          label: "sss",
-          value: "ggg",
-        },
-      ],
+      questionOptions: [],
       expressionOptions: [
         { label: "选中", value: "eq" },
         { label: "未选中", value: "ne" },
       ],
-      optionValueOptions: [],
       //是否拥有积分商城
       scoreShop: true,
       //奖品查询分页
@@ -736,7 +734,7 @@ export default {
       };
     },
     getUploadUrl() {
-      return `${process.env.VUE_APP_API_ROOT}/user/file/upload`;
+      return `${process.env.VUE_APP_API_ROOT}/project/file/upload/${this.projectKey}`;
     },
     getUserInfo() {
       return JSON.parse(this.$store.getters["user/userInfo"]);
@@ -1004,7 +1002,7 @@ export default {
         //   }
         // )
         .then((res) => {
-          console.log(111,res);
+          console.log(111, res);
           // let blob = new Blob([res.data]);
           // let downloadElement = document.createElement("a");
           // let href = window.URL.createObjectURL(blob); // 创建下载的链接
@@ -1026,8 +1024,17 @@ export default {
       //   `/user/prize/cdk/import?projectKey=${this.projectKey}&desc=${item.desc}`
       // );
     },
+    beforeUploadFile(file) {
+      const extension = file.name.substring(file.name.lastIndexOf(".") + 1);
+      if (extension !== ".xls") {
+        this.$message.warning("只能上传excel的文件");
+      } else if (extension !== ".xlsx") {
+        this.$message.warning("只能上传excel的文件");
+      }
+    },
     handleError(err, file, fileList) {
       console.log(333, err, file, fileList);
+      this.$message.error('文件上传失败')
     },
     //下载cdk模板
     downloadFile() {},
@@ -1072,6 +1079,9 @@ export default {
     changeDistributionType() {
       this.getRoleLogic();
       this.getRoleList();
+      if (this.roleForm.distributionType == "different") {
+        this.queryProjectItems();
+      }
     },
     //获取角色逻辑分配
     getRoleLogic() {
@@ -1121,6 +1131,7 @@ export default {
         params.id = this.roleForm.distributionRule[index].id;
         params.formItemId = this.roleForm.distributionRule[index].role;
         params.conditionList = item;
+        params.expression = 2;
       }
       this.$api.post(`/user/project/logic/save`, params).then((res) => {
         if (this.roleForm.distributionType == "fix") {
@@ -1141,6 +1152,28 @@ export default {
       if (arr.length > 0) {
         this.saveRoleLogic(arr, index);
       }
+    },
+    //获取所有题型
+    queryProjectItems() {
+      this.$api
+        .get("/user/project/item/list", { params: { key: this.projectKey } })
+        .then((res) => {
+          //过滤掉不支持的题目类型
+          let questionArr = res.data.filter((item) => {
+            return ["RADIO", "CHECKBOX", "SELECT"].includes(item.type);
+          });
+          this.questionOptions = questionArr;
+        });
+    },
+    //获取指定题型下选项
+    getFormItemOptions(formItemId) {
+      let formItem = this.questionOptions.find(
+        (item) => item.formItemId == formItemId
+      );
+      if (formItem) {
+        return formItem.expand.options;
+      }
+      return [];
     },
   },
 };
