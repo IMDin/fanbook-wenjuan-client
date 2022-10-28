@@ -990,7 +990,6 @@ export default {
         url: `http://192.168.2.131:8999/mofang-api/user/prize/export?projectKey=${this.projectKey}`,
         method: "post",
         responseType: "blob",
-        headers: { "Content-Type": "application/vnd.ms-excel" },
       })
         // .post(
         //   process.env.VUE_APP_API_ROOT +
