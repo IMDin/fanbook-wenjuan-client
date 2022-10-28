@@ -288,7 +288,9 @@ export const selectComponents = [
     clearable: true,
     disabled: false,
     filterable: false,
-    multiple: false
+    multiple: false,
+    min:null,
+    max: null
   },
   {
     typeId: 'IMAGE_SELECT',
