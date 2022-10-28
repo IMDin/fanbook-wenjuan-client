@@ -271,8 +271,13 @@
                                 <el-upload
                                   class="upload-demo"
                                   accept=".xls, .xlsx"
-                                  :action="getUploadUrl"
-                                  :before-upload="beforeUploadFile"
+                                  :action="`${url}user/prize/cdk/import/?projectKey=${projectKey}&desc=${item.desc}`"
+                                  :before-upload="(file) => {
+                                    return beforeUploadFile(
+                                      file,
+                                      item
+                                    );
+                                  }"
                                   :on-success="
                                     (response, file, fileList) => {
                                       return uploadFile(
@@ -635,6 +640,7 @@ export default {
   name: "ProjectSetting",
   data() {
     return {
+      url: process.env.VUE_APP_API_ROOT,
       activeName: "answer",
       projectKey: null,
       wxWrite: false,
@@ -938,7 +944,7 @@ export default {
               };
             });
           } else {
-            this.giftForm.coreSet = cdkSetArr.map((item) => {
+            this.giftForm.cdkSetArr = cdkSetArr.map((item) => {
               return {
                 desc: item.desc,
                 count: "",
@@ -1037,25 +1043,36 @@ export default {
       }
     },
     //上传文件(同CDK配置项保存)
-    uploadFile(response, file, fileList, item, index) {
-      console.log(response, file, fileList)
-      this.giftForm.cdkSet[index].fileList = fileList;
-      if (item.desc) {
-        this.$api
-          .post(
-            `/user/prize/cdk/import?projectKey=${this.projectKey}&desc=${item.desc}`
-          )
-          .then(() => {
-            this.queryGiftSetting();
-          });
-      } else {
-        this.$message.warning("请填写奖品名称!");
+    uploadFile(response, file, fileList, item) {
+      console.log(222, item, response, file, fileList);
+      if (response.code == 200 && response.data) {
+        this.$message({ type: 'success', message: "上传成功" });
+        this.queryGiftSetting();
+      }else {
+        this.$message({ type: 'error', message: response.msg });
       }
+      // this.$api.post(
+      //   `/user/prize/cdk/import?projectKey=${this.projectKey}&desc=${item.desc}`
+      // );
     },
-    beforeUploadFile(file) {
-      const extension = file.name.substring(file.name.lastIndexOf(".") + 1);
-      if (extension !== "xls" && extension !== "xlsx") {
-        this.$message.warning("只能上传excel文件");
+    beforeUploadFile(file, item) {
+      if(!item.desc) {
+        this.$message({ type: 'error', message: '请填写cdk名称' });
+        return
+      }
+      console.log('🍓 file beforeUpload: ', file);
+      const isLt2M = file.size / 1024 / 1024 < 4;
+      if (!/^.+(\.xls|\.xlsx)$/.test(file.name)) {
+          this.$message({ type: 'error', message: '请使用正确的文件格式进行导入' });
+          return false;
+      }
+      if (!isLt2M) {
+          this.$message({
+              message: '上传文件大小不能超过 4MB!',
+              type: 'error',
+              duration: 6000,
+          });
+          return false;
       }
     },
     handleError() {
