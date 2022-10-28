@@ -20,6 +20,7 @@
         border
         show-summary
         sum-text="本题有效填写人数"
+        v-if="item.options"
         :data="item.options"
         style="width: 100%"
       >
@@ -37,6 +38,18 @@
           label="比例"
         />
       </el-table>
+      <el-row
+        type="flex"
+        class="sum-box"
+        v-else
+      >
+        <el-col :span="12">
+          本题有效填写人数
+        </el-col>
+        <el-col :span="12">
+          {{ item.num }}
+        </el-col>
+      </el-row>
     </el-col>
   </el-row>
 </template>
@@ -74,6 +87,13 @@ export default {
   .main-data-top {
     display: flex;
     justify-content: space-between;
+  }
+  .sum-box {
+    background-color: #F5F7FA;
+    color: #606266;
+    height: 40px;
+    line-height: 40px;
+    padding: 0 15px;
   }
 }
 </style>

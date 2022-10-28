@@ -5,15 +5,15 @@ import {Message, MessageBox} from 'element-ui'
 import router from '@/router/index'
 import store from '@/store/index'
 import signMd5Utils from '@/utils/sign'
-import JSONbig from 'json-bigint'
+// import JSONbig from 'json-bigint'
 axios.defaults.headers['Content-type'] = 'application/json';
-axios.defaults.transformResponse = [
-  (data) => {
-    const newData = JSONbig.parse(data);
-    // console.log(data,newData,'newData');
-    return newData;
-  }
-]
+// axios.defaults.transformResponse = [
+//   (data) => {
+//     const newData = JSONbig.parse(data);
+//     // console.log(data,newData,'newData');
+//     return newData;
+//   }
+// ]
 const api = axios.create({
     baseURL: process.env.VUE_APP_API_ROOT,
     timeout: 30000,
