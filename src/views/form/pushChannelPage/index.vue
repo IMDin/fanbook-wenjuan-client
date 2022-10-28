@@ -67,6 +67,7 @@
           label-width="120px"
         >
           <el-cascader
+            style="width:200px"
             placeholder="试试搜索：服务器频道"
             ref="myCascader"
             v-model="guildsValue"

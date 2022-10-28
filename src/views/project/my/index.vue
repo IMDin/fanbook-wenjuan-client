@@ -112,7 +112,7 @@
           <el-button
             type="text" 
             class="btn-befo"
-            @click="dataCharts(row.id)"
+            @click="dataCharts(row.id, row.key, row.status)"
           >
             数据
           </el-button>
@@ -213,6 +213,9 @@ export default {
           this.total = total
           this.queryParams.size = size
           this.loading = false
+      }).catch(err => {
+        console.log(err );
+        this.loading = false
       })
     },
     toProjectHandle(key, type, status) {// 编辑
@@ -248,8 +251,9 @@ export default {
           });          
         });
     },
-    dataCharts(id) { // 查看数据
+    dataCharts(id, key, status) { // 查看数据
       console.log('查看数据', id)
+      this.$router.push({path: `/project/form/statistics`, query: {key: key, status: status}})
     },
     async handleCommand(e) {
       if (!e) return 
