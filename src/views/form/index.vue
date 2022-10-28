@@ -201,10 +201,16 @@ export default {
         console.log(route.path, 'route.path');
         if (route.path == '/project/form/publish' || route.path ==  '/project/form/pushChannelPage' ) {
           this.menuItemLists = this.publishMenuItemList
+          this.currentTab = 'publish'
+          this.defaultActiveMenu = route.path
         }else if( route.path  == '/project/form/statistics' || route.path == '/project/form/mianStatistics') {
           this.menuItemLists = this.statisticsMenuItemList
+          this.currentTab = 'statistics'
+          this.defaultActiveMenu = route.path
         }else{
           this.menuItemLists = this.menuItemList
+          this.currentTab = 'editor'
+          this.defaultActiveMenu = route.path
         }
       },
       immediate: true

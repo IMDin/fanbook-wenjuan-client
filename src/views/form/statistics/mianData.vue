@@ -25,7 +25,7 @@
       >
         <el-table-column
           prop="key"
-          label="选项1"
+          label="选项"
           width="500px"
         />
         <el-table-column
