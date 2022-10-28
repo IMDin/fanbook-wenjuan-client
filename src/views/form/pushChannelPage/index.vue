@@ -11,9 +11,16 @@
       <p>频道推送</p>
       <div class="post-content">
         <div class="post-content-t">
+          <div class="post-content-t-left">
+            <p>设置频道推送</p>
+            <p>可将问卷推送至服务器内的任意频道</p>
+          </div>
           <el-button 
             type="primary"
+            plain
+            icon="el-icon-plus"
             @click="add"
+            class="post-content-t-butt"
           >
             添加
           </el-button>
@@ -27,12 +34,10 @@
             <el-table-column
               prop="name"
               label="推送频道"
-              width="180"
             />
             <el-table-column
               prop="publishTime"
               label="推送时间"
-              width="180"
             />
             <el-table-column
               prop="status"
@@ -53,6 +58,8 @@
     <el-dialog
       title="发布信息"
       :visible.sync="dialogFormVisible"
+      width="40%"
+      :close-on-click-modal="false"
     >
       <el-form :model="form">
         <el-form-item
@@ -259,7 +266,24 @@ export default {
       }
       .post-content-t {
         display: flex;
-        justify-content: flex-end;
+        justify-content: space-between;
+        .post-content-t-left {
+          p {
+            line-height: 40px;
+            margin: 0;
+            padding: 0;
+            height: 20px;
+            border: 0;
+            &:nth-of-type(2) {
+              color: #CCC;
+              font-size: 14px;
+              margin-top: 5px;
+            }
+          }
+        }
+        .post-content-t-butt {
+          height: 35px;
+        }
       }
     }
   }

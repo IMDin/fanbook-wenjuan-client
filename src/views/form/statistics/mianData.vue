@@ -3,26 +3,34 @@
     <el-col class="main-data-top">
       <div>答题情况</div>
       <div>
-        <el-button>
+        <el-button @click="projectExport">
           下载答题数据
         </el-button>
       </div>
     </el-col>
-    <el-col>
-      <p>01. 这是第一题题目名称【单选题】</p>
+    <el-col 
+      v-for="(item, index) in tableData" 
+      :key="index"
+    >
+      <p>
+        {{ index }}. {{ item.titleName }}【{{ item.type }}】
+      </p>
+      <!-- :summary-method="getSummaries"  -->
       <el-table
-        :data="tableData"
+        border
+        show-summary
+        sum-text="本题有效填写人数"
+        :data="item.options"
         style="width: 100%"
       >
         <el-table-column
-          prop="date"
+          prop="key"
           label="选项1"
-          width="180"
+          width="500px"
         />
         <el-table-column
-          prop="name"
+          prop="value"
           label="小记"
-          width="180"
         />
         <el-table-column
           prop="address"
@@ -36,29 +44,24 @@
 <script>
 export default {
   name: "MainData",
-  data(){
-    return {
-      tableData:[
-        {
-          date:'选项1',
-          name: 1,
-          address: '100%'
-        },
-        {
-          date:'选项2',
-          name: 1,
-          address: '100%'
-        },
-        {
-          date:'选项3',
-          name: 1,
-          address: '100%'
-        }
-      ]
+  props:{
+    tableData:{
+      type: Array,
+      default: () => []
     }
   },
+  data(){
+    return {
+
+    }
+  },
+  mounted() {
+    console.log(this.tableData, 'tableData');
+  },
   methods:{
-    
+    projectExport() {
+      this.$emit('projectExport')
+    }
   }
 }
 </script>

@@ -176,6 +176,18 @@ export default {
           route: "/project/form/pushChannelPage",
         },
       ],
+      statisticsMenuItemList: [
+        {
+          title: "数据",
+          icon: "el-icon-edit",
+          route: "/project/form/statistics",
+        },
+        {
+          title: "统计",
+          icon: "el-icon-edit",
+          route: "/project/form/mianStatistics",
+        },
+      ],
       //新增问卷名称字段
       projectTitle: "问卷名称",
       //当前页面
@@ -190,6 +202,8 @@ export default {
         console.log(route.path, 'route.path');
         if (route.path == '/project/form/publish' || route.path ==  '/project/form/pushChannelPage' ) {
           this.menuItemLists = this.publishMenuItemList
+        }else if( route.path  == '/project/form/statistics' || route.path == '/project/form/mianStatistics') {
+          this.menuItemLists = this.statisticsMenuItemList
         }else{
           this.menuItemLists = this.menuItemList
         }
@@ -232,7 +246,7 @@ export default {
     publishProject() {
       if( this.isPublish == 2 ) {
         this.msgInfo('该问卷已发布')
-        this.$router.push({ path: "/project/form/publish", query: { key: this.projectKey } });
+        // this.$router.push({ path: "/project/form/publish", query: { key: this.projectKey } });
         return;
       }
       console.log("点击发布按钮");

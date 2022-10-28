@@ -38,15 +38,67 @@
       </div>
     </div>
     <div class="line-chat">
+      <div class="project-index-view-top">
+        日常收集
+      </div>
       <line-chart
-        :width="'95vw'"
+        :width="'1100px'"
         :chart-option="lineChartOptionData"
       />
     </div>
-    <p class="tag-title">
-      表单提交地域分布图
-    </p>
-    <div style="width: 90%">
+    <el-row 
+      :gutter="20"
+      type="flex"
+      justify="space-between"
+    >
+      <el-col 
+        :span="8" 
+        class="tag-box"
+      >
+        <p class="tag-title">
+          地域位置
+        </p>
+        <map-chart
+          :width="'375px'"
+          :chart-option="mapChartOptionData"
+          :height="'450px'"
+          style="border: 1px solid #efefef;"
+        />
+      </el-col>
+      <el-col 
+        :span="8" 
+        class="tag-box"
+      >
+        <p class="tag-title">
+          常用设备
+        </p>
+        <pie-chart
+          :width="'375px'"
+          :chart-option="pieChartOptionData"
+          :height="'450px'"
+          style="border: 1px solid #efefef;"
+        />
+      </el-col>
+      <el-col
+        :span="8" 
+        class="tag-box"
+      >
+        <p class="tag-title">
+          来源渠道
+        </p>
+        <bar-chart
+          :width="'375px'"
+          :chart-option="barChartOptionData"
+          :height="'450px'"
+          style="border: 1px solid #efefef;"
+        />
+      </el-col>
+    </el-row>
+
+
+
+   
+    <!-- <div style="width: 90%">
       <map-chart
         :width="'100vw'"
         :chart-option="mapChartOptionData"
@@ -80,8 +132,8 @@
             :height="'250px'"
           />
         </div>
-      </div>
-    </div>
+      </div> -->
+    <!-- </div> -->
   </div>
 </template>
 <script>
@@ -406,12 +458,16 @@ export default {
   overflow-x: hidden !important;
 }
 .tag-title {
-  font-size: 16px;
-  line-height: 25px;
-  margin-left: 20px;
+  border: 1px solid #efefef;
+  height: 50px;
+  line-height: 50px;
+  padding: 0 15px;
+  margin: 0;
+  background-color: #FAFAFA;
 }
 .project-index-view {
   border: 1px solid #efefef;
+  padding-bottom: 15px;
   .project-index-view-top{
     height: 50px;
     line-height: 50px;
@@ -424,6 +480,21 @@ export default {
     text-align: center;
     margin: 0 auto;
     justify-content: space-between;
+  }
+}
+.tag-box {
+  margin-top: 15px;
+  // border: 1px solid #efefef;
+}
+.line-chat {
+  width: 100%;
+  border: 1px solid #efefef;
+  margin-top: 15px;
+  .project-index-view-top{
+    height: 50px;
+    line-height: 50px;
+    padding: 0 15px;
+    background-color: #FAFAFA;
   }
 }
 </style>

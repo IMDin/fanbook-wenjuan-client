@@ -52,6 +52,12 @@ export default [
                 component: () => import(/* webpackChunkName: 'root' */ '@/views/form/statistics')
             },
             {
+              path: 'mianStatistics',
+              name: 'mianStatistics',
+              meta: {requireLogin: true},
+              component: () => import(/* webpackChunkName: 'root' */ '@/views/form/statistics/mianStatistics')
+          },
+            {
               path: 'postQuestionnaire',
               meta: {requireLogin: true},
               component: () => import(/* webpackChunkName: 'root' */ '@/views/form/postQuestionnaire')

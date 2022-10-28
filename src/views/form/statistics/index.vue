@@ -9,14 +9,17 @@
           label="列表视图" 
           name="list"
         >
-          <mianData />
+          <mianData 
+            :table-data="tableData" 
+            @projectExport="projectExport"  
+          />
         </el-tab-pane>
-        <el-tab-pane 
+        <!-- <el-tab-pane 
           label="统计视图" 
           name="chart"
         >
           <chart />
-        </el-tab-pane>
+        </el-tab-pane> -->
         <!-- <el-tab-pane label="数据分析" name="analysis">
           <analysis />
         </el-tab-pane> -->
@@ -27,21 +30,54 @@
 
 <script>
 import mianData from './mianData'
-import chart from './chart'
+// import chart from './chart'
+import { reqProjectData, reqProjectExport } from '@/api/myProject'
 export default {
     name: 'ProjectStatistics',
     components: {
         mianData,
-        chart,
     },
     data() {
         return {
-            activeName: 'list'
+            activeName: 'list',
+            projectKey: '',
+            tableData:[]
         }
     },
     mounted() {
-
-    }, methods: {}
+      this.projectKey = this.$route.query?.key
+      this.getData()
+    }, 
+    methods: {
+      getData () {
+        reqProjectData({key: this.projectKey}).then(res => {
+          if(res.code === 200) {
+            const  obj = res.data
+            obj?.length && obj.forEach(ele => {
+              let arr = ele.titie?.split("/")
+              ele['titleName'] = arr[0]
+              ele['type'] = arr[1]
+              ele['id'] = arr[2]
+            });
+            this.tableData = obj
+            console.log(this.tableData, 'this.tableData');
+          }
+        })
+      },
+      projectExport() {
+        reqProjectExport({key: this.projectKey}).then(res => {
+          let blob = res
+          let downloadElement = document.createElement('a')
+          let href = window.URL.createObjectURL(blob) // 创建下载的链接
+          downloadElement.href = href
+          downloadElement.download = this.projectData.name + this.$dayjs().format('YYYYMMDDHHMM') + '.xls' // 下载后文件名
+          document.body.appendChild(downloadElement)
+          downloadElement.click() // 点击下载
+          document.body.removeChild(downloadElement) // 下载完成移除元素
+          window.URL.revokeObjectURL(href) // 释放掉blob对象
+        })
+      }
+    }
 
 }
 </script>
