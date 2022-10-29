@@ -242,8 +242,9 @@ const dataParams = {
     'table': '__slot__.table'
   },
   //省市区
-  'PROVINCE_CITY':{
-    'provinceRadio': 'provinceRadio'
+  'PROVINCE_CITY': {
+    'provinceRadio': 'provinceRadio',
+    'address': 'address'
   }
 }
 

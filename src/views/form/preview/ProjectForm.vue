@@ -161,7 +161,6 @@ export default {
         })
         this.$api.get(url).then(res => {
             if (res.data) {
-              console.log(res.data, '1234');
                 let serialNumber = 1
                 let fields = res.data.projectItems.map(item => {
                     let projectItem = dbDataConvertForItemJson(item)

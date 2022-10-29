@@ -8,9 +8,9 @@
       <el-scrollbar class="right-scrollbar">
         <!-- 组件区 -->
         <el-form label-width="125px" label-position="left" size="small">
-          <p>整题设置</p>
           <!-- 公共选项 -->
-          <div>
+          <div v-if="activeData.__config__.tag !== 'pagination'">
+            <p>整题设置</p>
             <el-form-item label="标题">
               <el-input
                 v-model="activeData.__config__.label"
@@ -423,10 +423,7 @@
                   activeData.__config__.tag !== 'province-city'
                 "
               >
-                <el-select
-                  v-model="activeData.type"
-                  style="width: 130px"
-                >
+                <el-select v-model="activeData.type" style="width: 130px">
                   <el-option
                     v-for="item in typeRestrictOptions"
                     :key="item.value"
@@ -437,7 +434,12 @@
                 </el-select>
               </el-form-item>
               <el-form-item
-                v-if="activeData.maxlength !== undefined"
+                v-if="
+                  activeData.maxlength !== undefined ||
+                  (activeData.__config__.tag !== 'province-city' &&
+                    activeData.type !==
+                      ('phone' || 'email' || 'url' || 'idCard'))
+                "
                 label="最少要填字数"
               >
                 <el-input
@@ -449,7 +451,12 @@
                 </el-input>
               </el-form-item>
               <el-form-item
-                v-if="activeData.maxlength !== undefined"
+                v-if="
+                  activeData.maxlength !== undefined ||
+                  (activeData.__config__.tag !== 'province-city' &&
+                    activeData.type !==
+                      ('phone' || 'email' || 'url' || 'idCard'))
+                "
                 label="最多可填字数"
               >
                 <el-input
@@ -785,6 +792,7 @@
             <div v-if="activeData.__config__.tagIcon == 'rate'">
               <el-form-item v-if="isShowMax" label="最大值">
                 <el-input-number
+                  :min="1"
                   v-model="activeData.max"
                   placeholder="最大值"
                 />
@@ -810,10 +818,10 @@
             <div v-if="activeData.__config__.tagIcon == 'page'">
               <p>分页设置</p>
               <el-form-item label="显示「上一页」按钮" label-width="140px">
-                <el-switch v-model="activeData['pageButton']" />
+                <el-switch v-model="activeData.prev" />
               </el-form-item>
               <el-form-item label="显示页码进度">
-                <el-switch v-model="activeData['pageNumber']" />
+                <el-switch v-model="activeData.currPage" />
               </el-form-item>
             </div>
           </div>
@@ -982,7 +990,6 @@ export default {
           return data.componentName || `${config.label}: ${data.__vModel__}`;
         },
       },
-      provinceRadio: "1",
       matrixRowDialogVisible: false,
       matrixTextarea: "",
       maxTipOptions: [
@@ -1014,15 +1021,38 @@ export default {
       //类型选项
       typeRestrictOptions: [
         {
-          label: "文本",
+          label: "不限",
           value: "text",
         },
         {
-          label: "密码",
-          value: "password",
+          label: "数字",
+          value: "number",
         },
-      ]
-
+        {
+          label: "字母",
+          value: "letter",
+        },
+        {
+          label: "中文",
+          value: "chinese",
+        },
+        {
+          label: "手机号",
+          value: "number",
+        },
+        {
+          label: "电子邮件",
+          value: "email",
+        },
+        {
+          label: "网址",
+          value: "url",
+        },
+        {
+          label: "身份证",
+          value: "idCard",
+        },
+      ],
     };
   },
   computed: {
