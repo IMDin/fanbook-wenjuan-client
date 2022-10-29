@@ -32,7 +32,6 @@
                 v-if="
                   scope.column.label && scope.row.colName == tableItem.colName
                 "
-                @change="dd(1)"
               >
                 {{ "" }}
               </el-checkbox>
@@ -60,7 +59,6 @@ export default {
   watch: {
     data: {
       handler(newV) {
-        console.log("newV", newV);
         //行处理
         this.trData = [
           {
@@ -90,6 +88,7 @@ export default {
     cellClick(row, column) {
       if (this.data.multiple) {
         console.log('dddd',this.data.multiple);
+
       } else {
         if (Object.keys(this.selectedData).length !== this.tableData.length) {
           this.tableData.forEach((item) => {
@@ -98,12 +97,9 @@ export default {
         }
         this.selectedData[row.colName] = column.label;
         let value = JSON.stringify(this.selectedData);
-        console.log(1111, value, this.selectedData);
-        // this.update(value);
+        console.log(2222, value, this.selectedData);
+        this.update(value);
       }
-    },
-    dd(e) {
-      console.log(111, e);
     },
   },
 };

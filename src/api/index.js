@@ -5,7 +5,7 @@ import { Message, MessageBox } from 'element-ui'
 import router from '@/router/index'
 import store from '@/store/index'
 import signMd5Utils from '@/utils/sign'
-import JSONbig from 'json-bigint'
+// import JSONbig from 'json-bigint'
 axios.defaults.headers['Content-type'] = 'application/json';
 // axios.defaults.transformResponse = [
 //   (data) => {
@@ -23,12 +23,6 @@ const api = axios.create({
     'Content-Type': 'application/json'
   }
 })
-api.defaults.transformResponse = [
-  (data) => {
-    const newData = JSONbig.parse(data);
-    return newData;
-  }
-]
 
 api.interceptors.request.use(
   request => {

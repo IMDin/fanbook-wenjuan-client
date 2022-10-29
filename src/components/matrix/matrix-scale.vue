@@ -64,7 +64,6 @@ export default {
   watch: {
     data: {
       handler(newV) {
-        console.log("newV", newV);
         //行处理
         this.trData = [
           {

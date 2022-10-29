@@ -36,6 +36,7 @@ export function formItemConvertData(item, projectKey) {
     'titleTip': item.__config__.titleTip,
     'titleTipText': item.__config__.titleTipText,
     'showTip': item.__config__.showTip,
+    'textType':item.__config__.textType
   }
   let expand = {}
   let param = dataParams[item.typeId]
@@ -117,8 +118,9 @@ const dataParams = {
     'prepend': '__slot__.prepend',
     'prefixIcon': 'prefix-icon',
     'maxlength': 'maxlength',
+    'minlength': 'minlength',
     'showWordLimit': 'show-word-limit',
-    'append': '__slot__.append'
+    'append': '__slot__.append',
   },
   // 多行文本
   'TEXTAREA': {

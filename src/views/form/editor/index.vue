@@ -280,8 +280,8 @@ import draggable from "vuedraggable";
 import { debounce } from "throttle-debounce";
 // import RightPanel from "./RightPanel";
 import RightPanel from "./newRightPanel.vue";
-import submitResultsPage from "./submitResultsPage.vue"
-import images from "../../../assets/images/blue.png"
+import submitResultsPage from "./submitResultsPage.vue";
+import images from "../../../assets/images/blue.png";
 import {
   // imageComponents,
   // assistComponents,
@@ -307,7 +307,7 @@ export default {
     draggable,
     RightPanel,
     DraggableItem,
-    submitResultsPage
+    submitResultsPage,
   },
   data() {
     return {
@@ -387,7 +387,7 @@ export default {
         projectShareImg: images,
         mainText: "太棒了！终于填完了",
         description: "感谢你的支持",
-        links: ''
+        links: "",
       },
     };
   },
@@ -436,11 +436,13 @@ export default {
     this.queryProjectItems();
     // 获取表单配置
     this.$api.get(`/user/project/${this.projectKey}`).then((res) => {
-      this.formConf.title = res.data.name;
-      this.dialogForm.projectShareImg = res.data.projectShareImg || images 
-      this.dialogForm.mainText = res.data.mainText || "太棒了！终于填完了"
-      this.dialogForm.description = res.data.description || "感谢你的支持"
-      this.dialogForm.links = res.data.links || ""
+      if (res.data) {
+        this.formConf.title = res.data.name;
+        this.dialogForm.projectShareImg = res.data.projectShareImg || images;
+        this.dialogForm.mainText = res.data.mainText || "太棒了！终于填完了";
+        this.dialogForm.description = res.data.description || "感谢你的支持";
+        this.dialogForm.links = res.data.links || "";
+      }
     });
     // 全局组件Id
     this.$api
@@ -453,8 +455,8 @@ export default {
   },
   methods: {
     getHeaders() {
-      let fbtoken = localStorage.getItem("fbtoken")
-      let token = localStorage.getItem("token")
+      let fbtoken = localStorage.getItem("fbtoken");
+      let token = localStorage.getItem("token");
       return {
         fbtoken,
         token,
@@ -472,12 +474,11 @@ export default {
           key: this.projectKey,
           name: this.formConf.title,
           describe: this.formConf.description,
-          fbUser: localStorage.getItem("user_id")
+          fbUser: localStorage.getItem("user_id"),
         })
         .then(() => {});
     }),
     updateProjectItemInfo(val) {
-      console.log('dd',val)
       let data = formItemConvertData(val, this.projectKey);
       this.$api.post("/user/project/item/update", data).then(() => {});
     },
@@ -525,6 +526,7 @@ export default {
         });
     },
     activeFormItem(currentItem) {
+      currentItem.action += this.projectKey
       this.activeData = currentItem;
       this.activeId = currentItem.__config__.formId;
     },
@@ -664,33 +666,33 @@ export default {
     commitSave() {
       this.dialogVisible = false;
       // 保存
-      this.$api.post("/user/project/update", {
-            key: this.projectKey,
-            name: this.formConf.title,
-            describe: this.formConf.description,
-            fbUser: localStorage.getItem("user_id"),
-            projectShareImg: this.dialogForm.projectShareImg,
-            mainText: this.dialogForm.mainText,
-            description: this.dialogForm.description,
-            links: this.dialogForm.links,
-          })
-          .then(() => {});
-
+      this.$api
+        .post("/user/project/update", {
+          key: this.projectKey,
+          name: this.formConf.title,
+          describe: this.formConf.description,
+          fbUser: localStorage.getItem("user_id"),
+          projectShareImg: this.dialogForm.projectShareImg,
+          mainText: this.dialogForm.mainText,
+          description: this.dialogForm.description,
+          links: this.dialogForm.links,
+        })
+        .then(() => {});
     },
     clickUploadPhoto() {
       // this.uploadPhoto = false;
     },
     //上传组件方法
-    handleAvatarSuccess(res,) {
+    handleAvatarSuccess(res) {
       if (res.code === 200) {
         this.imageUrl = res.data;
-        this.dialogForm.projectShareImg = res.data
-      }else {
+        this.dialogForm.projectShareImg = res.data;
+      } else {
         this.$message.error("上传图片错误");
       }
     },
     beforeAvatarUpload(file) {
-      console.log(file, 'sssss');
+      console.log(file, "sssss");
       const isJPG = file.type.includes("image");
       const isLt2M = file.size / 1024 / 1024 < 2;
 

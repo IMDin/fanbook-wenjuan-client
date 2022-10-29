@@ -582,9 +582,39 @@ export default {
           }
           // 显示时使用表单校验
           if (!flag) {
+            if (config.tagIcon == "input") {
+              switch (config.textType) {
+                case "text":
+                  config.regList = config.regList.splice(7, 1);
+                  break;
+                case "number":
+                  config.regList = config.regList.splice(0, 1);
+                  break;
+                case "letter":
+                  config.regList = config.regList.splice(1, 1);
+                  break;
+                case "chinese":
+                  config.regList = config.regList.splice(2, 1);
+                  break;
+                case "phone":
+                  config.regList = config.regList.splice(3, 1);
+                  break;
+                case "email":
+                  config.regList = config.regList.splice(4, 1);
+                  break;
+                case "url":
+                  config.regList = config.regList.splice(5, 1);
+                  break;
+                case "idCard":
+                  config.regList = config.regList.splice(6, 1);
+                  break;
+              }
+            }
+            console.log(888, config.regList);
             rules[cur.__vModel__] = config.regList.map((item) => {
               item.pattern && (item.pattern = eval(item.pattern));
               item.trigger = ruleTrigger && ruleTrigger[config.tag];
+              console.log(999, item);
               return item;
             });
           }
@@ -594,6 +624,7 @@ export default {
     },
     // 重建逻辑规则的表单校验
     logicRules(componentList, rules, arr = [], isShow) {
+      console.log(111);
       componentList.forEach((cur) => {
         let triggerShow =
           _.indexOf(this.logicTriggerItemList, cur.formItemId) > -1;

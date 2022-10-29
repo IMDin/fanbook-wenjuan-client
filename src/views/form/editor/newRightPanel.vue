@@ -415,7 +415,12 @@
             </div>
 
             <!-- 单行文本 -->
-            <div v-if="activeData.__config__.tagIcon == 'input'">
+            <div
+              v-if="
+                activeData.__config__.tagIcon == 'input' &&
+                activeData.__config__.tag !== 'province-city'
+              "
+            >
               <el-form-item
                 label="格式限制"
                 v-if="
@@ -423,7 +428,7 @@
                   activeData.__config__.tag !== 'province-city'
                 "
               >
-                <el-select v-model="activeData.type" style="width: 130px">
+                <el-select v-model="activeData.__config__.textType" style="width: 130px">
                   <el-option
                     v-for="item in typeRestrictOptions"
                     :key="item.value"
@@ -435,14 +440,12 @@
               </el-form-item>
               <el-form-item
                 v-if="
-                  activeData.maxlength !== undefined ||
-                  (activeData.__config__.tag !== 'province-city' &&
-                    activeData.type !==
-                      ('phone' || 'email' || 'url' || 'idCard'))
+                  activeData.type !== ('phone' || 'email' || 'url' || 'idCard')
                 "
                 label="最少要填字数"
               >
                 <el-input
+                  :min="activeData.__config__.required ? 1 : 0"
                   v-model="activeData.minlength"
                   placeholder="请输入"
                   style="width: 130px"
@@ -452,14 +455,12 @@
               </el-form-item>
               <el-form-item
                 v-if="
-                  activeData.maxlength !== undefined ||
-                  (activeData.__config__.tag !== 'province-city' &&
-                    activeData.type !==
-                      ('phone' || 'email' || 'url' || 'idCard'))
+                  activeData.type !== ('phone' || 'email' || 'url' || 'idCard')
                 "
                 label="最多可填字数"
               >
                 <el-input
+                  :min="activeData.minlength"
                   v-model="activeData.maxlength"
                   placeholder="请输入"
                   style="width: 130px"
@@ -1040,7 +1041,7 @@ export default {
         },
         {
           label: "手机号",
-          value: "number",
+          value: "phone",
         },
         {
           label: "电子邮件",
@@ -1124,8 +1125,8 @@ export default {
       return ["el-input-number", "el-slider"].indexOf(this.activeTag) > -1;
     },
     getUploadHeader() {
-      let fbtoken = localStorage.getItem("fbtoken")
-      let token = localStorage.getItem("token")
+      let fbtoken = localStorage.getItem("fbtoken");
+      let token = localStorage.getItem("token");
       return {
         fbtoken,
         token,
@@ -1153,7 +1154,6 @@ export default {
         // 切换选中时不触发
         if (newValue.__config__.formId === oldValue.__config__.formId) {
           if (newValue) {
-            console.log(101, newValue, oldValue, this.activeData);
             this.dataChange(newValue);
           }
         }
@@ -1162,12 +1162,6 @@ export default {
     },
   },
   methods: {
-    addReg() {
-      this.activeData.__config__.regList.push({
-        pattern: "",
-        message: "",
-      });
-    },
     addSelectItem(tagIcon, position) {
       let arr = [];
       if (tagIcon == "matrix-scale" || tagIcon == "matrix-select") {

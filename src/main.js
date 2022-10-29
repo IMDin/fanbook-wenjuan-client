@@ -8,6 +8,7 @@ import dayjs from 'dayjs'
 import Cookies from 'js-cookie'
 import router from './router/index'
 
+import JSONbig from 'json-bigint'
 import axios from 'axios'
 import api from './api'
 import store from './store/index'
@@ -25,6 +26,7 @@ import VConsole from 'vconsole'
 
 import  "@/utils/time.js"
 
+Vue.prototype.$JSONbig = JSONbig
 Vue.prototype.$axios = axios
 Vue.prototype.$api = api
 Vue.prototype.$dayjs = dayjs

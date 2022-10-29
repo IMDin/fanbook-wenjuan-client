@@ -34,10 +34,13 @@ const components = {
 const layouts = {
   // eslint-disable-next-line no-unused-vars
   colFormItem(h, currentItem, index, list) {
+    // const projectKey = this.$route.query.key;
     // eslint-disable-next-line no-unused-vars
-    const { activeItem, changeLabel } = this.$listeners;
+    console.log(555, currentItem);
+    const { activeItem } = this.$listeners;
     const config = currentItem.__config__;
     const child = renderChildren.apply(this, arguments);
+    // this.$set(currentItem, "action", currentItem.action + projectKey);
     let className =
       this.activeId === config.formId
         ? "drawing-item active-from-item"
@@ -51,8 +54,9 @@ const layouts = {
         span={config.span}
         class={className}
         nativeOnClick={(event) => {
-          activeItem(currentItem);
-          event.stopPropagation();
+          config.tag !== ("matrix-select" || "matrix-scale")
+            ? (activeItem(currentItem), event.stopPropagation())
+            : "";
         }}
       >
         <el-form-item
@@ -74,7 +78,9 @@ const layouts = {
             key={config.renderKey}
             conf={currentItem}
             onInput={(event) => {
-              this.$set(config, "defaultValue", event);
+              config.tag !== "matrix-select"
+                ? this.$set(config, "defaultValue", event)
+                : "";
             }}
           >
             {child}
@@ -83,18 +89,15 @@ const layouts = {
                 data={currentItem}
                 update={(e) => {
                   this.$set(config, "defaultValue", e);
-                  activeItem(currentItem);
-                  e.stopPropagation();
+                  // activeItem(currentItem);
                 }}
               />
             ) : config.tag == "matrix-select" ? (
               <MatrixSelect
                 data={currentItem}
                 update={(e) => {
-                  console.log(777, e, config.defaultValue);
                   this.$set(config, "defaultValue", e);
-                  activeItem(currentItem);
-                  e.stopPropagation();
+                  // activeItem(currentItem);
                 }}
               />
             ) : (

@@ -95,6 +95,7 @@ export const inputComponents = [
       titleTipText: '请输入题目说明',
       labelWidth: null,
       showLabel: true,
+      showRegList: true,
       changeTag: true,
       tag: 'el-input',
       tagIcon: 'input',
@@ -103,8 +104,38 @@ export const inputComponents = [
       layout: 'colFormItem',
       span: 24,
       document: 'https://element.eleme.cn/#/zh-CN/component/input',
+      textType: 'text',
       // 正则校验规则
-      regList: []
+      regList: [
+        {
+          pattern: '/^1(3|4|5|7|8|9)\\d{9}$/',
+          message: '数字格式错误'
+        },
+        {
+          pattern: '/^1(3|4|5|7|8|9)\\d{9}$/',
+          message: '字母格式错误'
+        },
+        {
+          pattern: '/^1(3|4|5|7|8|9)\\d{9}$/',
+          message: '中文格式错误'
+        },
+        {
+          pattern: '/^1(3|4|5|7|8|9)\\d{9}$/',
+          message: '手机号格式错误'
+        },
+        {
+          pattern: '/^1(3|4|5|7|8|9)\\d{9}$/',
+          message: '电子邮件格式错误'
+        },
+        {
+          pattern: '/^1(3|4|5|7|8|9)\\d{9}$/',
+          message: '网址格式错误'
+        },
+        {
+          pattern: '/^1(3|4|5|7|8|9)\\d{9}$/',
+          message: '身份证格式错误'
+        },
+      ]
     },
     // 组件的插槽属性
     __slot__: {
@@ -118,10 +149,10 @@ export const inputComponents = [
     'prefix-icon': '',
     'suffix-icon': '',
     maxlength: null,
+    minlength: null,
     'show-word-limit': false,
     readonly: false,
     disabled: false,
-    type: 'text'
   },
   {
     typeId: 'TEXTAREA',

@@ -1,6 +1,5 @@
 export default {
   'list-type': (h, conf, key) => {
-    console.log(555, conf)
     const list = []
     const config = conf.__config__
     if (config.tagIcon == 'image' && conf['list-type'] === 'picture-card') {
