@@ -67,9 +67,8 @@ export default {
       projectExport() {
         this.$api.get('user/project/result/export', {
             params: {projectKey: this.projectKey},
-            responseType: 'blob'
+            responseType: 'blob'   
         }).then(res => {
-          console.log(res, '1234');
             let blob = res
             let downloadElement = document.createElement('a')
             let href = window.URL.createObjectURL(blob) // 创建下载的链接

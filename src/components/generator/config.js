@@ -738,7 +738,7 @@ export const assistComponents = [
     },
     color: '#000000',
     style: { width: '100%' },
-    action: '/project/file/upload/'
+    action: 'project/file/upload/'
   },
   {
     typeId: 'SIGN_PAD',
@@ -760,7 +760,7 @@ export const assistComponents = [
     },
     color: '#000000',
     style: { width: '100%' },
-    action: '/project/file/upload/'
+    action: 'project/file/upload/'
   },
   {
     typeId: 'PAGINATION',
@@ -1157,7 +1157,7 @@ export const otherComponents = [
     __slot__: {
       'list-type': true
     },
-    action: process.env.VUE_APP_API_ROOT + '/project/file/upload/',
+    action: process.env.VUE_APP_API_ROOT + 'project/file/upload/',
     disabled: false,
     accept: '',
     name: 'file',
@@ -1194,7 +1194,7 @@ export const otherComponents = [
     __slot__: {
       'list-type': true
     },
-    action: process.env.VUE_APP_API_ROOT + '/project/file/upload/',
+    action: process.env.VUE_APP_API_ROOT + 'project/file/upload/',
     disabled: false,
     accept: '',
     name: 'file',

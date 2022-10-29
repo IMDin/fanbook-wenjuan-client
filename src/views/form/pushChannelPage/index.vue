@@ -44,13 +44,29 @@
               label="状态"
             >
               <template slot-scope="{row}">
-                {{ row.status == 1 ? '推送成功' : row.status == 2 ? '推送失败' : '推送中' }}
+                {{ row.status == 1 ? '推送成功' : row.status == 2 ? '推送失败' : row.status == 3 ? '推送中' : '取消推送' }}
               </template>
             </el-table-column>
             <el-table-column
               prop="answerNum"
               label="答卷数量"
             />
+            <el-table-column
+              label="操作"
+            >
+              <template slot-scope="{row}">
+                <el-button
+                  type="text"
+                  @click="cancelDialogForm(row.id)"
+                  v-if="row.status == 3"
+                >
+                  取消推送
+                </el-button>
+                <div v-else>
+                  -
+                </div>
+              </template>
+            </el-table-column>
           </el-table>
         </div>
       </div>
@@ -164,6 +180,14 @@ export default {
       this.sendResult2()
     },
     methods: {
+      cancelDialogForm(id) {
+        this.$api.get(`/user/project/cancelTimingPublish?id=${id}`).then(res => {
+          if (res.code == 200) {
+            this.msgSuccess('取消成功')
+            this.sendResult2()
+          }
+        })
+      },
       sendResult2(){
         //停止发布则回显 上次保存的数据
         const key = this.projectKey;
