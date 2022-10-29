@@ -361,12 +361,10 @@ export default {
          this.$api
         .get(`/user/project/details/${this.projectConfig.projectKey}`)
         .then((res) => {
-            console.log(res.data, 'res.data ');
-            this.dialogForm.projectShareImg = res.data.project.projectShareImg
-            this.dialogForm.mainText = res.data.project.mainText
-            this.dialogForm.description = res.data.project.description
-            this.dialogForm.links = res.data.project.links
-            console.log(this.dialogForm, 'this.dialogForm');
+            this.dialogForm.projectShareImg = res.data.project.projectShareImg || defaultValue.projectShareImg
+            this.dialogForm.mainText = res.data.project.mainText || defaultValue.mainText
+            this.dialogForm.description = res.data.project.description || defaultValue.description
+            this.dialogForm.links = res.data.project.links || defaultValue.links
         })
         
     },
