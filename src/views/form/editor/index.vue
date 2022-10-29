@@ -74,20 +74,18 @@
             >
               <el-col class="form-head-desc">
                 <Tinymce
+                  v-if="editDescription"
+                  @blur="editDescription = false"
                   v-model="formConf.description"
                   placeholder="请输入问卷描述"
                   @input="saveProjectInfo"
                 />
-                <!-- <div
+                <div
                   v-else
-                  
-                  v-if="editDescription"
-                  @blur="editDescription = false"
-
                   class="projectNameText"
                   @click="editDescription = true"
                   v-html="formConf.description"
-                /> -->
+                />
                 <!--                            <p class="form-name-text" contenteditable="true"-->
                 <!--                               @blur="(event)=>{-->
                 <!--                                   formConf.description=event.target.innerText;-->
