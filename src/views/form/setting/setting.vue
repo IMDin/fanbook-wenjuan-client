@@ -700,9 +700,8 @@ export default {
       giftPercentage: "",
       getGiftData: [],
       roleForm: {
-        roleId: "",
         distributionType: "fix",
-        distributionRole: "",
+        distributionRole: "", //被分配的角色
         distributionRule: [
           {
             logic: [{ formItemId: "", expression: "", optionValue: "" }],
@@ -1184,7 +1183,7 @@ export default {
           });
           if (this.roleForm.distributionType == "fix") {
             this.roleForm.distributionRole =
-              fixRole.length > 0 ? fixRole.formItemId : "";
+              fixRole.length > 0 ? fixRole[0].formItemId : "";
           }
           if (
             this.roleForm.distributionType == "different" &&
@@ -1204,7 +1203,6 @@ export default {
     saveRoleLogic(item, index) {
       let params = {};
       if (this.roleForm.distributionType == "fix") {
-        params.id = this.roleForm.roleId;
         params.formItemId = this.roleForm.distributionRole;
         params.roleType = false;
         params.projectKey = this.projectKey;
@@ -1215,7 +1213,6 @@ export default {
       if (this.roleForm.distributionType == "different") {
         params.projectKey = this.projectKey;
         params.roleType = true;
-        params.id = this.roleForm.distributionRule[index].id;
         params.formItemId = this.roleForm.distributionRule[index].role;
         params.conditionList = item;
         params.expression = 2;
@@ -1225,7 +1222,7 @@ export default {
         if (res.data && res.code == 200) {
           this.$message.success("分配角色成功");
           if (this.roleForm.distributionType == "fix") {
-            this.roleForm.roleId = res.data.formItemId;
+            this.roleForm.distributionRole = res.data.formItemId;
           }
           if (this.roleForm.distributionType == "different") {
             this.roleForm.distributionRule[index].id = res.data.formItemId;
