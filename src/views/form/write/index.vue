@@ -138,6 +138,7 @@ export default {
       await this.getWxAuthorizationUserInfo();
     }
 
+    this.queryProjectSetting(); // 获取表单配置
     const platform = window.fb.getPlatform();
     if (platform !== 1) {
       this.$message({
@@ -150,7 +151,6 @@ export default {
     // 如果是在fanbook里面打开的 不使用微信验证
     // this.getWxAuthorizationUrl();
     // this.queryProjectSettingStatus();
-    this.queryProjectSetting(); // 获取表单配置
     // if (constants.enableWx) {
     //   // 加载微信相关 获取签名
     //   this.$api
@@ -353,6 +353,8 @@ export default {
               // } else {
               //   this.onlyWxOpenHandle();
               // }
+                 document.body.innerHTML =
+              '<div class="weui_msg"><div class="weui_icon_area"><i class="weui_icon_info weui_icon_msg"></i></div><div class="weui_text_area"><h4 class="weui_msg_title">请在fanbook客户端打开链接</h4></div></div>';
             }
           }
         });
