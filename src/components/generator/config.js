@@ -980,7 +980,8 @@ export const personalInfoComponents = [
     },
     placeholder: '请选择省市县',
     style: { width: '100%' },
-    provinceRadio: 3
+    provinceRadio: 2,
+    address: ''
   },
   // {
   //   typeId: 'INPUT_MAP',
@@ -1248,8 +1249,8 @@ export const otherComponents = [
       regList: [],
       changeTag: false
     },
-    prev: true,
-    currPage: true,
+    prev: false,
+    currPage: false,
     totalPage: true,
     currPageNum: 1,
     totalPageNum: 1,
