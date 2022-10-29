@@ -117,7 +117,8 @@ export default {
             })
         },
         getUserToken() {
-            return this.$store.getters['user/isLogin']
+            // return this.$store.getters['user/isLogin']
+            return localStorage.getItem("token")
         },
         destroyTinymce() {
             if (!window.tinymce) return
