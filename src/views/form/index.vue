@@ -297,8 +297,8 @@ export default {
       if (this.$route.name == "publish") {
         this.currentTab = "publish";
       }
+      this.$router.push({ path: '/project/form/publish', query: { key: this.projectKey } })
       this.publishProject()
-      // this.$router.push({ path: '/project/form/publish', query: { key: this.projectKey } })
     },
     statisticsBreadClick() {
       if (this.$route.name == "statistics") {
