@@ -272,6 +272,7 @@
                                   class="upload-demo"
                                   accept=".xls, .xlsx"
                                   :action="`${url}user/prize/cdk/import/?projectKey=${projectKey}&desc=${item.desc}`"
+                                  :headers="getUploadHeader"
                                   :before-upload="(file) => {
                                     return beforeUploadFile(
                                       file,
@@ -739,8 +740,11 @@ export default {
   },
   computed: {
     getUploadHeader() {
+      let fbtoken = localStorage.getItem("fbtoken")
+      let token = localStorage.getItem("token")
       return {
-        token: this.$store.getters["user/isLogin"],
+        fbtoken,
+        token,
       };
     },
     getUploadUrl() {

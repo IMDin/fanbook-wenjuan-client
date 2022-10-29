@@ -220,6 +220,7 @@
                 class="avatar-uploader"
                 :action="`${url}user/file/upload`"
                 :data="uploadData()"
+                :headers="getHeaders()"
                 :show-file-list="false"
                 :on-success="handleAvatarSuccess"
                 :before-upload="beforeAvatarUpload"
@@ -451,6 +452,14 @@ export default {
       });
   },
   methods: {
+    getHeaders() {
+      let fbtoken = localStorage.getItem("fbtoken")
+      let token = localStorage.getItem("token")
+      return {
+        fbtoken,
+        token,
+      };
+    },
     uploadData() {
       let fbuser = localStorage.getItem("user_id");
       return {

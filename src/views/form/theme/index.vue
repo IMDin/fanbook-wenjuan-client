@@ -559,8 +559,11 @@ export default {
   },
   computed: {
     getUploadHeader() {
+      let fbtoken = localStorage.getItem("fbtoken")
+      let token = localStorage.getItem("token")
       return {
-        token: this.$store.getters["user/isLogin"],
+        fbtoken,
+        token,
       };
     },
     getUploadUrl() {
