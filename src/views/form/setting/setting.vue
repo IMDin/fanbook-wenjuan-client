@@ -1146,7 +1146,7 @@ export default {
     //获取角色逻辑分配
     getRoleLogic() {
       this.$api
-        .post(`/user/role/view`, { projectKey: this.projectKey })
+        .post(`/user/role/view?projectKey=${this.projectKey}`)
         .then((res) => {
           console.log(res);
           let fixRole = res.data.filter((item) => {
