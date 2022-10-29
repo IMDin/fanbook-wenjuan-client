@@ -139,7 +139,9 @@ const dataParams = {
   'SELECT': {
     'options': '__slot__.options',
     'filterable': 'filterable',
-    'multiple': 'multiple'
+    'multiple': 'multiple',
+    'min': 'min',
+    'max': 'max',
   },
   // 级联选择
   'CASCADER': {
@@ -238,6 +240,10 @@ const dataParams = {
   // 矩阵选择
   'MATRIX_SELECT': {
     'table': '__slot__.table'
+  },
+  //省市区
+  'PROVINCE_CITY':{
+    'provinceRadio': 'provinceRadio'
   }
 }
 

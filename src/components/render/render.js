@@ -62,7 +62,6 @@ function vModel(dataObject, defaultValue) {
     }
   } else {
     dataObject.props.value = defaultValue
-
     dataObject.on.input = val => {
       this.$emit('input', val)
     }
