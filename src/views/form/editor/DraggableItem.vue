@@ -101,16 +101,33 @@ const layouts = {
               ""
             )}
           </render>
+          {config.tag == "province-city" ? (
+            <input type={"textarea"}>123</input>
+          ) : (
+            ""
+          )}
+          {config.tagIcon == "image-upload" ? (
+            <div style="margin-top:5px">
+              <i class="el-icon-warning-outline" style="font-size: 14px" />
+              <span style="margin-left: 10px; color: #7b7b7b; font-size: 14px">
+                单张图片大小不超过30M
+              </span>
+            </div>
+          ) : (
+            ""
+          )}
           {config.titleTip ? (
             // <div>
             //   <input placeholder="请输入" value=""></input>
             // </div>
-            <Tinymce
-              placeholder="请输入题目说明"
-              onInput={(event) => {
-                this.$set(config, "titleTipText", event);
-              }}
-            />
+            <div style="margin-top:15px">
+              <Tinymce
+                placeholder="请输入题目说明"
+                onInput={(event) => {
+                  this.$set(config, "titleTipText", event);
+                }}
+              />
+            </div>
           ) : (
             ""
           )}

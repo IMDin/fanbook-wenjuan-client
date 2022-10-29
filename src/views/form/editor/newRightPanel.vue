@@ -198,13 +198,19 @@
               </el-form-item>
               <el-divider />
               <el-form-item label="选项随机排列">
-                <el-switch v-model="activeData.__config__.selectRandom" />
+                <el-switch
+                  v-model="activeData.__config__.selectRandom"
+                  @change="randomSelect"
+                />
               </el-form-item>
               <el-form-item
                 v-if="activeData.__config__.selectRandom === true"
                 label="固定最后一个选项"
               >
-                <el-switch v-model="activeData.__config__.fixLastSelect" />
+                <el-switch
+                  v-model="activeData.__config__.fixLastSelect"
+                  @change="selectFix"
+                />
               </el-form-item>
             </div>
 
@@ -262,20 +268,13 @@
               </div>
               <el-divider />
               <el-form-item label="选择类型">
-                <div class="selectType">
-                  <div
-                    @click="clickSingle('单选')"
-                    :class="selectType == '单选' ? 'activeType' : 'normalType'"
-                  >
-                    单选
-                  </div>
-                  <div
-                    @click="clickMore('多选')"
-                    :class="selectType == '多选' ? 'activeType' : 'normalType'"
-                  >
-                    多选
-                  </div>
-                </div>
+                <el-radio-group
+                  v-model="activeData.multiple"
+                  @change="multipleChange"
+                >
+                  <el-radio-button :label="false">单选</el-radio-button>
+                  <el-radio-button :label="true">多选</el-radio-button>
+                </el-radio-group>
               </el-form-item>
               <el-form-item label="最少要选">
                 <el-select v-model="activeData.min" style="width: 130px">
@@ -301,13 +300,19 @@
               </el-form-item>
               <el-divider />
               <el-form-item label="选项随机排列">
-                <el-switch v-model="activeData.__config__.selectRandom" />
+                <el-switch
+                  v-model="activeData.__config__.selectRandom"
+                  @change="randomSelect"
+                />
               </el-form-item>
               <el-form-item
                 v-if="activeData.__config__.selectRandom === true"
                 label="固定最后一个选项"
               >
-                <el-switch v-model="activeData.__config__.fixLastSelect" />
+                <el-switch
+                  v-model="activeData.__config__.fixLastSelect"
+                  @change="selectFix"
+                />
               </el-form-item>
             </div>
 
@@ -384,29 +389,28 @@
               </div>
               <el-divider />
               <el-form-item label="选择类型">
-                <div class="selectType">
-                  <div
-                    @click="clickSingle('单选')"
-                    :class="selectType == '单选' ? 'activeType' : 'normalType'"
-                  >
-                    单选
-                  </div>
-                  <div
-                    @click="clickMore('多选')"
-                    :class="selectType == '多选' ? 'activeType' : 'normalType'"
-                  >
-                    多选
-                  </div>
-                </div>
+                <el-radio-group
+                  v-model="activeData.multiple"
+                  @change="multipleChange"
+                >
+                  <el-radio-button :label="false">单选</el-radio-button>
+                  <el-radio-button :label="true">多选</el-radio-button>
+                </el-radio-group>
               </el-form-item>
               <el-form-item label="选项随机排列">
-                <el-switch v-model="activeData.__config__.selectRandom" />
+                <el-switch
+                  v-model="activeData.__config__.selectRandom"
+                  @change="randomSelect"
+                />
               </el-form-item>
               <el-form-item
                 v-if="activeData.__config__.selectRandom === true"
                 label="固定最后一个选项"
               >
-                <el-switch v-model="activeData.__config__.fixLastSelect" />
+                <el-switch
+                  v-model="activeData.__config__.fixLastSelect"
+                  @change="selectFix"
+                />
               </el-form-item>
             </div>
 
@@ -420,9 +424,17 @@
                 "
               >
                 <el-select
-                  v-model="activeData.__config__.selectRandom"
+                  v-model="activeData.type"
                   style="width: 130px"
-                />
+                >
+                  <el-option
+                    v-for="item in typeRestrictOptions"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  >
+                  </el-option>
+                </el-select>
               </el-form-item>
               <el-form-item
                 v-if="activeData.maxlength !== undefined"
@@ -669,9 +681,12 @@
               </div>
               <el-divider />
               <el-form-item label="选择类型">
-                <el-radio-group v-model="activeData.multiple">
-                  <el-radio-button label="false">单选</el-radio-button>
-                  <el-radio-button label="true">多选</el-radio-button>
+                <el-radio-group
+                  v-model="activeData.multiple"
+                  @change="multipleChange"
+                >
+                  <el-radio-button :label="false">单选</el-radio-button>
+                  <el-radio-button :label="true">多选</el-radio-button>
                 </el-radio-group>
               </el-form-item>
             </div>
@@ -684,7 +699,10 @@
 
             <!-- 省市区 -->
             <div v-if="activeData.__config__.tag == 'province-city'">
-              <el-radio-group v-model="provinceRadio" class="provinceStyle">
+              <el-radio-group
+                v-model="activeData.provinceRadio"
+                class="provinceStyle"
+              >
                 <el-radio :label="1">具体到“详细地址”</el-radio>
                 <el-radio :label="2">具体到“区县”</el-radio>
                 <el-radio :label="3">具体到“城市”</el-radio>
@@ -695,7 +713,7 @@
             <!-- 上传图片 -->
             <div v-if="activeData.__config__.tagIcon == 'image-upload'">
               <el-form-item label="最多上传图片数量">
-                <el-input-number v-model="activeData.limit" />
+                <el-input-number v-model="activeData.__config__.limit" />
               </el-form-item>
               <el-form-item
                 v-if="activeData.__config__.fileSize !== undefined"
@@ -721,7 +739,7 @@
             <!-- 上传文件 -->
             <div v-if="activeData.__config__.tagIcon == 'file-upload'">
               <el-form-item label="最多上传文件数量">
-                <el-input-number v-model="activeData.limit" />
+                <el-input-number v-model="activeData.__config__.limit" />
               </el-form-item>
               <el-form-item
                 v-if="activeData.__config__.fileSize !== undefined"
@@ -964,8 +982,6 @@ export default {
           return data.componentName || `${config.label}: ${data.__vModel__}`;
         },
       },
-
-      selectType: "单选",
       provinceRadio: "1",
       matrixRowDialogVisible: false,
       matrixTextarea: "",
@@ -993,7 +1009,20 @@ export default {
           value: "el-icon-sunny",
         },
       ],
-      colorRow: "",
+      //判断行还是列进行批量编辑
+      colOrRow: "",
+      //类型选项
+      typeRestrictOptions: [
+        {
+          label: "文本",
+          value: "text",
+        },
+        {
+          label: "密码",
+          value: "password",
+        },
+      ]
+
     };
   },
   computed: {
@@ -1072,7 +1101,6 @@ export default {
     },
     uploadData() {
       let fbuser = localStorage.getItem("user_id");
-      console.log(999, fbuser);
       return {
         fbuser: fbuser,
       };
@@ -1321,15 +1349,6 @@ export default {
         this.activeData.__config__.renderKey = +new Date();
       }
     },
-    //新增方法
-    clickSingle(e) {
-      this.selectType = e;
-      this.activeData.multiple = false;
-    },
-    clickMore(e) {
-      this.selectType = e;
-      this.activeData.multiple = true;
-    },
     //选项随机排列
     randomSelect(e) {
       if (this.activeData.__config__.selectRandom) {
@@ -1361,7 +1380,7 @@ export default {
     },
     //批量编辑
     addBatchButton(data, position) {
-      this.colorRow = position;
+      this.colOrRow = position;
       this.matrixTextarea = "";
       data.forEach((item) => {
         this.matrixTextarea += item.label + "\n";
@@ -1369,7 +1388,7 @@ export default {
       this.matrixRowDialogVisible = true;
     },
     addBatchData() {
-      let flag = this.colorRow == "rows" ? "rows" : "columns";
+      let flag = this.colOrRow == "rows" ? "rows" : "columns";
       this.matrixRowDialogVisible = false;
       let arr = this.matrixTextarea.split("\n");
       this.activeData.__slot__.table[flag] = arr.map((item, index) => {
@@ -1464,9 +1483,6 @@ export default {
   border: 1px solid #bebfc3;
   text-align: center;
   width: 65px;
-}
-.selectType {
-  display: inline-flex;
 }
 .panelTitle {
   margin: 10px 0 0 15px;

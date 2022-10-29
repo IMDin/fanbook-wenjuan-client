@@ -120,7 +120,8 @@ export const inputComponents = [
     maxlength: null,
     'show-word-limit': false,
     readonly: false,
-    disabled: false
+    disabled: false,
+    type: 'text'
   },
   {
     typeId: 'TEXTAREA',
@@ -226,6 +227,8 @@ export const selectComponents = [
       labelDescription: '多选题',
       titleTip: false,
       titleTipText: '请输入题目说明',
+      selectRandom: false,
+      fixLastSelect: false,
       tag: 'el-checkbox-group',
       tagIcon: 'checkbox',
       defaultValue: [],
@@ -267,6 +270,7 @@ export const selectComponents = [
       labelWidth: null,
       tag: 'el-select',
       tagIcon: 'select',
+      defaultValue: undefined,
       layout: 'colFormItem',
       span: 24,
       required: true,
@@ -289,8 +293,8 @@ export const selectComponents = [
     disabled: false,
     filterable: false,
     multiple: false,
-    min:null,
-    max: null
+    min: null,
+    max: null,
   },
   {
     typeId: 'IMAGE_SELECT',
@@ -975,7 +979,8 @@ export const personalInfoComponents = [
       document: 'https://element.eleme.cn/#/zh-CN/component/input'
     },
     placeholder: '请选择省市县',
-    style: { width: '100%' }
+    style: { width: '100%' },
+    provinceRadio: 3
   },
   // {
   //   typeId: 'INPUT_MAP',
@@ -1029,7 +1034,7 @@ export const matrixComponents = [
       titleTip: false,
       titleTipText: '请输入题目说明',
       maxTip: 'satisfaction',
-      maxTipData:{min: '非常不满意',max: '非常满意'},
+      maxTipData: { min: '非常不满意', max: '非常满意' },
       showIcon: 'el-icon-star-off',
       labelWidth: null,
       showLabel: true,
@@ -1130,7 +1135,7 @@ export const otherComponents = [
       titleTip: false,
       titleTipText: '请输入题目说明',
       tag: 'el-upload',
-      tagIcon: 'image-upload',
+      tagIcon: 'image',
       layout: 'colFormItem',
       defaultValue: null,
       showLabel: true,
@@ -1144,7 +1149,9 @@ export const otherComponents = [
       changeTag: true,
       fileSize: 10,
       sizeUnit: 'MB',
-      document: 'https://element.eleme.cn/#/zh-CN/component/upload'
+      document: 'https://element.eleme.cn/#/zh-CN/component/upload',
+      limit: 1,
+      multiple: false
     },
     __slot__: {
       'list-type': true
@@ -1155,8 +1162,7 @@ export const otherComponents = [
     name: 'file',
     'auto-upload': true,
     'list-type': 'picture-card',
-    limit: 2,
-    multiple: false
+
   },
   {
     typeId: 'UPLOAD',
@@ -1180,7 +1186,9 @@ export const otherComponents = [
       changeTag: true,
       fileSize: 10,
       sizeUnit: 'MB',
-      document: 'https://element.eleme.cn/#/zh-CN/component/upload'
+      document: 'https://element.eleme.cn/#/zh-CN/component/upload',
+      limit: 1,
+      multiple: false
     },
     __slot__: {
       'list-type': true
@@ -1191,8 +1199,7 @@ export const otherComponents = [
     name: 'file',
     'auto-upload': true,
     'list-type': 'text',
-    limit: 2,
-    multiple: false
+
   },
   {
     typeId: 'RATE',

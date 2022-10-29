@@ -727,6 +727,8 @@ export default {
       total: 0,
       currentPage: 1,
       pageSize: 10,
+      //id信息
+      guildId: ''
     };
   },
   computed: {
@@ -937,8 +939,11 @@ export default {
                 disabled: true,
               };
             });
+            if (this.giftForm.coreSet.length < 1) {
+              this.addPercentage();
+            }
           } else {
-            this.giftForm.coreSet = cdkSetArr.map((item) => {
+            this.giftForm.cdkSet = cdkSetArr.map((item) => {
               return {
                 desc: item.desc,
                 count: "",
@@ -946,6 +951,9 @@ export default {
                 disabled: true,
               };
             });
+            if (this.giftForm.cdkSet.length < 1) {
+              this.addPercentage();
+            }
           }
         }
       });
@@ -1038,7 +1046,7 @@ export default {
     },
     //上传文件(同CDK配置项保存)
     uploadFile(response, file, fileList, item, index) {
-      console.log(response, file, fileList)
+      console.log(response, file, fileList);
       this.giftForm.cdkSet[index].fileList = fileList;
       if (item.desc) {
         this.$api
@@ -1063,7 +1071,12 @@ export default {
     },
     //获取角色列表
     getRoleList() {
-      this.$api.get(`/user/role/list`).then((res) => {
+      let params = {
+        token: process.env.VUE_APP_API_ROOT_TOKEN,
+        guildId: "420861300550139904",
+        roleId: "",
+      };
+      this.$api.post(`admin/fanbook/pullroles`, params).then((res) => {
         this.distributionRoleOptions = res.data.map((item) => {
           return {
             label: item.name,
