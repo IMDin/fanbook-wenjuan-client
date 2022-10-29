@@ -1125,8 +1125,14 @@ export default {
           desc: item.desc,
           count: item.flag ? 0 : Number(item.count),
         };
-        this.$api.post(`/user/prize/score/save`, params);
-        this.queryGiftSetting(true);
+        this.$api.post(`/user/prize/score/save`, params).then((res) => {
+          if (res.data && res.code) {
+            this.$message.success("添加积分成功");
+            this.queryGiftSetting(true);
+          } else {
+            this.$message.error("添加积分失败");
+          }
+        });
       }
     },
     //删除积分奖励
@@ -1140,7 +1146,14 @@ export default {
           count: this.giftForm.giftType ? item.count : "",
           desc: item.desc,
         };
-        this.$api.post(`/user/prize/delete`, params);
+        this.$api.post(`/user/prize/delete`, params).then((res) => {
+          if (res.data && res.code) {
+            this.$message.success("删除积分成功");
+            this.queryGiftSetting(true);
+          } else {
+            this.$message.error("添加积分失败");
+          }
+        });
       }
     },
     //切换角色选项
@@ -1153,35 +1166,37 @@ export default {
     },
     //获取角色逻辑分配
     getRoleLogic() {
-      this.$api.post(`/user/role/view`).then((res) => {
-        console.log(res);
-        let fixRole = res.data.filter((item) => {
-          if (!item.roleType) {
-            return item;
-          }
-        });
-        let differentRole = res.data.filter((item) => {
-          if (item.roleType) {
-            return item;
-          }
-        });
-        if (this.roleForm.distributionType == "fix") {
-          this.roleForm.distributionRole =
-            fixRole.length > 0 ? fixRole.formItemId : "";
-        }
-        if (
-          this.roleForm.distributionType == "different" &&
-          differentRole.length > 0
-        ) {
-          this.roleForm.distributionRule = differentRole.map((item) => {
-            return {
-              logic: item.conditionList,
-              role: item.formItemId,
-              id: item.id,
-            };
+      this.$api
+        .post(`/user/role/view`, { projectKey: this.projectKey })
+        .then((res) => {
+          console.log(res);
+          let fixRole = res.data.filter((item) => {
+            if (!item.roleType) {
+              return item;
+            }
           });
-        }
-      });
+          let differentRole = res.data.filter((item) => {
+            if (item.roleType) {
+              return item;
+            }
+          });
+          if (this.roleForm.distributionType == "fix") {
+            this.roleForm.distributionRole =
+              fixRole.length > 0 ? fixRole.formItemId : "";
+          }
+          if (
+            this.roleForm.distributionType == "different" &&
+            differentRole.length > 0
+          ) {
+            this.roleForm.distributionRule = differentRole.map((item) => {
+              return {
+                logic: item.conditionList,
+                role: item.formItemId,
+                id: item.id,
+              };
+            });
+          }
+        });
     },
     //保存角色逻辑
     saveRoleLogic(item, index) {
@@ -1203,11 +1218,16 @@ export default {
         params.expression = 2;
       }
       this.$api.post(`/user/project/logic/save`, params).then((res) => {
-        if (this.roleForm.distributionType == "fix") {
-          this.roleForm.roleId = res.data.id;
-        }
-        if (this.roleForm.distributionType == "different") {
-          this.roleForm.distributionRule[index].id = res.data.id;
+        if (res.data && res.code == 200) {
+          this.$message.success("分配角色成功");
+          if (this.roleForm.distributionType == "fix") {
+            this.roleForm.roleId = res.data.id;
+          }
+          if (this.roleForm.distributionType == "different") {
+            this.roleForm.distributionRule[index].id = res.data.id;
+          }
+        } else {
+          this.$message.error("分配角色失败");
         }
       });
     },

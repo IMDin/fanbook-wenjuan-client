@@ -1163,7 +1163,6 @@ export const otherComponents = [
     name: 'file',
     'auto-upload': true,
     'list-type': 'picture-card',
-
   },
   {
     typeId: 'UPLOAD',
@@ -1181,7 +1180,7 @@ export const otherComponents = [
       labelWidth: null,
       required: true,
       span: 24,
-      showTip: false,
+      showTip: true,
       buttonText: '点击上传',
       regList: [],
       changeTag: true,
@@ -1189,10 +1188,10 @@ export const otherComponents = [
       sizeUnit: 'MB',
       document: 'https://element.eleme.cn/#/zh-CN/component/upload',
       limit: 1,
-      multiple: false
+      multiple: false,
     },
     __slot__: {
-      'list-type': true
+      'list-type': true,
     },
     action: process.env.VUE_APP_API_ROOT + 'project/file/upload/',
     disabled: false,
@@ -1200,7 +1199,7 @@ export const otherComponents = [
     name: 'file',
     'auto-upload': true,
     'list-type': 'text',
-
+    drag: true
   },
   {
     typeId: 'RATE',

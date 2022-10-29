@@ -718,7 +718,7 @@
             </div>
 
             <!-- 上传图片 -->
-            <div v-if="activeData.__config__.tagIcon == 'image-upload'">
+            <div v-if="activeData.__config__.tagIcon == 'image'">
               <el-form-item label="最多上传图片数量">
                 <el-input-number v-model="activeData.__config__.limit" />
               </el-form-item>
@@ -744,7 +744,7 @@
             </div>
 
             <!-- 上传文件 -->
-            <div v-if="activeData.__config__.tagIcon == 'file-upload'">
+            <div v-if="activeData.__config__.tagIcon == 'upload'">
               <el-form-item label="最多上传文件数量">
                 <el-input-number v-model="activeData.__config__.limit" />
               </el-form-item>
@@ -753,6 +753,7 @@
                 label="单个文件限制"
               >
                 <el-input
+                  :min="1"
                   v-model.number="activeData.__config__.fileSize"
                   placeholder="请输入文件大小"
                 >
@@ -777,6 +778,7 @@
                   clearable
                   placeholder="请选择文件类型"
                 >
+                  <el-option label="不限" value="" />
                   <el-option label="图片" value="image/*" />
                   <el-option label="视频" value="video/*" />
                   <el-option label="音频" value="audio/*" />

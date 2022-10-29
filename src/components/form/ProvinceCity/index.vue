@@ -36,6 +36,7 @@ export default {
     provinceRadio: {
       handler(val) {
         console.log(256, val,this.props);
+        this.value = []
         if (val == 3) {
           this.props.children = "d.n";
         } else if (val == 4) {
@@ -47,6 +48,16 @@ export default {
       },
     },
     deep: true,
+  },
+  mounted() {
+    this.$nextTick(
+    // this.$set(this.props,'children','d.n')
+    this.props = {
+        label: "n",
+        value: "n",
+        children: "d.n",
+      },
+    )
   },
   methods: {
     changeHandle(val) {
