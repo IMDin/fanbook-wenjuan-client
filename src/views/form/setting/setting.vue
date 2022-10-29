@@ -1208,6 +1208,7 @@ export default {
         params.projectKey = this.projectKey;
         params.expression = 2;
         params.conditionList = [];
+        params.type = 3;
       }
       if (this.roleForm.distributionType == "different") {
         params.projectKey = this.projectKey;
@@ -1216,6 +1217,7 @@ export default {
         params.formItemId = this.roleForm.distributionRule[index].role;
         params.conditionList = item;
         params.expression = 2;
+        params.type = 3;
       }
       this.$api.post(`/user/project/logic/save`, params).then((res) => {
         if (res.data && res.code == 200) {

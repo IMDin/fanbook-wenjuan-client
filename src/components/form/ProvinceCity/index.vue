@@ -45,6 +45,7 @@ export default {
             value: "n",
           };
         }
+        this.$forceUpdate()
       },
     },
     deep: true,
