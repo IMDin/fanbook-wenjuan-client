@@ -436,11 +436,10 @@ export default {
     // 获取表单配置
     this.$api.get(`/user/project/${this.projectKey}`).then((res) => {
       this.formConf.title = res.data.name;
-      this.formConf.description = res.data.describe;
-      this.dialogForm.projectShareImg = res.data.projectShareImg
-      this.dialogForm.mainText = res.data.mainText
-      this.dialogForm.description = res.data.description
-      this.dialogForm.links = res.data.links
+      this.dialogForm.projectShareImg = res.data.projectShareImg || images 
+      this.dialogForm.mainText = res.data.mainText || "太棒了！终于填完了"
+      this.dialogForm.description = res.data.description || "感谢你的支持"
+      this.dialogForm.links = res.data.links || ""
     });
     // 全局组件Id
     this.$api
