@@ -176,7 +176,7 @@
       right
     >
       <div class="dialogContent">
-        <div class="leftPart">
+        <!-- <div class="leftPart">
           <p>效果预览</p>
           <img
             src="../../../assets/images/blue.png"
@@ -186,7 +186,8 @@
             <p>{{ dialogForm.mainText }}</p>
             <p>{{ dialogForm.description }}</p>
           </div>
-        </div>
+        </div> -->
+        <submitResultsPage :dialog-form="dialogForm" />
         <div class="commitOption">
           <el-form
             ref="dialogForm"
@@ -217,7 +218,8 @@
             >
               <el-upload
                 class="avatar-uploader"
-                action="https://jsonplaceholder.typicode.com/posts/"
+                :action="`${url}user/file/upload`"
+                :data="uploadData()"
                 :show-file-list="false"
                 :on-success="handleAvatarSuccess"
                 :before-upload="beforeAvatarUpload"
@@ -235,7 +237,7 @@
               <i class="el-icon-warning-outline" />
               <span
                 style="margin-left: 10px; color: #7b7b7b; font-size: 14px"
-              >单张图片大小不超过30M</span>
+              >单张图片大小不超过2M</span>
             </div>
           </div>
           <div class="dialogShowTip">
@@ -249,7 +251,7 @@
           <el-input
             v-show="showTipUrl"
             placeholder="请输入跳转网址"
-            v-model="inputTipUrl"
+            v-model="dialogForm.links"
             clearable
           />
         </div>
@@ -277,7 +279,8 @@ import draggable from "vuedraggable";
 import { debounce } from "throttle-debounce";
 // import RightPanel from "./RightPanel";
 import RightPanel from "./newRightPanel.vue";
-
+import submitResultsPage from "./submitResultsPage.vue"
+import images from "../../../assets/images/blue.png"
 import {
   // imageComponents,
   // assistComponents,
@@ -303,9 +306,11 @@ export default {
     draggable,
     RightPanel,
     DraggableItem,
+    submitResultsPage
   },
   data() {
     return {
+      url: process.env.VUE_APP_API_ROOT,
       idGlobal,
       formConf: null,
       editDescription: false, //控制问卷描述
@@ -378,8 +383,10 @@ export default {
       uploadPhoto: true,
       imageUrl: "",
       dialogForm: {
+        projectShareImg: images,
         mainText: "太棒了！终于填完了",
         description: "感谢你的支持",
+        links: ''
       },
     };
   },
@@ -430,6 +437,10 @@ export default {
     this.$api.get(`/user/project/${this.projectKey}`).then((res) => {
       this.formConf.title = res.data.name;
       this.formConf.description = res.data.describe;
+      this.dialogForm.projectShareImg = res.data.projectShareImg
+      this.dialogForm.mainText = res.data.mainText
+      this.dialogForm.description = res.data.description
+      this.dialogForm.links = res.data.links
     });
     // 全局组件Id
     this.$api
@@ -441,6 +452,12 @@ export default {
       });
   },
   methods: {
+    uploadData() {
+      let fbuser = localStorage.getItem("user_id");
+      return {
+        fbuser: fbuser,
+      };
+    },
     saveProjectInfo: debounce(430, true, function () {
       this.$api
         .post("/user/project/update", {
@@ -638,20 +655,39 @@ export default {
     },
     commitSave() {
       this.dialogVisible = false;
+      // 保存
+      this.$api.post("/user/project/update", {
+            key: this.projectKey,
+            name: this.formConf.title,
+            describe: this.formConf.description,
+            fbUser: localStorage.getItem("user_id"),
+            projectShareImg: this.dialogForm.projectShareImg,
+            mainText: this.dialogForm.mainText,
+            description: this.dialogForm.description,
+            links: this.dialogForm.links,
+          })
+          .then(() => {});
+
     },
     clickUploadPhoto() {
       // this.uploadPhoto = false;
     },
     //上传组件方法
-    handleAvatarSuccess(res, file) {
-      this.imageUrl = URL.createObjectURL(file.raw);
+    handleAvatarSuccess(res,) {
+      if (res.code === 200) {
+        this.imageUrl = res.data;
+        this.dialogForm.projectShareImg = res.data
+      }else {
+        this.$message.error("上传图片错误");
+      }
     },
     beforeAvatarUpload(file) {
-      const isJPG = file.type === "image/jpeg";
+      console.log(file, 'sssss');
+      const isJPG = file.type.includes("image");
       const isLt2M = file.size / 1024 / 1024 < 2;
 
       if (!isJPG) {
-        this.$message.error("上传头像图片只能是 JPG 格式!");
+        this.$message.error("请上传图片");
       }
       if (!isLt2M) {
         this.$message.error("上传头像图片大小不能超过 2MB!");

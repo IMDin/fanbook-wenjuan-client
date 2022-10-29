@@ -29,7 +29,12 @@
       v-if="writeStatus == 2"
       class="title-icon-view"
     >
-      <div class="icon-view">
+      <submitResultsPage
+        :dialog-form="dialogForm"
+        :write-status="writeStatus"
+      />
+      <!-- 提交完成之后的页面 -->
+      <!-- <div class="icon-view">
         <i class="el-icon-check success-icon" />
       </div>
       <p style="text-align: center">
@@ -51,7 +56,7 @@
         @click="openPublicResultHandle"
       >
         查看数据
-      </el-button>
+      </el-button> -->
     </div>
   </div>
 </template>
@@ -61,8 +66,8 @@ import ProjectForm from "../preview/ProjectForm";
 import loadWXJs from "@/utils/loadWxSdk";
 import defaultValue from "@/utils/defaultValue";
 import { getQueryString } from "@/utils";
-import constants from "@/utils/constants";
-
+// import constants from "@/utils/constants";
+import submitResultsPage from "@/views/form/editor/submitResultsPage"
 const uaParser = require("ua-parser-js");
 const ua = uaParser(navigator.userAgent);
 
@@ -71,10 +76,12 @@ export default {
   name: "WriteView",
   components: {
     ProjectForm,
+    submitResultsPage
   },
   props: {},
   data() {
     return {
+      dialogForm: defaultValue,
       inActiveTime: 0,
       projectConfig: {
         projectKey: "",
@@ -140,19 +147,20 @@ export default {
       });
       return;
     }
-
-    this.getWxAuthorizationUrl();
-    this.queryProjectSettingStatus();
-    this.queryProjectSetting();
-    if (constants.enableWx) {
-      // 加载微信相关 获取签名
-      this.$api
-        .get("/wx/jsapi/signature", { params: { url: window.location.href } })
-        .then((res) => {
-          this.wxSignature = res.data;
-          this.setWxConfig();
-        });
-    }
+    // 如果是在fanbook里面打开的 不使用微信验证
+    // this.getWxAuthorizationUrl();
+    // this.queryProjectSettingStatus();
+    this.queryProjectSetting(); // 获取表单配置
+    // if (constants.enableWx) {
+    //   // 加载微信相关 获取签名
+    //   this.$api
+    //     .get("/wx/jsapi/signature", { params: { url: window.location.href } })
+    //     .then((res) => {
+    //       this.wxSignature = res.data;
+    //       this.setWxConfig();
+    //     });
+    // }
+             
   },
   mounted() {
     this.viewProjectHandle();
@@ -339,15 +347,26 @@ export default {
             this.userProjectSetting = res.data;
             // 仅在微信环境打开
             if (res.data && res.data.wxWrite) {
-              // 记录微信用户信息
-              if (res.data.recordWxUser && !this.wxAuthorizationCode) {
-                location.href = this.wxAuthorizationUrl;
-              } else {
-                this.onlyWxOpenHandle();
-              }
+              // // 记录微信用户信息
+              // if (res.data.recordWxUser && !this.wxAuthorizationCode) {
+              //   location.href = this.wxAuthorizationUrl;
+              // } else {
+              //   this.onlyWxOpenHandle();
+              // }
             }
           }
         });
+         this.$api
+        .get(`/user/project/details/${this.projectConfig.projectKey}`)
+        .then((res) => {
+            console.log(res.data, 'res.data ');
+            this.dialogForm.projectShareImg = res.data.project.projectShareImg
+            this.dialogForm.mainText = res.data.project.mainText
+            this.dialogForm.description = res.data.project.description
+            this.dialogForm.links = res.data.project.links
+            console.log(this.dialogForm, 'this.dialogForm');
+        })
+        
     },
     /**
      * 仅在微信打开
