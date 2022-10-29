@@ -273,12 +273,11 @@
                                   accept=".xls, .xlsx"
                                   :action="`${url}user/prize/cdk/import/?projectKey=${projectKey}&desc=${item.desc}`"
                                   :headers="getUploadHeader"
-                                  :before-upload="(file) => {
-                                    return beforeUploadFile(
-                                      file,
-                                      item
-                                    );
-                                  }"
+                                  :before-upload="
+                                    (file) => {
+                                      return beforeUploadFile(file, item);
+                                    }
+                                  "
                                   :on-success="
                                     (response, file, fileList) => {
                                       return uploadFile(
@@ -740,8 +739,8 @@ export default {
   },
   computed: {
     getUploadHeader() {
-      let fbtoken = localStorage.getItem("fbtoken")
-      let token = localStorage.getItem("token")
+      let fbtoken = localStorage.getItem("fbtoken");
+      let token = localStorage.getItem("token");
       return {
         fbtoken,
         token,
@@ -1061,33 +1060,36 @@ export default {
     uploadFile(response, file, fileList, item) {
       console.log(222, item, response, file, fileList);
       if (response.code == 200 && response.data) {
-        this.$message({ type: 'success', message: "上传成功" });
+        this.$message({ type: "success", message: "上传成功" });
         this.queryGiftSetting();
-      }else {
-        this.$message({ type: 'error', message: response.msg });
+      } else {
+        this.$message({ type: "error", message: response.msg });
       }
       // this.$api.post(
       //   `/user/prize/cdk/import?projectKey=${this.projectKey}&desc=${item.desc}`
       // );
     },
     beforeUploadFile(file, item) {
-      if(!item.desc) {
-        this.$message({ type: 'error', message: '请填写cdk名称' });
-        return
+      if (!item.desc) {
+        this.$message({ type: "error", message: "请填写cdk名称" });
+        return;
       }
-      console.log('🍓 file beforeUpload: ', file);
+      console.log("🍓 file beforeUpload: ", file);
       const isLt2M = file.size / 1024 / 1024 < 4;
       if (!/^.+(\.xls|\.xlsx)$/.test(file.name)) {
-          this.$message({ type: 'error', message: '请使用正确的文件格式进行导入' });
-          return false;
+        this.$message({
+          type: "error",
+          message: "请使用正确的文件格式进行导入",
+        });
+        return false;
       }
       if (!isLt2M) {
-          this.$message({
-              message: '上传文件大小不能超过 4MB!',
-              type: 'error',
-              duration: 6000,
-          });
-          return false;
+        this.$message({
+          message: "上传文件大小不能超过 4MB!",
+          type: "error",
+          duration: 6000,
+        });
+        return false;
       }
     },
     handleError() {
@@ -1223,10 +1225,10 @@ export default {
         if (res.data && res.code == 200) {
           this.$message.success("分配角色成功");
           if (this.roleForm.distributionType == "fix") {
-            this.roleForm.roleId = res.data.id;
+            this.roleForm.roleId = res.data.formItemId;
           }
           if (this.roleForm.distributionType == "different") {
-            this.roleForm.distributionRule[index].id = res.data.id;
+            this.roleForm.distributionRule[index].id = res.data.formItemId;
           }
         } else {
           this.$message.error("分配角色失败");
