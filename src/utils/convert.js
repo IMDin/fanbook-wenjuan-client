@@ -35,6 +35,7 @@ export function formItemConvertData(item, projectKey) {
     'multiple': item.multiple,
     'titleTip': item.__config__.titleTip,
     'titleTipText': item.__config__.titleTipText,
+    'showTip': item.__config__.showTip,
   }
   let expand = {}
   let param = dataParams[item.typeId]
