@@ -734,7 +734,7 @@ export default {
       currentPage: 1,
       pageSize: 10,
       //id信息
-      guildId: ''
+      guildId: "",
     };
   },
   computed: {
@@ -753,6 +753,9 @@ export default {
   mounted() {
     this.projectKey = this.$route.query.key;
     this.queryUserProjectSetting();
+    window.fb.getCurrentGuild().then((res) => {
+      this.guildId = res.id;
+    });
   },
   methods: {
     //自定义输入框格式处理
@@ -1090,11 +1093,19 @@ export default {
     getRoleList() {
       let params = {
         token: process.env.VUE_APP_API_ROOT_TOKEN,
-        guildId: "420861300550139904",
+        guildId: this.guildId || "420861300550139904",
         roleId: "",
       };
       this.$api.post(`admin/fanbook/pullroles`, params).then((res) => {
-        this.distributionRoleOptions = res.data.map((item) => {
+        let position = res.data.filter((item) => {
+          if (item.tag && item.tag.botId == process.env.VUE_APP_botId) {
+            return item;
+          }
+        })[0];
+        let filterArr = res.data.filter((item) => {
+          return item.position < position.position;
+        });
+        this.distributionRoleOptions = filterArr.map((item) => {
           return {
             label: item.name,
             value: item.id,
@@ -1177,6 +1188,7 @@ export default {
         params.roleType = false;
         params.projectKey = this.projectKey;
         params.expression = 2;
+        params.conditionList = [];
       }
       if (this.roleForm.distributionType == "different") {
         params.projectKey = this.projectKey;

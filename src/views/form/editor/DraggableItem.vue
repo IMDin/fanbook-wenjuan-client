@@ -101,8 +101,12 @@ const layouts = {
               ""
             )}
           </render>
-          {config.tag == "province-city" ? (
-            <input type={"textarea"}>123</input>
+          {config.tag == "province-city" && currentItem.provinceRadio == 1 ? (
+            <el-input
+              type="textarea"
+              style="margin-top:15px;width:300px"
+              v-model={currentItem.address}
+            ></el-input>
           ) : (
             ""
           )}
@@ -215,8 +219,7 @@ function layoutIsNotFound() {
   throw new Error(`没有与${this.currentItem.__config__.layout}匹配的layout`);
 }
 
-function changeNumber(num, e) {
-  console.log(e);
+function changeNumber(num) {
   if (num + 1 < 10) {
     return "0" + String(num + 1);
   } else {
