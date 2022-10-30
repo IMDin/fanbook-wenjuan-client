@@ -32,3 +32,12 @@ export const getFbPullroles = ( data ) => {
     data
   })
 }
+
+// 获取已设置的成员角色 mofang-api/admin/role/list
+export const getAdminRoleList = ( data ) => {
+  return api({
+    url: '/admin/role/group', 
+    method: 'post',
+    data
+  })
+}

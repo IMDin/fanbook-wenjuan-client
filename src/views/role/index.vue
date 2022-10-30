@@ -68,7 +68,8 @@
 import {
   getPullMembers,
   getFbPullroles,
-  getFbAdminUp
+  getFbAdminUp,
+  getAdminRoleList
 } from "@/api/role"
 export default {
   name: "Role",
@@ -81,12 +82,16 @@ export default {
       dialogVisible: false,
       membersList: [],
       newMembersList: [],
+      oldMembersList: [],
       list:[],
       FbPullroles: [],
       guildId: "420861300550139904",
       token: process.env.VUE_APP_API_ROOT_TOKEN,
       isMobile: false
     }
+  },
+  created() {
+    //  this.isMobile = this.isMobileNavigator() // 移动的切换
   },
   mounted() {
     // fanbook初始化
@@ -105,12 +110,15 @@ export default {
         type: "error",
         center: true,
       });
+      this.getAdminRoleList()
+      this.getFbPullroles()
       return;
     }
     window.fb.getCurrentGuild().then(res => {
       console.log("current guild", res.id, res.name)
       this.guildId=res.id;
       this.guildName=res.name;
+      this.getAdminRoleList()
       this.getFbPullroles()
     });
   },
@@ -123,12 +131,39 @@ export default {
             return cur;
         },[])
         this.newMembersList = obj
-        console.log(obj, 'obj');
+        this.chageData(obj)
       },
       deep: true
     }
   },
   methods: {
+     // 测试移动端环境
+    isMobileNavigator() {
+        let flag = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i)
+        return flag;
+    },
+    chageData(obj) {
+      obj?.length && obj.forEach(item => {
+        this.oldMembersList.forEach(it => {
+          if (item.key == it.name) {
+            item.disabled = true
+            this.value.push(item.key)
+          }
+        })
+      })
+    },
+    getAdminRoleList() {
+      const data ={
+        "roleid": null,
+        "rolename": null,
+        "status": 1
+      }
+      getAdminRoleList(data).then(res => {
+        if (res.code === 200) {
+          this.oldMembersList = res.data
+        }
+      })
+    },
     //confirmOauth () {
     //  window.fb.oAuth({
     //    oAuthUrl: process.env.VUE_APP_API_ROOT+ 'fanbook/redirect'
@@ -177,13 +212,17 @@ export default {
       .then(res => {
         res.forEach(it => {
           const { code, data } = it
+          if(!data){
+            return
+          } 
           this.list.push(...data)
           if (code === 200 && data.length !== 0) {
             data.forEach(item => {
               this.membersList.push({
                 lable:  item.user?.id,
                 key: item.user?.first_name,
-                pinyin: item.user?.first_name
+                pinyin: item.user?.first_name,
+                disabled: false
               })
             })
           }
@@ -199,7 +238,8 @@ export default {
         return;
       }
       let data = [];
-      this.value.forEach(it => {
+      let arr =  Array.from(new Set(this.value))
+      arr.forEach(it => {
         const ite = this.list.find(item => {
           return item.user?.first_name === it
         })
