@@ -3,6 +3,7 @@
     <el-radio-group
       v-if="!multiple"
       v-model="selectValue"
+      @change="selectValueChange"
     >
       <div
         v-for="option in options"
@@ -30,6 +31,7 @@
     <el-checkbox-group
       v-else
       v-model="selectValue"
+      @change="selectValueChange"
     >
       <div
         v-for="option in options"
@@ -59,16 +61,16 @@
 
 <script>
 export default {
-  name: "ImageSelect",
+  name: 'ImageSelect',
   props: {
     value: {
-      type: Number,
-      default: 1,
+      type: [Array, Number, String],
+      default: '',
     },
     options: {
       type: Array,
       default: function () {
-        return [];
+        return []
       },
       required: true,
     },
@@ -79,19 +81,30 @@ export default {
   },
   data() {
     return {
-      selectValue: this.value,
-    };
+      selectValue: '',
+    }
   },
   watch: {
-    selectValue(val) {
-      this.$emit("input", val);
-    },
-    value(val) {
-      this.selectValue = val;
+    multiple() {
+      this.setValue()
     },
   },
-  methods: {},
-};
+  created() {
+    this.selectValue = this.value
+  },
+  methods: {
+    selectValueChange() {
+      this.$emit('input', this.selectValue)
+    },
+    setValue() {
+      if (this.multiple) {
+        this.selectValue = Array.isArray(this.vallue) ? this.value : []
+      } else {
+        this.selectValue = Array.isArray(this.vallue) ? '' : this.vallue
+      }
+    },
+  },
+}
 </script>
 <style lang="scss" scoped>
 ::v-deep .el-radio-button__inner,
