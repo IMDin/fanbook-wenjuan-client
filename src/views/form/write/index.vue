@@ -339,14 +339,14 @@ export default {
         },
       });
     },
-    queryProjectSetting() {
+    queryProjectSetting() { 
       this.$api
         .get(`/user/project/setting/${this.projectConfig.projectKey}`)
         .then((res) => {
           if (res.data) {
             this.userProjectSetting = res.data;
             // 仅在微信环境打开
-            if (res.data && res.data.wxWrite) {
+            if (res.data && res.data.wxWrite && window.fb.getPlatform() !== 1) {
               // // 记录微信用户信息
               // if (res.data.recordWxUser && !this.wxAuthorizationCode) {
               //   location.href = this.wxAuthorizationUrl;
