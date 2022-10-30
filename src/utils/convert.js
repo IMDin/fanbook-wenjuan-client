@@ -103,7 +103,6 @@ export function dbDataConvertForItemJson(data) {
   jsonItem.placeholder = data.placeholder
   jsonItem.formItemId = data.formItemId
   jsonItem.__vModel__ = 'field' + data.formItemId
-  console.log('jsonItem', jsonItem)
   return jsonItem
 }
 

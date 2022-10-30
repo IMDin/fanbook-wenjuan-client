@@ -69,14 +69,16 @@ export default {
         newV.__slot__.table.columns.forEach((item) => {
           this.trData.push({
             prop: String(item.id),
-            label: item.label,
+            // label: item.label,
+            label: String(item.id),
           });
         });
         //列处理
         this.tableData = [];
         newV.__slot__.table.rows.forEach((item) => {
           this.tableData.push({
-            colName: item.label,
+            // colName: item.label,
+            colName: item.id,
           });
         });
       },
@@ -87,18 +89,28 @@ export default {
   methods: {
     cellClick(row, column) {
       if (this.data.multiple) {
-        console.log('dddd',this.data.multiple);
-
+        if (Object.keys(this.selectedData).length !== this.tableData.length) {
+          this.tableData.forEach((item) => {
+            this.selectedData[item.colName] = [];
+          });
+        }
+        if (this.selectedData[row.colName].indexOf(Number(column.label)) < 0) {
+          this.selectedData[row.colName].push(Number(column.label));
+          this.selectedData[row.colName].sort()
+        }
+        console.log("dddd", this.selectedData);
+        // if ()
       } else {
         if (Object.keys(this.selectedData).length !== this.tableData.length) {
           this.tableData.forEach((item) => {
-            this.selectedData[item.colName] = "";
+            // this.selectedData[item.colName] = "";
+            this.selectedData[item.colName] = [];
           });
         }
-        this.selectedData[row.colName] = column.label;
-        let value = JSON.stringify(this.selectedData);
-        console.log(2222, value, this.selectedData);
-        this.update(value);
+        this.selectedData[row.colName] = [Number(column.label)];
+        // let value = JSON.stringify(this.selectedData);
+        console.log(2222, this.selectedData);
+        this.update(this.selectedData);
       }
     },
   },

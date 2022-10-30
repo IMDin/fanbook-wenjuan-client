@@ -58,15 +58,30 @@ const layouts = {
           prop={scheme.__vModel__}
           label={config.showLabel ? label : ""}
         >
-          <render conf={scheme} {...{ on: listeners }}>
-            {config.tag == "matrix-scale" ? (
-              <MatrixScale data={scheme} />
-            ) : config.tag == "matrix-select" ? (
-              <MatrixSelect data={scheme} />
-            ) : (
-              ""
-            )}
-          </render>
+          {config.tag !== "matrix-select" ? (
+            <render conf={scheme} {...{ on: listeners }} />
+          ) : (
+            <render conf={scheme}>
+              {config.tag == "matrix-scale" ? (
+                <MatrixScale
+                  data={scheme}
+                  update={(e) => {
+                    this.$set(config, "defaultValue", e);
+                  }}
+                />
+              ) : config.tag == "matrix-select" ? (
+                <MatrixSelect
+                  data={scheme}
+                  update={(e) => {
+                    console.log(888);
+                    this.$set(config, "defaultValue", e);
+                  }}
+                />
+              ) : (
+                ""
+              )}
+            </render>
+          )}
         </el-form-item>
       </el-col>
     );

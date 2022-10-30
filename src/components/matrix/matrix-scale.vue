@@ -78,7 +78,10 @@ export default {
         this.tableData = [];
         newV.__slot__.table.rows.forEach((item) => {
           this.tableData.push({
-            colName: item.label,
+            //拿label处理
+            // colName: item.label,
+            //拿id处理
+            colName: item.id,
           });
         });
       },
@@ -93,10 +96,10 @@ export default {
           this.selectedData[item.colName] = "";
         });
       }
-      this.selectedData[row.colName] = column.label;
-      let value = JSON.stringify(this.selectedData);
-      console.log(1111, value, this.selectedData);
-      this.update(value);
+      this.selectedData[row.colName] = Number(column.label);
+      // let value = JSON.stringify(this.selectedData);
+      // console.log(1111, this.selectedData,column);
+      this.update(this.selectedData);
     },
     hoverEnterClass(row, column) {
       this.currentRow = row.colName;
