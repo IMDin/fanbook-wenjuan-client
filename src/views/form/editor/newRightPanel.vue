@@ -1070,7 +1070,9 @@ export default {
             value: index + 1,
           };
         });
-        arr.unshift({ label: "不限", value: 0 });
+        if (!this.activeData.__config__.required) {
+          arr.unshift({ label: "不限", value: 0 });
+        }
         arr = arr.filter((item) => {
           return item.value < this.activeData.max;
         });

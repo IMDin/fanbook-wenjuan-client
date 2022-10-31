@@ -73,7 +73,6 @@ const layouts = {
                 <MatrixSelect
                   data={scheme}
                   update={(e) => {
-                    console.log(888);
                     this.$set(config, "defaultValue", e);
                   }}
                 />
@@ -625,7 +624,7 @@ export default {
                   break;
               }
             }
-            console.log(888, config.regList);
+            console.log(888, cur);
             rules[cur.__vModel__] = config.regList.map((item) => {
               item.pattern && (item.pattern = eval(item.pattern));
               item.trigger = ruleTrigger && ruleTrigger[config.tag];
