@@ -505,6 +505,9 @@ export default {
       conditionProjectItemList = conditionProjectItemList.filter((item) => {
         return ["RADIO", "CHECKBOX", "SELECT"].includes(item.type);
       });
+      conditionProjectItemList.forEach(element => {
+        element.formItemId = Number(element.formItemId)
+      });
       return conditionProjectItemList;
     },
     getProjectItemList(formItemId) {
