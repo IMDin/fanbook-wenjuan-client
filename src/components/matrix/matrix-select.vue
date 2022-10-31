@@ -18,7 +18,6 @@
           >
             <div v-if="!data.multiple">
               <el-radio
-                @change="radioClick"
                 v-model="radioList[i]"
                 :label="scope.column.label"
                 v-if="
@@ -86,11 +85,8 @@ export default {
     },
   },
   methods: {
-    radioClick() {
-      console.log(999);
-    },
     cellClick(row, column, cell, event) {
-      if (event.target.tagName == "SPAN") return;
+      if (event.target.tagName !== "SPAN") return;
       if (this.data.multiple) {
         if (Object.keys(this.selectedData).length !== this.tableData.length) {
           this.tableData.forEach((item) => {
@@ -102,17 +98,11 @@ export default {
         ) {
           this.selectedData[row.colName].push(Number(column.property));
         } else {
-          // this.selectedData[row.colName] = this.selectedData[
-          //   row.colName
-          // ].filter((item) => {
-          //   console.log('kkk',item,Number(column.property))
-          //   return item !== Number(column.property);
-          // });
-          console.log("sss", this.selectedData[row.colName]);
-          // let index = this.selectedData[row.colName].indexOf(
-          //   Number(column.property)
-          // );
-          // this.selectedData[row.colName].splice(index, 1);
+          this.selectedData[row.colName] = this.selectedData[
+            row.colName
+          ].filter((item) => {
+            return item !== Number(column.property);
+          });
         }
         this.selectedData[row.colName].sort();
         //重构数据结构
@@ -124,7 +114,7 @@ export default {
             }
           });
         });
-        console.log("dddd", this.selectedData,data);
+        // console.log("dddd", this.selectedData,data);
       } else {
         if (Object.keys(this.selectedData).length !== this.tableData.length) {
           this.tableData.forEach((item) => {
