@@ -162,6 +162,7 @@
                 >
                   <el-form-item label="奖品类型">
                     <el-radio-group
+                      :disabled="disabled"
                       v-model="giftForm.giftType"
                       @change="queryGiftSetting(giftForm.giftType)"
                     >
@@ -335,6 +336,7 @@
                       </div>
                     </div>
                     <el-button
+                      :disabled="disabled"
                       type="text"
                       icon="el-icon-circle-plus-outline"
                       @click="addPercentage"
@@ -642,6 +644,7 @@ export default {
   data() {
     return {
       id: "",
+      disabled: true,
       url: process.env.VUE_APP_API_ROOT,
       activeName: "answer",
       projectKey: null,
@@ -667,8 +670,8 @@ export default {
       giftForm: {
         //积分1 ;CDK 0
         giftType: 1,
-        sendGiftType: 1,
-        percentage: "other",
+        sendGiftType: null,
+        percentage: "must",
         coreSet: [
           {
             desc: 10,
@@ -938,47 +941,51 @@ export default {
           params: { projectKey: this.projectKey },
         }
       ).then((res) => {
-        this.giftForm.sendGiftType = res.data.type;
-        if (res.data.probability == 1) {
-          this.giftForm.percentage = "must";
-        } else {
-          this.giftPercentage = res.data.probability;
-        }
-        if (res.data.prizes && res.data.prizes.length > 0) {
-          let coreSetArr = res.data.prizes.filter((item) => {
-            if (item.type) {
-              return item;
-            }
-          });
-          let cdkSetArr = res.data.prizes.filter((item) => {
-            if (!item.type) {
-              return item;
-            }
-          });
-          if (type) {
-            this.giftForm.coreSet = coreSetArr.map((item) => {
-              return {
-                desc: item.desc,
-                count: item.count == 0 ? "" : item.count,
-                flag: item.count == 0 ? 1 : 0,
-                id: item.id,
-                disabled: true,
-              };
-            });
-            if (this.giftForm.coreSet.length < 1) {
-              this.addPercentage();
-            }
+        if (res.data && res.code == 200) {
+          this.disabled = res.data.id ? false : true;
+          this.id = res.data.id;
+          this.giftForm.sendGiftType = res.data.type;
+          if (res.data.probability == 1) {
+            this.giftForm.percentage = "must";
           } else {
-            this.giftForm.cdkSet = cdkSetArr.map((item) => {
-              return {
-                desc: item.desc,
-                count: "",
-                id: item.id,
-                disabled: true,
-              };
+            this.giftPercentage = res.data.probability;
+          }
+          if (res.data.prizes && res.data.prizes.length > 0) {
+            let coreSetArr = res.data.prizes.filter((item) => {
+              if (item.type) {
+                return item;
+              }
             });
-            if (this.giftForm.cdkSet.length < 1) {
-              this.addPercentage();
+            let cdkSetArr = res.data.prizes.filter((item) => {
+              if (!item.type) {
+                return item;
+              }
+            });
+            if (type) {
+              this.giftForm.coreSet = coreSetArr.map((item) => {
+                return {
+                  desc: item.desc,
+                  count: item.count == 0 ? "" : item.count,
+                  flag: item.count == 0 ? 1 : 0,
+                  id: item.id,
+                  disabled: true,
+                };
+              });
+              if (this.giftForm.coreSet.length < 1) {
+                this.addPercentage();
+              }
+            } else {
+              this.giftForm.cdkSet = cdkSetArr.map((item) => {
+                return {
+                  desc: item.desc,
+                  count: "",
+                  id: item.id,
+                  disabled: true,
+                };
+              });
+              if (this.giftForm.cdkSet.length < 1) {
+                this.addPercentage();
+              }
             }
           }
         }
@@ -996,6 +1003,7 @@ export default {
       this.$api.post(`/user/prize/setting/save`, params).then((res) => {
         if (res.data && res.code == 200) {
           this.id = res.data.id;
+          this.disabled = false;
           this.$message.success("发奖规则设置成功");
         }
       });
@@ -1151,20 +1159,24 @@ export default {
     },
     //添加积分奖励
     addScore(item) {
-      if (item.desc && (item.flag || item.count)) {
-        let params = {
-          projectKey: this.projectKey,
-          desc: item.desc,
-          count: item.flag ? 0 : Number(item.count),
-        };
-        this.$api.post(`/user/prize/score/save`, params).then((res) => {
-          if (res.data && res.code) {
-            this.$message.success("添加积分分配成功");
-            this.queryGiftSetting(true);
-          } else {
-            this.$message.error("添加积分分配失败");
-          }
-        });
+      if (this.id) {
+        if (item.desc && (item.flag || item.count)) {
+          let params = {
+            projectKey: this.projectKey,
+            desc: item.desc,
+            count: item.flag ? 0 : Number(item.count),
+          };
+          this.$api.post(`/user/prize/score/save`, params).then((res) => {
+            if (res.data && res.code) {
+              this.$message.success("添加积分分配成功");
+              this.queryGiftSetting(true);
+            } else {
+              this.$message.error("添加积分分配失败");
+            }
+          });
+        }
+      } else {
+        this.$message.warning("请先填写发奖方式和中奖概率");
       }
     },
     //删除积分奖励

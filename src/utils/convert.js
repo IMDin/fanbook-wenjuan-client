@@ -48,7 +48,6 @@ export function formItemConvertData(item, projectKey) {
     })
     _.set(data, 'expand', expand)
   }
-  console.log('ttt',expand)
   return data
 }
 
@@ -105,6 +104,7 @@ export function dbDataConvertForItemJson(data) {
   jsonItem.placeholder = data.placeholder
   jsonItem.formItemId = data.formItemId
   jsonItem.__vModel__ = 'field' + data.formItemId
+  console.log(777,jsonItem)
   return jsonItem
 }
 
