@@ -36,7 +36,8 @@ export function formItemConvertData(item, projectKey) {
     'titleTip': item.__config__.titleTip,
     'titleTipText': item.__config__.titleTipText,
     'showTip': item.__config__.showTip,
-    'textType':item.__config__.textType
+    'textType':item.__config__.textType,
+    'limit':item.__config__.limit
   }
   let expand = {}
   let param = dataParams[item.typeId]
@@ -47,6 +48,7 @@ export function formItemConvertData(item, projectKey) {
     })
     _.set(data, 'expand', expand)
   }
+  console.log('ttt',expand)
   return data
 }
 
@@ -120,6 +122,7 @@ const dataParams = {
     'minlength': 'minlength',
     'showWordLimit': 'show-word-limit',
     'append': '__slot__.append',
+    'textType': 'textType'
   },
   // 多行文本
   'TEXTAREA': {
@@ -191,8 +194,8 @@ const dataParams = {
     'fileSize': '__config__.fileSize',
     'sizeUnit': '__config__.sizeUnit',
     'listType': 'list-type',
-    'limit': 'limit',
-    'multiple': 'multiple',
+    'limit': '__config__.limit',
+    'multiple': '__config__.multiple',
     'accept': 'accept'
   },
   // 图片上传
@@ -202,8 +205,8 @@ const dataParams = {
     'fileSize': '__config__.fileSize',
     'sizeUnit': '__config__.sizeUnit',
     'listType': 'list-type',
-    'limit': 'limit',
-    'multiple': 'multiple',
+    'limit': '__config__.limit',
+    'multiple': '__config__.multiple',
     'accept': 'accept'
   },
   // 图片

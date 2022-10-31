@@ -30,6 +30,7 @@ function vModel(dataObject, defaultValue) {
     }
     // eslint-disable-next-line no-unused-vars
     dataObject.attrs['on-exceed'] = (files, fileList) => {
+      console.log(88899,config.limit)
       this.$message.error(`最多上传${config.limit}个文件`)
     }
     dataObject.attrs['before-upload'] = file => {

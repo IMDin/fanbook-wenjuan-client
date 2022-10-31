@@ -66,10 +66,11 @@ export default {
             label: "",
           },
         ];
+        console.log(888, newV.__slot__.table.columns);
         newV.__slot__.table.columns.forEach((item) => {
           this.trData.push({
             prop: String(item.id),
-            label: item.label,
+            label: item.label || "选项" + newV.__slot__.table.columns.length,
           });
         });
         //列处理

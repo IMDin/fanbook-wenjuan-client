@@ -387,6 +387,7 @@
                           style="display: inline; margin-left: 10px"
                         >
                           <el-input
+                            :min="2"
                             type="number"
                             v-model="giftPercentage"
                             @change="saveGiftSetting"
@@ -640,6 +641,7 @@ export default {
   name: "ProjectSetting",
   data() {
     return {
+      id: "",
       url: process.env.VUE_APP_API_ROOT,
       activeName: "answer",
       projectKey: null,
@@ -697,7 +699,7 @@ export default {
           value: 0,
         },
       ],
-      giftPercentage: "",
+      giftPercentage: 2,
       getGiftData: [],
       roleForm: {
         id: "",
@@ -792,6 +794,7 @@ export default {
           desc: "",
           count: "",
           disabled: false,
+          fileList: [],
         });
       }
     },
@@ -845,7 +848,6 @@ export default {
     //主页签切换
     tabChange(tab) {
       if (tab.name == "gift") {
-        console.log("tab");
         this.queryGiftSetting(true);
         this.giftForm.giftType = this.scoreShop ? 1 : 0;
       } else if (tab.name == "answer") {
@@ -985,12 +987,18 @@ export default {
     //保存奖品设置
     saveGiftSetting() {
       let params = {
+        id: this.id || null,
         projectKey: this.projectKey,
         type: this.giftForm.sendGiftType,
         probability:
           this.giftForm.percentage == "must" ? 1 : Number(this.giftPercentage),
       };
-      this.$api.post(`/user/prize/setting/save`, params);
+      this.$api.post(`/user/prize/setting/save`, params).then((res) => {
+        if (res.data && res.code == 200) {
+          this.id = res.data.id;
+          this.$message.success("发奖规则设置成功");
+        }
+      });
     },
     //获取奖品领取情况
     getReceiveGiftData() {
@@ -1040,6 +1048,10 @@ export default {
         url: `${process.env.VUE_APP_API_ROOT}user/prize/export?projectKey=${this.projectKey}`,
         method: "post",
         responseType: "blob",
+        headers: {
+          token: localStorage.getItem("token"),
+          fbtoken: localStorage.getItem("fbtoken"),
+        },
       }).then((res) => {
         this.exportFunction(res, "奖品领取情况");
       });
@@ -1125,7 +1137,9 @@ export default {
           }
         })[0];
         let filterArr = res.data.filter((item) => {
-          return item.position < position.position && !(item.tag && item.tag.botId);
+          return (
+            item.position < position.position && !(item.tag && item.tag.botId)
+          );
         });
         this.distributionRoleOptions = filterArr.map((item) => {
           return {
@@ -1154,8 +1168,7 @@ export default {
       }
     },
     //删除积分奖励
-    deleteScore(item, index) {
-      console.log(index, item);
+    deleteScore(item) {
       if (item.desc) {
         let params = {
           projectKey: this.projectKey,
@@ -1187,7 +1200,6 @@ export default {
       this.$api
         .post(`/user/role/view?projectKey=${this.projectKey}`)
         .then((res) => {
-          console.log(res);
           let fixRole = res.data.filter((item) => {
             if (!item.roleType) {
               return item;
