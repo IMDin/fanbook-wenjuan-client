@@ -104,7 +104,7 @@ const layouts = {
               ""
             )}
           </render>
-          {config.tag == "province-city" && currentItem.provinceRadio == 1 ? (
+          {/* {config.tag == "province-city" && currentItem.provinceRadio == 1 ? (
             <el-input
               type="textarea"
               style="margin-top:15px;width:300px"
@@ -112,7 +112,7 @@ const layouts = {
             ></el-input>
           ) : (
             ""
-          )}
+          )} */}
           {config.tagIcon == "image-upload" ? (
             <div style="margin-top:5px">
               <i class="el-icon-warning-outline" style="font-size: 14px" />

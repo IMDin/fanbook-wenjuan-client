@@ -1049,6 +1049,10 @@ export default {
         url: `${process.env.VUE_APP_API_ROOT}user/prize/model`,
         method: "post",
         responseType: "blob",
+        headers: {
+          token: localStorage.getItem('token'),
+          fbtoken: localStorage.getItem('fbtoken')
+        }
       }).then((res) => {
         this.exportFunction(res, "兑换码模板");
       });

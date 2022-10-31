@@ -210,8 +210,8 @@ export default {
             });
           }
           this.tableData = records
-          this.total = total
-          this.queryParams.size = size
+          this.total = Number(total)
+          this.queryParams.size = Number(size)
           this.loading = false
       }).catch(err => {
         console.log(err );
