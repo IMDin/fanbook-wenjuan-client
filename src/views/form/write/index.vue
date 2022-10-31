@@ -139,15 +139,15 @@ export default {
     }
 
     this.queryProjectSetting(); // 获取表单配置
-    const platform = window.fb.getPlatform();
-    if (platform !== 1) {
-      this.$message({
-        message: "该功能只支持Fanbook小程序使用",
-        type: "error",
-        center: true,
-      });
-      return;
-    }
+    // const platform = window.fb.getPlatform();
+    // if (platform !== 1) {
+    //   this.$message({
+    //     message: "该功能只支持Fanbook小程序使用",
+    //     type: "error",
+    //     center: true,
+    //   });
+    //   return;
+    // }
     // 如果是在fanbook里面打开的 不使用微信验证
     // this.getWxAuthorizationUrl();
     // this.queryProjectSettingStatus();

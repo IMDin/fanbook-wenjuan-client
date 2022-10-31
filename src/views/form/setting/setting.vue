@@ -1007,7 +1007,7 @@ export default {
           `/user/prize/win?projectKey=${this.projectKey}&page=${this.currentPage}&limit=${this.pageSize}`
         )
         .then((res) => {
-          this.total = res.data.count;
+          this.total = Number(res.data.count) || 0;
           this.getGiftData = res.data.data.map((item) => {
             return {
               type: item.type == 1 ? "积分" : "CDK",
