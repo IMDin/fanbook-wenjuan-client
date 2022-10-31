@@ -242,6 +242,7 @@ const dataParams = {
   // 矩阵选择
   'MATRIX_SELECT': {
     'table': '__slot__.table'
+    
   },
   //省市区
   'PROVINCE_CITY': {

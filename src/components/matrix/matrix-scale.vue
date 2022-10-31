@@ -78,10 +78,7 @@ export default {
         this.tableData = [];
         newV.__slot__.table.rows.forEach((item) => {
           this.tableData.push({
-            //拿label处理
-            // colName: item.label,
-            //拿id处理
-            colName: item.id,
+            colName: item.label,
           });
         });
       },
@@ -93,13 +90,22 @@ export default {
     cellClick(row, column) {
       if (Object.keys(this.selectedData).length !== this.tableData.length) {
         this.tableData.forEach((item) => {
-          this.selectedData[item.colName] = "";
+          this.selectedData[item.colName] = 0;
         });
       }
       this.selectedData[row.colName] = Number(column.label);
-      // let value = JSON.stringify(this.selectedData);
-      // console.log(1111, this.selectedData,column);
-      this.update(this.selectedData);
+      //重构数据结构
+      let data = {};
+      this.data.__slot__.table.rows.forEach((item, index) => {
+        Object.keys(this.selectedData).forEach((selectItem) => {
+          if (selectItem == item.label) {
+            data[String(index + 1)] = this.selectedData[selectItem];
+          }
+        });
+      }),
+        // let value = JSON.stringify(this.selectedData);
+        console.log(1111, this.selectedData, data);
+      this.update(data);
     },
     hoverEnterClass(row, column) {
       this.currentRow = row.colName;

@@ -567,7 +567,7 @@ export default {
       };
     },
     getUploadUrl() {
-      return `${process.env.VUE_APP_API_ROOT}/user/file/upload`;
+      return `${process.env.VUE_APP_API_ROOT}project/file/upload/${this.projectKey}`;
     },
   },
   mounted() {

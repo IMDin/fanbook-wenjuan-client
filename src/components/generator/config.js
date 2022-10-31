@@ -1148,7 +1148,6 @@ export const matrixComponents = [
         }]
       }
     },
-
     multiple: false,
     placeholder: '',
     style: {

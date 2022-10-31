@@ -911,7 +911,19 @@ export default {
         startTime: this.setTime && this.timeStart ? this.startTime : "",
         endTime: this.setTime && this.timeEnd ? this.endTime : "",
       };
-      this.$api.post("/user/project/setting/save", params).then(() => {});
+      this.$api
+        .post("/user/project/setting/save", params)
+        .then((res) => {
+          if (res.data && res.code == 200) {
+            this.$message.success("设置成功");
+          } else {
+            this.$message.error("设置失败");
+          }
+          this.queryUserProjectSetting();
+        })
+        .catch(() => {
+          this.queryUserProjectSetting();
+        });
     },
     //获取奖品配置
     queryGiftSetting(type) {
@@ -1128,10 +1140,10 @@ export default {
         };
         this.$api.post(`/user/prize/score/save`, params).then((res) => {
           if (res.data && res.code) {
-            this.$message.success("添加积分成功");
+            this.$message.success("添加积分分配成功");
             this.queryGiftSetting(true);
           } else {
-            this.$message.error("添加积分失败");
+            this.$message.error("添加积分分配失败");
           }
         });
       }
@@ -1149,10 +1161,10 @@ export default {
         };
         this.$api.post(`/user/prize/delete`, params).then((res) => {
           if (res.data && res.code) {
-            this.$message.success("删除积分成功");
+            this.$message.success("删除积分分配成功");
             this.queryGiftSetting(true);
           } else {
-            this.$message.error("添加积分失败");
+            this.$message.error("删除积分分配失败");
           }
         });
       }
@@ -1220,7 +1232,7 @@ export default {
       }
       this.$api.post(`/user/project/logic/save`, params).then((res) => {
         if (res.data && res.code == 200) {
-          this.$message.success("分配角色成功");
+          this.$message.success("保存角色分配成功");
           if (this.roleForm.distributionType == "fix") {
             this.roleForm.distributionRole = res.data.formItemId;
           }
@@ -1228,7 +1240,7 @@ export default {
             this.roleForm.distributionRule[index].id = res.data.formItemId;
           }
         } else {
-          this.$message.error("分配角色失败");
+          this.$message.error("保存角色分配失败");
         }
       });
     },

@@ -58,7 +58,7 @@ const layouts = {
           prop={scheme.__vModel__}
           label={config.showLabel ? label : ""}
         >
-          {config.tag !== "matrix-select" ? (
+          {config.tag !== "matrix-select" && config.tag !== "matrix-scale" ? (
             <render conf={scheme} {...{ on: listeners }} />
           ) : (
             <render conf={scheme}>
@@ -629,7 +629,6 @@ export default {
             rules[cur.__vModel__] = config.regList.map((item) => {
               item.pattern && (item.pattern = eval(item.pattern));
               item.trigger = ruleTrigger && ruleTrigger[config.tag];
-              console.log(999, item);
               return item;
             });
           }

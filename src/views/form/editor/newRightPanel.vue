@@ -276,7 +276,7 @@
                   <el-radio-button :label="true">多选</el-radio-button>
                 </el-radio-group>
               </el-form-item>
-              <el-form-item label="最少要选">
+              <el-form-item label="最少要选" v-if="activeData.multiple">
                 <el-select v-model="activeData.min" style="width: 130px">
                   <el-option
                     v-for="item in minOptions"
@@ -287,7 +287,7 @@
                   </el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item label="最多可选">
+              <el-form-item label="最多可选" v-if="activeData.multiple">
                 <el-select v-model="activeData.max" style="width: 130px">
                   <el-option
                     v-for="item in maxOptions"

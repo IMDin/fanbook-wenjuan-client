@@ -18,6 +18,7 @@
           >
             <div v-if="!data.multiple">
               <el-radio
+                @change="radioClick"
                 v-model="radioList[i]"
                 :label="scope.column.label"
                 v-if="
@@ -69,16 +70,14 @@ export default {
         newV.__slot__.table.columns.forEach((item) => {
           this.trData.push({
             prop: String(item.id),
-            // label: item.label,
-            label: String(item.id),
+            label: item.label,
           });
         });
         //列处理
         this.tableData = [];
         newV.__slot__.table.rows.forEach((item) => {
           this.tableData.push({
-            // colName: item.label,
-            colName: item.id,
+            colName: item.label,
           });
         });
       },
@@ -87,19 +86,45 @@ export default {
     },
   },
   methods: {
-    cellClick(row, column) {
+    radioClick() {
+      console.log(999);
+    },
+    cellClick(row, column, cell, event) {
+      if (event.target.tagName == "SPAN") return;
       if (this.data.multiple) {
         if (Object.keys(this.selectedData).length !== this.tableData.length) {
           this.tableData.forEach((item) => {
             this.selectedData[item.colName] = [];
           });
         }
-        if (this.selectedData[row.colName].indexOf(Number(column.label)) < 0) {
-          this.selectedData[row.colName].push(Number(column.label));
-          this.selectedData[row.colName].sort()
+        if (
+          this.selectedData[row.colName].indexOf(Number(column.property)) < 0
+        ) {
+          this.selectedData[row.colName].push(Number(column.property));
+        } else {
+          // this.selectedData[row.colName] = this.selectedData[
+          //   row.colName
+          // ].filter((item) => {
+          //   console.log('kkk',item,Number(column.property))
+          //   return item !== Number(column.property);
+          // });
+          console.log("sss", this.selectedData[row.colName]);
+          // let index = this.selectedData[row.colName].indexOf(
+          //   Number(column.property)
+          // );
+          // this.selectedData[row.colName].splice(index, 1);
         }
-        console.log("dddd", this.selectedData);
-        // if ()
+        this.selectedData[row.colName].sort();
+        //重构数据结构
+        let data = {};
+        this.data.__slot__.table.rows.forEach((item, index) => {
+          Object.keys(this.selectedData).forEach((selectItem) => {
+            if (selectItem == item.label) {
+              data[String(index + 1)] = this.selectedData[selectItem];
+            }
+          });
+        });
+        console.log("dddd", this.selectedData,data);
       } else {
         if (Object.keys(this.selectedData).length !== this.tableData.length) {
           this.tableData.forEach((item) => {
@@ -107,9 +132,18 @@ export default {
             this.selectedData[item.colName] = [];
           });
         }
-        this.selectedData[row.colName] = [Number(column.label)];
-        // let value = JSON.stringify(this.selectedData);
-        console.log(2222, this.selectedData);
+        this.selectedData[row.colName] = [Number(column.property)];
+        //重构数据结构
+        let data = {};
+        this.data.__slot__.table.rows.forEach((item, index) => {
+          Object.keys(this.selectedData).forEach((selectItem) => {
+            if (selectItem == item.label) {
+              data[String(index + 1)] = this.selectedData[selectItem];
+            }
+          });
+        }),
+          // let value = JSON.stringify(this.selectedData);
+          console.log(2222, this.selectedData, data);
         this.update(this.selectedData);
       }
     },
