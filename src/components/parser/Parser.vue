@@ -644,7 +644,7 @@ export default {
           _.indexOf(this.logicTriggerItemList, cur.formItemId) > -1;
         let flag = cur.logicShow || triggerShow ? "" : "display:none";
         const config = cur.__config__;
-        let flagTwo = arr.includes(cur.formItemId) && isShow == false;
+        let flagTwo = arr.includes(Number(cur.formItemId)) && isShow == false;
         if (!flag && !flagTwo) {
           rules[cur.__vModel__] = config.regList.map((item) => {
             item.pattern && (item.pattern = eval(item.pattern));
