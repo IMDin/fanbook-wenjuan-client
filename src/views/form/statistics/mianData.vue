@@ -13,9 +13,38 @@
       :key="index"
     >
       <p>
-        {{ index }}. {{ item.titleName }}【{{ item.type }}】
+        {{ index + 1 }}. {{ item.titleName }}【{{ item.type }}】
       </p>
       <!-- :summary-method="getSummaries"  -->
+      <div v-if="item.type == 'MATRIX_SCALE' || item.type == 'MATRIX_SELECT' ">
+        <div
+          v-for="(innerItem, index) in item.table"
+          :key="index"
+        >
+          <p>{{ innerItem.titie }}</p>
+          <el-table
+            border
+            show-summary
+            sum-text="本题有效填写人数"
+            :data="innerItem.options"
+            style="width: 100%"
+          >
+            <el-table-column
+              prop="key"
+              label="选项"
+              width="500px"
+            />
+            <el-table-column
+              prop="value"
+              label="小记"
+            />
+            <el-table-column
+              prop="percent"
+              label="比例"
+            />
+          </el-table>
+        </div>
+      </div>
       <el-table
         border
         show-summary
@@ -34,7 +63,7 @@
           label="小记"
         />
         <el-table-column
-          prop="address"
+          prop="percent"
           label="比例"
         />
       </el-table>
@@ -47,7 +76,7 @@
           本题有效填写人数
         </el-col>
         <el-col :span="12">
-          {{ item.num }}
+          {{ item.num || 0 }}
         </el-col>
       </el-row>
     </el-col>

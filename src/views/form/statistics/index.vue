@@ -54,10 +54,17 @@ export default {
           if(res.code === 200) {
             const  obj = res.data
             obj?.length && obj.forEach(ele => {
-              let arr = ele.titie?.split("/")
-              ele['titleName'] = arr[0]
-              ele['type'] = arr[1]
-              ele['id'] = arr[2]
+              if( ele.lable ) {
+                let arr = ele.lable?.split("/")
+                ele['titleName'] = arr[0]
+                ele['type'] = arr[1]
+                ele['id'] = arr[2]
+              }else {
+                let arr = ele.titie?.split("/")
+                ele['titleName'] = arr[0]
+                ele['type'] = arr[1]
+                ele['id'] = arr[2]
+              }
             });
             this.tableData = obj
             console.log(this.tableData, 'this.tableData');
