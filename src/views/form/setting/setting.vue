@@ -700,6 +700,7 @@ export default {
       giftPercentage: "",
       getGiftData: [],
       roleForm: {
+        id: "",
         distributionType: "fix",
         distributionRole: "", //被分配的角色
         distributionRule: [
@@ -881,7 +882,7 @@ export default {
           let data = res.data;
           this.wxWrite = data.wxWrite;
           this.empower = data.empower;
-          this.inputFanbookIdOnce = data.is_wx_write_once;
+          this.inputFanbookIdOnce = data.wxWriteOnce;
           if (data.everyoneWriteOnce) {
             this.inputTimes = true;
             this.inputTimesNum = data.everyoneWriteOnce;
@@ -906,7 +907,7 @@ export default {
         projectKey: this.projectKey,
         wxWrite: this.wxWrite,
         empower: this.empower,
-        is_wx_write_once: this.inputFanbookIdOnce,
+        wxWriteOnce: this.inputFanbookIdOnce,
         everyoneWriteOnce: this.inputTimes ? this.inputTimesNum : 0,
         startTime: this.setTime && this.timeStart ? this.startTime : "",
         endTime: this.setTime && this.timeEnd ? this.endTime : "",
@@ -1050,9 +1051,9 @@ export default {
         method: "post",
         responseType: "blob",
         headers: {
-          token: localStorage.getItem('token'),
-          fbtoken: localStorage.getItem('fbtoken')
-        }
+          token: localStorage.getItem("token"),
+          fbtoken: localStorage.getItem("fbtoken"),
+        },
       }).then((res) => {
         this.exportFunction(res, "兑换码模板");
       });
@@ -1124,7 +1125,7 @@ export default {
           }
         })[0];
         let filterArr = res.data.filter((item) => {
-          return item.position < position.position;
+          return item.position < position.position && !(item.tag && item.tag.botId);
         });
         this.distributionRoleOptions = filterArr.map((item) => {
           return {
@@ -1198,6 +1199,7 @@ export default {
             }
           });
           if (this.roleForm.distributionType == "fix") {
+            this.roleForm.id = fixRole.length > 0 ? fixRole[0].id : "";
             this.roleForm.distributionRole =
               fixRole.length > 0 ? fixRole[0].formItemId : "";
           }
@@ -1219,6 +1221,7 @@ export default {
     saveRoleLogic(item, index) {
       let params = {};
       if (this.roleForm.distributionType == "fix") {
+        params.id = this.roleForm.id;
         params.formItemId = this.roleForm.distributionRole;
         params.roleType = false;
         params.projectKey = this.projectKey;

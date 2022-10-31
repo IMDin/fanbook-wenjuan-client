@@ -428,7 +428,10 @@
                   activeData.__config__.tag !== 'province-city'
                 "
               >
-                <el-select v-model="activeData.__config__.textType" style="width: 130px">
+                <el-select
+                  v-model="activeData.__config__.textType"
+                  style="width: 130px"
+                >
                   <el-option
                     v-for="item in typeRestrictOptions"
                     :key="item.value"
@@ -1068,6 +1071,9 @@ export default {
           };
         });
         arr.unshift({ label: "不限", value: 0 });
+        arr = arr.filter((item) => {
+          return item.value < this.activeData.max;
+        });
         return arr;
       }
     },
@@ -1078,6 +1084,9 @@ export default {
             label: index + 1 + "项",
             value: index + 1,
           };
+        });
+        arr = arr.filter((item) => {
+          return item.value > this.activeData.min;
         });
         return arr;
       }
@@ -1166,18 +1175,28 @@ export default {
       let arr = [];
       if (tagIcon == "matrix-scale" || tagIcon == "matrix-select") {
         arr = this.activeData.__slot__.table[position];
+        let lastItem = _.last(arr);
+        arr.push({
+          label: "",
+          id: lastItem
+            ? lastItem.id === 0
+              ? _.max(_.values(arr.map((item) => item.id))) + 1
+              : lastItem.id + 1
+            : 1,
+        });
       } else {
         arr = this.activeData.__slot__.options;
+        let lastItem = _.last(arr);
+        arr.push({
+          label: "",
+          value: lastItem
+            ? lastItem.value === 0
+              ? _.max(_.values(arr.map((item) => item.value))) + 1
+              : lastItem.value + 1
+            : 1,
+        });
+        console.log("kkk", arr);
       }
-      let lastItem = _.last(arr);
-      arr.push({
-        label: "",
-        value: lastItem
-          ? lastItem.value === 0
-            ? _.max(_.values(arr.map((item) => item.value))) + 1
-            : lastItem.value + 1
-          : 1,
-      });
     },
     async blukAddSelectItems() {
       let arrStrs = await navigator.clipboard.readText();
