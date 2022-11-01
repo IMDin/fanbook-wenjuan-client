@@ -260,7 +260,7 @@ export const selectComponents = [
       titleTipText: '请输入题目说明',
       selectRandom: false,
       fixLastSelect: false,
-      tag: 'el-checkbox-group',
+      tag: 'my-checkbox-group',
       tagIcon: 'checkbox',
       defaultValue: [],
       span: 24,

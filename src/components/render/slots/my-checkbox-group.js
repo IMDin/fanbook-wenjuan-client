@@ -13,7 +13,7 @@ export default {
                             </el-checkbox>
                             <input class="item-other-input"
                                    onInput={event => {
-                                       console.log(event)
+                                       console.log(event, 'eventssssssss')
                                        that.$emit('otherChange', event.target.value, conf)
                                    }}
                                    onChange={event => {
