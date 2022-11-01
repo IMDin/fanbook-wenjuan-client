@@ -3,14 +3,14 @@ export default {
         const list = []
         conf.__slot__.options.forEach(item => {
             if (conf.__config__.optionType === 'button') {
-                list.push(<el-checkbox-button label={item.value}>{item.label}</el-checkbox-button>)
+                list.push(<my-checkbox-button label={item.value}>{item.label}</my-checkbox-button>)
             } else {
                 if (item.value == 0) {
                     list.push(
                         <div style="display: flex;align-items: center;">
-                            <el-checkbox label={item.value}
+                            <my-checkbox label={item.value}
                                          border={conf.border}>{item.label}
-                            </el-checkbox>
+                            </my-checkbox>
                             <input class="item-other-input"
                                    onInput={event => {
                                        console.log(event, 'eventssssssss')
@@ -22,7 +22,7 @@ export default {
                         </div>
                     )
                 } else {
-                    list.push(<el-checkbox label={item.value} border={conf.border}>{item.label}</el-checkbox>)
+                    list.push(<my-checkbox label={item.value} border={conf.border}>{item.label}</my-checkbox>)
                 }
             }
         })

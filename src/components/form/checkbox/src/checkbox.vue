@@ -63,7 +63,7 @@
   import Emitter from 'element-ui/src/mixins/emitter';
 
   export default {
-    name: 'ElCheckbox',
+    name: 'MyCheckbox',
 
     mixins: [Emitter],
 
@@ -76,7 +76,7 @@
       }
     },
 
-    componentName: 'ElCheckbox',
+    componentName: 'MyCheckbox',
 
     data() {
       return {
@@ -97,16 +97,15 @@
         set(val) {
           if (this.isGroup) {
             this.isLimitExceeded = false;
-            (this._checkboxGroup.min !== undefined &&
-              val.length < this._checkboxGroup.min &&
-              (this.isLimitExceeded = true));
-
+            // (this._checkboxGroup.min !== undefined &&
+            //   val.length < this._checkboxGroup.min &&
+            //   (this.isLimitExceeded = true));
             (this._checkboxGroup.max !== undefined &&
               val.length > this._checkboxGroup.max &&
               (this.isLimitExceeded = true));
 
             this.isLimitExceeded === false &&
-            this.dispatch('ElCheckboxGroup', 'input', [val]);
+            this.dispatch('MyCheckboxGroup', 'input', [val]);
           } else {
             this.$emit('input', val);
             this.selfModel = val;
@@ -126,7 +125,7 @@
       isGroup() {
         let parent = this.$parent;
         while (parent) {
-          if (parent.$options.componentName !== 'ElCheckboxGroup') {
+          if (parent.$options.componentName !== 'MyCheckboxGroup') {
             parent = parent.$parent;
           } else {
             // eslint-disable-next-line vue/no-side-effects-in-computed-properties
@@ -204,7 +203,7 @@
         this.$emit('change', value, ev);
         this.$nextTick(() => {
           if (this.isGroup) {
-            this.dispatch('ElCheckboxGroup', 'change', [this._checkboxGroup.value]);
+            this.dispatch('MyCheckboxGroup', 'change', [this._checkboxGroup.value]);
           }
         });
       }
