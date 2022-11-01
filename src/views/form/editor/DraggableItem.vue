@@ -42,7 +42,7 @@ const layouts = {
     const child = renderChildren.apply(this, arguments);
     // this.$set(currentItem, "action", currentItem.action + projectKey);
     //初始化最多可选
-    if (config.tag == "el-checkbox-group") {
+    if (config.tag == "my-checkbox-group") {
       this.$set(currentItem, "max", currentItem.__slot__.options.length);
     }
     let className =
