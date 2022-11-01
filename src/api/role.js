@@ -41,3 +41,11 @@ export const getAdminRoleList = ( data ) => {
     data
   })
 }
+// admin/fanbook/members  获取fanbook 服务器角色
+export const getAdminFbMembers = ( data ) => {
+  return api({
+    url: '/admin/fanbook/members', 
+    method: 'post',
+    data
+  })
+}

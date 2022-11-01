@@ -42,7 +42,7 @@
           filter-placeholder="请输入用户名称"
           :titles="['可选成员', '已选成员']"
           v-model="value"
-          :data="newMembersList"
+          :data="membersList"
         />
         <span
           slot="footer"
@@ -66,10 +66,9 @@
 
 <script>
 import {
-  getPullMembers,
-  getFbPullroles,
   getFbAdminUp,
-  getAdminRoleList
+  getAdminRoleList,
+  getAdminFbMembers
 } from "@/api/role"
 export default {
   name: "Role",
@@ -90,19 +89,7 @@ export default {
       isMobile: false
     }
   },
-  created() {
-    //  this.isMobile = this.isMobileNavigator() // 移动的切换
-  },
   mounted() {
-    // fanbook初始化
-    //console.log("role mounted step 1(fanbook) at:" + new Date());
-    //window.fb.init({
-    //  success: () => {
-    //      // 如果没有登录调起授权，并保存token到本地
-    //        console.log("mounted未授权，需要拉起授权 at:" + new Date());
-    //        this.confirmOauth();
-    //  }
-    //});
     const platform = window.fb.getPlatform();
     if (platform !== 1) {
       this.$message({
@@ -110,31 +97,15 @@ export default {
         type: "error",
         center: true,
       });
-      this.getAdminRoleList()
-      this.getFbPullroles()
+      this.getAdminFbMembers()
       return;
     }
     window.fb.getCurrentGuild().then(res => {
       console.log("current guild", res.id, res.name)
       this.guildId=res.id;
       this.guildName=res.name;
-      this.getAdminRoleList()
-      this.getFbPullroles()
+      this.getAdminFbMembers()
     });
-  },
-  watch:{
-    "membersList":{
-      handler(newVal) {
-        let hasObj= {};
-        const obj = newVal.reduce((cur,next) => {
-            hasObj[next.key] ? "" : (hasObj[next.key] = true && cur.push(next));
-            return cur;
-        },[])
-        this.newMembersList = obj
-        this.chageData(obj)
-      },
-      deep: true
-    }
   },
   methods: {
      // 测试移动端环境
@@ -142,14 +113,25 @@ export default {
         let flag = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i)
         return flag;
     },
-    chageData(obj) {
-      obj?.length && obj.forEach(item => {
-        this.oldMembersList.forEach(it => {
-          if (item.key == it.name) {
-            item.disabled = true
-            this.value.push(item.key)
-          }
-        })
+    getAdminFbMembers() {
+      const data = {
+          "guildId": this.guildId,
+          "after":0,
+          "limit":500
+      }
+      getAdminFbMembers(data).then(res => {
+        if (res.code == 200) {
+          this.list = res.data
+           res.data && res.data.forEach(item => {
+              this.membersList.push({
+                lable:  item.user?.id,
+                key: item.user?.first_name,
+                pinyin: item.user?.first_name,
+                disabled: false
+              })
+           })
+           this.getAdminRoleList()
+        }
       })
     },
     getAdminRoleList() {
@@ -161,75 +143,16 @@ export default {
       getAdminRoleList(data).then(res => {
         if (res.code === 200) {
           this.oldMembersList = res.data
-        }
-      })
-    },
-    //confirmOauth () {
-    //  window.fb.oAuth({
-    //    oAuthUrl: process.env.VUE_APP_API_ROOT+ 'fanbook/redirect'
-    //  }).then(res => {
-    //    console.log("role fanbook oauth2 code:" + JSON.stringify(res));
-    //    if (res.data && res.data.code) {
-    //      console.log("role succ to get oauth2 code:",res.data.code);
-    //      // 此为异步，监听islogin的变化发送请求
-    //      window.fb.getCurrentGuild().then(res => {
-    //        console.log("role succ to login, get guild", res.id, res.name)
-    //        this.guildId=res.id;
-    //        this.guildName=res.name;
-    //        this.getFbPullroles()
-    //      });
-    //    }else{
-    //      console.log("role fail to get oauth2 code!");
-    //      this.needAuth = true;
-    //      // 授权失败，关闭小程序
-    //      window.fb.closeWindow();
-    //    }
-    //  });
-    //},
-    getFbPullroles() {
-      const data = {
-        "token": this.token,
-        "guildId": this.guildId,
-      }
-      getFbPullroles(data).then(res => {
-        if (res.code === 200) {
-          res.data && res.data.forEach(item => {
-            this.FbPullroles.push({
-              id: String(item.id),
-              lable: item.name
+          console.log(this.oldMembersList, this.membersList, 'this.membersList');
+          res.data && res.data?.forEach(item => {
+            this.membersList.forEach(it => {
+            if (item.name == it.key) {
+                it.disabled = true
+                this.value.push(it.key)
+              }
             })
           })
-          this.getUserList()
         }
-      })
-    },
-    getUserList() { // 获取fb服务器成员列表
-      Promise.all(this.FbPullroles.map(item => getPullMembers({
-        "token": this.token,
-        "guildId": this.guildId,
-        "roleId": item.id
-      })))
-      .then(res => {
-        res.forEach(it => {
-          const { code, data } = it
-          if(!data){
-            return
-          } 
-          this.list.push(...data)
-          if (code === 200 && data.length !== 0) {
-            data.forEach(item => {
-              this.membersList.push({
-                lable:  item.user?.id,
-                key: item.user?.first_name,
-                pinyin: item.user?.first_name,
-                disabled: false
-              })
-            })
-          }
-        })
-      })
-      .catch(err => {
-        console.log(err);
       })
     },
     confirm() {
