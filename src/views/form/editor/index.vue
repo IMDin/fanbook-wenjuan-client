@@ -39,7 +39,9 @@
       </el-scrollbar>
     </div>
     <div class="center-board">
-      <el-scrollbar class="center-scrollbar">
+      <el-scrollbar 
+        class="center-scrollbar scrollbars" 
+      >
         <el-row
           v-if="formConf"
           :gutter="formConf.gutter"
@@ -565,6 +567,13 @@ export default {
       this.saveProjectItemInfo(clone);
       this.drawingList.push(clone);
       this.activeFormItem(clone);
+      this.scollToBottom()
+    },
+    scollToBottom() {
+      this.$nextTick(() => {
+        const container = this.$el.querySelector(".scrollbars > .el-scrollbar__wrap")
+        console.log(container.scrollTop, container.scrollHeight, 'container.scrollHeight');
+      })
     },
     cloneComponent(origin) {
       const clone = deepClone(origin);
