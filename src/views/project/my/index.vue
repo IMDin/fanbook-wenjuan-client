@@ -54,7 +54,11 @@
         label="标题"
         width="300"
         show-overflow-tooltip
-      />
+      >
+        <template slot-scope="{row}">
+          {{ row.describe | filterP }}
+        </template>
+      </el-table-column>
       <el-table-column
         prop="status"
         label="状态"
@@ -198,6 +202,12 @@ export default {
   },
   mounted() {
       this.getData()
+  },
+  filters:{
+    filterP: (val) => {
+      val = val.replace(/<\/?p[^>]*>/gi,'')
+      return val
+    }
   },
   methods: {
     getData() {
