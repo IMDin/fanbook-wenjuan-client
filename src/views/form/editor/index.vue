@@ -572,7 +572,7 @@ export default {
     scollToBottom() {
       this.$nextTick(() => {
         const container = this.$el.querySelector(".scrollbars > .el-scrollbar__wrap")
-        console.log(container.scrollTop, container.scrollHeight, 'container.scrollHeight');
+        container.scrollTo({top: container.scrollHeight, behavior: 'smooth'})
       })
     },
     cloneComponent(origin) {
