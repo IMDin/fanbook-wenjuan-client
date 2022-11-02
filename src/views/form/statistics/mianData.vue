@@ -24,8 +24,6 @@
           <p>{{ innerItem.titie }}</p>
           <el-table
             border
-            show-summary
-            sum-text="本题有效填写人数"
             :data="innerItem.options"
             style="width: 100%"
           >
@@ -42,13 +40,19 @@
               prop="percent"
               label="比例"
             />
+            <el-row 
+              slot="append"
+              type="flex"
+              class="table-append-flex"
+            >
+              <el-col>本题有效填写人数</el-col>
+              <el-col>{{ innerItem.num }}</el-col> 
+            </el-row>
           </el-table>
         </div>
       </div>
       <el-table
         border
-        show-summary
-        sum-text="本题有效填写人数"
         v-if="item.options"
         :data="item.options"
         style="width: 100%"
@@ -66,11 +70,19 @@
           prop="percent"
           label="比例"
         />
+        <el-row 
+          slot="append"
+          type="flex"
+          class="table-append-flex"
+        >
+          <el-col>本题有效填写人数</el-col>
+          <el-col>{{ item.num }}</el-col> 
+        </el-row>
       </el-table>
       <el-row
         type="flex"
         class="sum-box"
-        v-else
+        v-if="!item.table && !item.options"
       >
         <el-col :span="12">
           本题有效填写人数
@@ -123,6 +135,15 @@ export default {
     height: 40px;
     line-height: 40px;
     padding: 0 15px;
+  }
+  .table-append-flex {
+    height: 40px;
+    background-color: #F5F7FA;
+    div {
+      line-height: 40px;
+      font-size: 16px;  
+      padding: 0 5px;
+    }
   }
 }
 </style>
