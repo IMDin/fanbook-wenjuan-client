@@ -518,7 +518,7 @@ export default {
         themeId: "",
         showTitle: true,
         showDescribe: true,
-        showNumber: false,
+        showNumber: true,
         backgroundColor: "",
         backgroundImg: "",
         logoImg: "",

@@ -115,7 +115,7 @@ export default {
                 resetBtn: false,
                 submitBtnText: '提交',
                 submitBtnColor: '#409EFF',
-                showNumber: false,
+                showNumber: true,
                 unFocusedComponentBorder: true
             }
         }
