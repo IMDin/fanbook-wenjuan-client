@@ -102,6 +102,16 @@
                 >
                   添加其他
                 </el-button>
+                 <el-button
+                  icon="el-icon-circle-plus-outline"
+                  style="padding-bottom: 0"
+                  type="text"
+                  @click="
+                    addBatchRadio(activeData.__slot__.options, 'radio')
+                  "
+                >
+                  批量添加
+                </el-button>
               </div>
               <el-divider />
               <el-form-item label="选项随机排列">
@@ -1428,6 +1438,14 @@ export default {
         return options;
       }
     },
+    // 批量编辑单选
+    addBatchRadio(data, position) {
+      this.colOrRow = position;
+      data.forEach((item) => {
+        this.matrixTextarea += item.label + "\n";
+      });
+      this.matrixRowDialogVisible = true;
+    },
     //批量编辑
     addBatchButton(data, position) {
       this.colOrRow = position;
@@ -1438,6 +1456,19 @@ export default {
       this.matrixRowDialogVisible = true;
     },
     addBatchData() {
+      // 单选框添加 批量添加按钮
+      if(this.colOrRow  == "radio") {
+        let arr = this.matrixTextarea.split("\n");
+        this.activeData.__slot__.options = arr.map((item, index) => {
+          return {
+            label: item,
+            id: index + 1,
+          };
+        });
+
+        this.matrixRowDialogVisible = false;
+        return;
+      }
       let flag = this.colOrRow == "rows" ? "rows" : "columns";
       this.matrixRowDialogVisible = false;
       let arr = this.matrixTextarea.split("\n");
