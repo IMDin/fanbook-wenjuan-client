@@ -346,7 +346,7 @@ export default {
           if (res.data) {
             this.userProjectSetting = res.data;
             // 仅在微信环境打开
-            if (res.data && res.data.wxWrite && window.fb.getPlatform() !== 1) {
+            if (res.data && res.data.wxWrite && window.fb.getPlatform() == 0) {
               // // 记录微信用户信息
               // if (res.data.recordWxUser && !this.wxAuthorizationCode) {
               //   location.href = this.wxAuthorizationUrl;
