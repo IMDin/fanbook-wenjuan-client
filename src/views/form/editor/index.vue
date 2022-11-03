@@ -283,7 +283,7 @@ import { debounce } from "throttle-debounce";
 // import RightPanel from "./RightPanel";
 import RightPanel from "./newRightPanel.vue";
 import submitResultsPage from "./submitResultsPage.vue";
-import images from "../../../assets/images/blue.png";
+import images from "../../../assets/images/newBlue.png";
 import {
   // imageComponents,
   // assistComponents,
