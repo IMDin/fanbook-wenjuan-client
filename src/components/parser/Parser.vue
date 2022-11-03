@@ -31,6 +31,7 @@ const layouts = {
     const config = scheme.__config__;
     const listeners = buildListeners.call(this, scheme);
     const { formConfCopy } = this;
+    console.log("formConfCopy", formConfCopy);
     let labelWidth = config.labelWidth ? `${config.labelWidth}px` : null;
     if (config.showLabel === false) labelWidth = "0";
     let label = config.label;
@@ -174,6 +175,7 @@ function formBtns(h) {
 }
 
 function renderFormItem(h, elementList) {
+  console.log("renderFormItem", elementList);
   return elementList.map((scheme) => {
     const config = scheme.__config__;
     const layout = layouts[config.layout];
@@ -192,6 +194,8 @@ function renderChildren(h, scheme) {
 }
 
 function setUpload(config, scheme, response, file) {
+  console.log(222,response,file)
+  console.log(111,[scheme.__vModel__],this[this.formConf.formModel],JSON.parse(this[this.formConf.formModel][scheme.__vModel__]))
   let newValue = JSON.parse(this[this.formConf.formModel][scheme.__vModel__]);
   if (!newValue) {
     newValue = [];
@@ -213,7 +217,7 @@ function deleteUpload(config, scheme, file, fileList) {
 }
 
 function setValue(event, config, scheme) {
-  console.log(event, config, scheme, "event, config, scheme");
+  console.log("setValue,event/config/scheme", event, config, scheme);
   this.$set(config, "defaultValue", event);
   this.$set(this[this.formConf.formModel], scheme.__vModel__, event);
   setValueLabel.call(this, event, config, scheme);
@@ -307,6 +311,7 @@ function prevPage(page) {
  */
 function switchPage(eventName, page) {
   this.$refs[this.formConf.formRef].validate((valid) => {
+    console.log("switchPage", valid);
     if (!valid) {
       setTimeout(() => {
         let isError = document.getElementsByClassName("is-error");
@@ -336,7 +341,7 @@ function setOtherValueLabel(event, config) {
       `${config.__vModel__}other`,
       event
     );
-    console.log(this[this.formConf.labelFormModel]);
+    console.log("setOtherValueLabel", this[this.formConf.labelFormModel]);
     setValueLabel.call(this, value, config.__config__, config);
   });
 }
@@ -532,8 +537,10 @@ export default {
         if (temConfig.children)
           this.initLabelFormData(temConfig.children, formData);
       });
+      console.log("initLabelFormData", formData);
     },
     initFormData(componentList, formData) {
+      console.log("initFormData", formData);
       // 设置默认值
       componentList.forEach((cur) => {
         const config = cur.__config__;
@@ -545,6 +552,7 @@ export default {
       });
     },
     buildRules(componentList, rules) {
+      console.log("buildRules", componentList, rules);
       componentList.forEach((cur) => {
         // 逻辑不显示必填问题不校验
         let triggerShow =
@@ -572,12 +580,32 @@ export default {
             callback();
           }
         };
+        //下拉多选自定义校验
+        const validateSelectMultiple = (rule, value, callback) => {
+          if (value.length > 0) {
+            if (cur.min && value.length < cur.min) {
+              callback(new Error(`请至少选择${cur.min}个选项`));
+            } else if (cur.max && value.length > cur.max) {
+              callback(new Error(`请最多选择${cur.max}个选项`));
+            } else {
+              callback();
+            }
+          } else {
+            callback(new Error(cur.placeholder));
+          }
+        };
         if (Array.isArray(config.regList)) {
           // 必填其他输入框校验
           if (["RADIO", "CHECKBOX"].includes(cur.typeId)) {
             const required = {
               validator: validateOtherInput,
               message: cur.placeholder,
+            };
+            config.regList.push(required);
+          }
+          if (["SELECT"].includes(cur.typeId) && cur.multiple) {
+            const required = {
+              validator: validateSelectMultiple,
             };
             config.regList.push(required);
           }
@@ -624,7 +652,6 @@ export default {
                   break;
               }
             }
-            console.log(888, cur);
             rules[cur.__vModel__] = config.regList.map((item) => {
               item.pattern && (item.pattern = eval(item.pattern));
               item.trigger = ruleTrigger && ruleTrigger[config.tag];
@@ -637,7 +664,6 @@ export default {
     },
     // 重建逻辑规则的表单校验
     logicRules(componentList, rules, arr = [], isShow) {
-      console.log(111);
       componentList.forEach((cur) => {
         let triggerShow =
           _.indexOf(this.logicTriggerItemList, cur.formItemId) > -1;
@@ -715,5 +741,8 @@ export default {
 
 ::v-deep .item-other-input:focus {
   outline: none !important;
+}
+::v-deep .el-upload {
+  display: flex;
 }
 </style>

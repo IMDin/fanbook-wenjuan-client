@@ -71,17 +71,13 @@
         <el-collapse
           v-model="activeNames"
           @change="handleChange"
+          accordion
         >
           <el-collapse-item
             title="品牌logo"
             name="1"
           >
             <div style="text-align: left">
-              <img
-                v-if="userProjectTheme.logoImg"
-                :src="userProjectTheme.logoImg"
-                style="width: 30px; height: 30px"
-              >
               <el-upload
                 ref="logoUpload"
                 :action="getUploadUrl"
@@ -91,8 +87,8 @@
                 accept=".jpg,.jpeg,.png,.gif,.bmp,.JPG,.JPEG,.PBG,.GIF,.BMP"
               >
                 <img
-                  v-if="imageUrl"
-                  :src="imageUrl"
+                  v-if="userProjectTheme.logoImg"
+                  :src="userProjectTheme.logoImg"
                   class="avatar"
                 >
                 <i
@@ -100,11 +96,17 @@
                   class="el-icon-plus avatar-uploader-icon"
                 />
               </el-upload>
+              <el-button
+                v-if="userProjectTheme.logoImg"
+                @click="clearImg"
+              >
+                清除
+              </el-button>
               <div>
                 <i class="el-icon-warning-outline" />
                 <span
                   style="margin-left: 10px; color: #7b7b7b; font-size: 14px"
-                >单张图片大小不超过30M</span>
+                >建议上传PNG格式图片，宽度大于400px</span>
               </div>
             </div>
             <el-row
@@ -146,7 +148,7 @@
                   <span class="option-line-sub-title">背景类型</span>
                 </el-col>
                 <el-col
-                  :spvan="18"
+                  :span="18"
                   style="text-align: right"
                 >
                   <el-radio-group
@@ -178,7 +180,7 @@
                   <span class="option-line-sub-title">背景颜色</span>
                 </el-col>
                 <el-col
-                  :spvan="18"
+                  :span="18"
                   style="text-align: right"
                 >
                   <el-color-picker
@@ -197,25 +199,38 @@
                 <el-col :span="8">
                   <span class="option-line-sub-title">背景图片</span>
                 </el-col>
-                <el-col :spvan="18">
-                  <el-upload
-                    ref="upload"
-                    :action="getUploadUrl"
-                    :headers="getUploadHeader"
-                    :on-success="uploadBackgroundHandle"
-                    :show-file-list="false"
-                    accept=".jpg,.jpeg,.png,.gif,.bmp,.JPG,.JPEG,.PBG,.GIF,.BMP"
-                    class="upload-demo"
-                  >
-                    <img
-                      v-if="imageUrl"
-                      :src="imageUrl"
-                      class="avatar"
+                <el-col :span="18">
+                  <div style="text-align: right; margin-bottom: 10px">
+                    <el-upload
+                      ref="upload"
+                      :action="getUploadUrl"
+                      :headers="getUploadHeader"
+                      :on-success="uploadBackgroundHandle"
+                      :show-file-list="false"
+                      accept=".jpg,.jpeg,.png,.gif,.bmp,.JPG,.JPEG,.PBG,.GIF,.BMP"
+                      class="upload-demo"
                     >
-                    <i
-                      class="el-icon-plus avatar-uploader-icon backgroundConfig"
-                    />
-                  </el-upload>
+                      <img
+                        v-if="userProjectTheme.backgroundImg"
+                        :src="userProjectTheme.backgroundImg"
+                        class="avatar"
+                      >
+                      <i
+                        v-else
+                        class="
+                          el-icon-plus
+                          avatar-uploader-icon
+                          backgroundConfig
+                        "
+                      />
+                    </el-upload>
+                    <el-button
+                      v-if="userProjectTheme.backgroundImg"
+                      @click="clearImg"
+                    >
+                      清除
+                    </el-button>
+                  </div>
                 </el-col>
               </el-row>
             </el-row>
@@ -520,8 +535,8 @@ export default {
         showDescribe: true,
         showNumber: true,
         backgroundColor: "",
-        backgroundImg: "",
-        logoImg: "",
+        backgroundImg: "", //背景图
+        logoImg: "", //logo图
         logoPosition: "left",
         submitBtnText: "提交",
       },
@@ -554,13 +569,13 @@ export default {
       activeTheme: "",
       themeList: [],
 
-      activeNames: [],
+      activeNames: "",
     };
   },
   computed: {
     getUploadHeader() {
-      let fbtoken = localStorage.getItem("fbtoken")
-      let token = localStorage.getItem("token")
+      let fbtoken = localStorage.getItem("fbtoken");
+      let token = localStorage.getItem("token");
       return {
         fbtoken,
         token,
@@ -661,14 +676,15 @@ export default {
         });
     },
 
-    handleChange() {
+    //切换选项卡
+    handleChange() {},
+    clearImg() {
       if (this.activeNames == "1") {
-        this.uploadLogoHandle({ data: "" });
-      } else if (this.activeNames == "2") {
+        this.userProjectTheme.logoImg = "";
+      } else {
         this.userProjectTheme.backgroundImg = "";
-        this.userProjectTheme.backgroundColor = "";
-        this.saveUserTheme();
       }
+      this.saveUserTheme();
     },
   },
 };

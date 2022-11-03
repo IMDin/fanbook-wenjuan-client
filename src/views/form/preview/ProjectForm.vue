@@ -167,8 +167,10 @@ export default {
                     projectItem.serialNumber = serialNumber
                     projectItem.logicShow = !logicItemMap.get(projectItem.formItemId)
                     serialNumber++
+                    console.log('projectItem',projectItem)
                     return projectItem
                 })
+                console.log('fields',fields)
                 this.pageShowHandle(fields)
                 if (_.keys(this.perPageFields).length != 0) {
                     this.formConf.fields = _.get(this.perPageFields, 1)
@@ -191,7 +193,7 @@ export default {
                     if (btnsColor) this.formConf.submitBtnColor = btnsColor
                 }
                 this.startParser = true
-
+                console.log('formConf',this.formConf)
             }
         })
     },
@@ -323,6 +325,7 @@ export default {
             this.parserKey = +new Date()
         },
         submitForm(data) {
+          console.log('submit')
             this.$emit('submit', data)
         }
     }

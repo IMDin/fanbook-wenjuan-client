@@ -16,10 +16,11 @@ keys.forEach(key => {
   componentChild[tag] = value
 })
 
-function vModel(dataObject, defaultValue) {
-  let config = dataObject.attrs.__config__
+function vModel(dataObject, confClone) {
+  console.log('vModel属性', dataObject)
+  let defaultValue = confClone.__config__.defaultValue
   // 表单组件特殊处理
-  if (config.tag === 'el-upload') {
+  if (confClone.__config__.tag === 'el-upload') {
     // 增加上传回调事件
     dataObject.attrs['on-success'] = (response, file, fileList) => {
       this.$emit('upload', response, file, fileList)
@@ -30,13 +31,12 @@ function vModel(dataObject, defaultValue) {
     }
     // eslint-disable-next-line no-unused-vars
     dataObject.attrs['on-exceed'] = (files, fileList) => {
-      console.log(88899,config.limit)
-      this.$message.error(`最多上传${config.limit}个文件`)
+      this.$message.error(`最多上传${confClone.limit}个文件`)
     }
     dataObject.attrs['before-upload'] = file => {
       let sizeUnitNum = 1
       // 文件大小判断
-      switch (config.sizeUnit) {
+      switch (confClone.sizeUnit) {
         case 'KB':
           sizeUnitNum = 1024
           break
@@ -47,14 +47,14 @@ function vModel(dataObject, defaultValue) {
           sizeUnitNum = 1024 * 1024 * 1024
           break
       }
-      let totalSize = config.fileSize * sizeUnitNum
+      let totalSize = confClone.fileSize * sizeUnitNum
       if (file.size > totalSize) {
-        this.$message.error(`上传图片大小不能超过${config.fileSize}${config.sizeUnit}`)
+        this.$message.error(`上传图片大小不能超过${confClone.fileSize}${confClone.sizeUnit}`)
         return false
       }
     }
     // 分页组件
-  } else if (config.tag === 'pagination') {
+  } else if (confClone.__config__.tag === 'pagination') {
     dataObject.on.prev = val => {
       this.$emit('prev', val)
     }
@@ -62,7 +62,7 @@ function vModel(dataObject, defaultValue) {
       this.$emit('next', val)
     }
   } else {
-    dataObject.props.value = defaultValue
+    dataObject.props.value = confClone.__config__.tag === 'el-select' && confClone.multiple ? typeof (defaultValue) == 'object' ? defaultValue : defaultValue ? [defaultValue] : [] : defaultValue
     dataObject.on.input = val => {
       this.$emit('input', val)
     }
@@ -98,13 +98,23 @@ function buildDataObject(confClone, dataObject) {
   Object.keys(confClone).forEach(key => {
     const val = confClone[key]
     if (key === '__vModel__') {
-      vModel.call(this, dataObject, confClone.__config__.defaultValue)
+      vModel.call(this, dataObject, confClone)
     } else if (dataObject[key]) {
+      console.log('dataObject[key]', key, dataObject[key], val)
       dataObject[key] = { ...dataObject[key], ...val }
-    } else {
+    } else if (confClone.typeId == ("UPLOAD" || 'IMAGE-"UPLOAD"') && key == 'action') {
+      //上传地址加projectKey
+      if (confClone[key].split(this.$route.query.key).length > 1) {
+        dataObject.attrs[key] = confClone[key]
+      } else {
+        dataObject.attrs[key] = confClone[key] + this.$route.query.key
+      }
+    }
+    else {
       dataObject.attrs[key] = val
     }
   })
+  console.log('render.dataObject', dataObject)
 
   // 清理属性
   clearAttrs(dataObject)
@@ -147,12 +157,9 @@ export default {
     // 将字符串类型的事件，发送为消息
     emitEvents.call(this, confClone)
 
+    console.log('render.confClone', confClone)
     // 将json表单配置转化为vue render可以识别的 “数据对象（dataObject）”
     buildDataObject.call(this, confClone, dataObject)
-
-    // if (this.conf.__config__.tag == 'matrix-scale') {
-    //   this.conf.__config__.tag = 'div'
-    // }
     return h(this.conf.__config__.tag, dataObject, children)
   }
 }

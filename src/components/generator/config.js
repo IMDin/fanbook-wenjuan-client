@@ -301,7 +301,7 @@ export const selectComponents = [
       labelWidth: null,
       tag: 'el-select',
       tagIcon: 'select',
-      defaultValue: undefined,
+      defaultValue: '',
       layout: 'colFormItem',
       span: 24,
       required: true,
@@ -1178,14 +1178,10 @@ export const otherComponents = [
       buttonText: '点击上传',
       regList: [],
       changeTag: true,
-      fileSize: 10,
-      sizeUnit: 'MB',
       document: 'https://element.eleme.cn/#/zh-CN/component/upload',
-      limit: 1,
-      multiple: false
     },
     __slot__: {
-      'list-type': true
+      'list-type': true,
     },
     action: process.env.VUE_APP_API_ROOT + 'project/file/upload/',
     disabled: false,
@@ -1193,6 +1189,10 @@ export const otherComponents = [
     name: 'file',
     'auto-upload': true,
     'list-type': 'picture-card',
+    limit: 1,
+    fileSize: 10,
+    sizeUnit: 'MB',
+    multiple: false
   },
   {
     typeId: 'UPLOAD',
@@ -1214,11 +1214,7 @@ export const otherComponents = [
       buttonText: '点击上传',
       regList: [],
       changeTag: true,
-      fileSize: 10,
-      sizeUnit: 'MB',
       document: 'https://element.eleme.cn/#/zh-CN/component/upload',
-      limit: 1,
-      multiple: false,
     },
     __slot__: {
       'list-type': true,
@@ -1229,7 +1225,11 @@ export const otherComponents = [
     name: 'file',
     'auto-upload': true,
     'list-type': 'text',
-    drag: true
+    drag: true,
+    fileSize: 10,
+    sizeUnit: 'MB',
+    multiple: false,
+    limit: 1,
   },
   {
     typeId: 'RATE',

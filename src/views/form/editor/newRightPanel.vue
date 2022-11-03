@@ -734,19 +734,19 @@
             <!-- 上传图片 -->
             <div v-if="activeData.__config__.tagIcon == 'image'">
               <el-form-item label="最多上传图片数量">
-                <el-input-number v-model="activeData.__config__.limit" />
+                <el-input-number v-model="activeData.limit" />
               </el-form-item>
               <el-form-item
-                v-if="activeData.__config__.fileSize !== undefined"
+                v-if="activeData.fileSize !== undefined"
                 label="单张图片限制"
               >
                 <el-input
-                  v-model.number="activeData.__config__.fileSize"
+                  v-model.number="activeData.fileSize"
                   placeholder="请输入图片大小"
                 >
                   <el-select
                     slot="append"
-                    v-model="activeData.__config__.sizeUnit"
+                    v-model="activeData.sizeUnit"
                     :style="{ width: '66px' }"
                   >
                     <el-option label="KB" value="KB" />
@@ -760,20 +760,20 @@
             <!-- 上传文件 -->
             <div v-if="activeData.__config__.tagIcon == 'upload'">
               <el-form-item label="最多上传文件数量">
-                <el-input-number v-model="activeData.__config__.limit" />
+                <el-input-number v-model="activeData.limit" />
               </el-form-item>
               <el-form-item
-                v-if="activeData.__config__.fileSize !== undefined"
+                v-if="activeData.fileSize !== undefined"
                 label="单个文件限制"
               >
                 <el-input
                   :min="1"
-                  v-model.number="activeData.__config__.fileSize"
+                  v-model.number="activeData.fileSize"
                   placeholder="请输入文件大小"
                 >
                   <el-select
                     slot="append"
-                    v-model="activeData.__config__.sizeUnit"
+                    v-model="activeData.sizeUnit"
                     :style="{ width: '66px' }"
                   >
                     <el-option label="KB" value="KB" />
@@ -1084,7 +1084,9 @@ export default {
           arr.unshift({ label: "不限", value: 0 });
         }
         arr = arr.filter((item) => {
-          return item.value < this.activeData.max;
+          return item.value < this.activeData.max
+            ? this.activeData.max
+            : arr.length;
         });
         return arr;
       }
@@ -1098,7 +1100,7 @@ export default {
           };
         });
         arr = arr.filter((item) => {
-          return item.value > this.activeData.min;
+          return item.value >= this.activeData.min;
         });
         return arr;
       }
@@ -1361,7 +1363,9 @@ export default {
       this.formConf.span = val;
     },
     multipleChange(val) {
-      this.$set(this.activeData.__config__, "defaultValue", val ? [] : "");
+      if (!val) {
+        this.$set(this.activeData.__config__, "defaultValue", "");
+      }
     },
     dateTypeChange(val) {
       this.setTimeValue(dateTimeFormat[val], val);

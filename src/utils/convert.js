@@ -37,7 +37,6 @@ export function formItemConvertData(item, projectKey) {
     'titleTipText': item.__config__.titleTipText,
     'showTip': item.__config__.showTip,
     'textType':item.__config__.textType,
-    'limit':item.__config__.limit
   }
   let expand = {}
   let param = dataParams[item.typeId]
@@ -48,6 +47,7 @@ export function formItemConvertData(item, projectKey) {
     })
     _.set(data, 'expand', expand)
   }
+  console.log('formItemConvertData',data)
   return data
 }
 
@@ -104,7 +104,7 @@ export function dbDataConvertForItemJson(data) {
   jsonItem.placeholder = data.placeholder
   jsonItem.formItemId = data.formItemId
   jsonItem.__vModel__ = 'field' + data.formItemId
-  console.log(777,jsonItem)
+  console.log('回写数据对象jsonItem',jsonItem)
   return jsonItem
 }
 
@@ -191,22 +191,22 @@ const dataParams = {
   'UPLOAD': {
     'buttonText': '__config__.buttonText',
     'showTip': '__config__.showTip',
-    'fileSize': '__config__.fileSize',
-    'sizeUnit': '__config__.sizeUnit',
+    'fileSize': 'fileSize',
+    'sizeUnit': 'sizeUnit',
     'listType': 'list-type',
-    'limit': '__config__.limit',
-    'multiple': '__config__.multiple',
+    'limit': 'limit',
+    'multiple': 'multiple',
     'accept': 'accept'
   },
   // 图片上传
   'IMAGE_UPLOAD': {
     'buttonText': '__config__.buttonText',
     'showTip': '__config__.showTip',
-    'fileSize': '__config__.fileSize',
-    'sizeUnit': '__config__.sizeUnit',
+    'fileSize': 'fileSize',
+    'sizeUnit': 'sizeUnit',
     'listType': 'list-type',
-    'limit': '__config__.limit',
-    'multiple': '__config__.multiple',
+    'limit': 'limit',
+    'multiple': 'multiple',
     'accept': 'accept'
   },
   // 图片
