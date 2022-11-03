@@ -25,13 +25,14 @@ export default {
 
 <style lang="scss" scoped>
 .showTipPhoto {
-  height: 50%;
-  width: 100%;
   padding: 30px 0 0;
+  margin: auto;
 }
 .leftPart {
-  border-right: 1px solid #f2f2f2;
-  padding-right: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
   .previewText {
     p:nth-child(1) {
       margin-bottom: 10px;
