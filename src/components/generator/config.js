@@ -1185,14 +1185,14 @@ export const otherComponents = [
     },
     action: process.env.VUE_APP_API_ROOT + 'project/file/upload/',
     disabled: false,
-    accept: '',
+    accept: '.jpg,jpeg,.png',
     name: 'file',
     'auto-upload': true,
     'list-type': 'picture-card',
     limit: 1,
     fileSize: 10,
     sizeUnit: 'MB',
-    multiple: false
+    multiple: false,
   },
   {
     typeId: 'UPLOAD',

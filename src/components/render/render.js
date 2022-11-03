@@ -102,7 +102,7 @@ function buildDataObject(confClone, dataObject) {
     } else if (dataObject[key]) {
       console.log('dataObject[key]', key, dataObject[key], val)
       dataObject[key] = { ...dataObject[key], ...val }
-    } else if (confClone.typeId == ("UPLOAD" || 'IMAGE-"UPLOAD"') && key == 'action') {
+    } else if (confClone.__config__.tag == "el-upload" && key == 'action') {
       //上传地址加projectKey
       if (confClone[key].split(this.$route.query.key).length > 1) {
         dataObject.attrs[key] = confClone[key]
