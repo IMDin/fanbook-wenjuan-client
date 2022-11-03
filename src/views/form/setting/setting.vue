@@ -117,8 +117,9 @@
                   v-model="startTime"
                   type="datetime"
                   placeholder="请选择时间"
-                  @change="saveUserProjectSetting"
+                  @change="timeChange('star')"
                   value-format="yyyy-MM-dd HH:mm:ss"
+                  :picker-options="pickerOptionsStart"
                 />
               </div>
               <div>
@@ -132,8 +133,9 @@
                   v-model="endTime"
                   type="datetime"
                   placeholder="请选择时间"
-                  @change="saveUserProjectSetting"
+                  @change="timeChange('end')"
                   value-format="yyyy-MM-dd HH:mm:ss"
+                  :picker-options="pickerOptionsEnd"
                 />
               </div>
             </div>
@@ -162,6 +164,7 @@
                 >
                   <el-form-item label="奖品类型">
                     <el-radio-group
+                      :disabled="disabled"
                       v-model="giftForm.giftType"
                       @change="queryGiftSetting(giftForm.giftType)"
                     >
@@ -338,6 +341,7 @@
                       type="text"
                       icon="el-icon-circle-plus-outline"
                       @click="addPercentage"
+                      :disabled="disabled"
                     >
                       添加份额
                     </el-button>
@@ -641,6 +645,7 @@ export default {
   name: "ProjectSetting",
   data() {
     return {
+      disabled: true,
       id: "",
       url: process.env.VUE_APP_API_ROOT,
       activeName: "answer",
@@ -667,7 +672,7 @@ export default {
       giftForm: {
         //积分1 ;CDK 0
         giftType: 1,
-        sendGiftType: 1,
+        sendGiftType: null,
         percentage: "other",
         coreSet: [
           {
@@ -740,6 +745,46 @@ export default {
     };
   },
   computed: {
+    pickerOptionsStart() {
+      return {
+        disabledDate: (time) => {
+          let endDateVal = this.endTime;
+          return endDateVal
+            ? time.getTime() > new Date(endDateVal).getTime() ||
+                time.getTime() < new Date().getTime() - 24 * 3600 * 1000
+            : time.getTime() < new Date().getTime() - 24 * 3600 * 1000;
+        },
+        selectableRange: `00:00:00 -  ${
+          this.endTime &&
+          new Date(this.endTime).getTime() -
+            new Date(this.startTime).getTime() <
+            24 * 3600 * 1000
+            ? this.initTime(this.endTime)
+            : "23:59:59"
+        }
+        `,
+      };
+    },
+    pickerOptionsEnd() {
+      return {
+        disabledDate: (time) => {
+          let beginDateVal = this.startTime;
+          return beginDateVal
+            ? time.getTime() <
+                new Date(beginDateVal).getTime() - 24 * 3600 * 1000
+            : time.getTime() < new Date().getTime() - 24 * 3600 * 1000;
+        },
+        selectableRange: ` ${
+          this.startTime &&
+          new Date(this.endTime).getTime() -
+            new Date(this.startTime).getTime() <
+            24 * 3600 * 1000
+            ? this.initTime(this.startTime)
+            : "00:00:00"
+        } - "23:59:59"
+        `,
+      };
+    },
     getUploadHeader() {
       let fbtoken = localStorage.getItem("fbtoken");
       let token = localStorage.getItem("token");
@@ -903,14 +948,40 @@ export default {
         }
       });
     },
+    timeChange(time) {
+      if (time == "star") {
+        if (new Date(this.startTime).getTime() - new Date().getTime() < 0) {
+          this.$message.warning("开始时间不可早于当前时间");
+          this.startTime = "";
+        } else if (this.timeStart) {
+          this.saveUserProjectSetting;
+        }
+      } else {
+        if (new Date(this.endTime).getTime() - new Date().getTime() < 0) {
+          this.$message.warning("结束时间不可早于当前时间");
+          this.endTime = "";
+        } else if (this.timeEnd) {
+          this.saveUserProjectSetting;
+        }
+      }
+    },
+    initTime(time) {
+      let date = time ? new Date(time) : new Date();
+      let h = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
+      let m =
+        date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
+      let s =
+        date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
+      return h + ":" + m + ":" + s;
+    },
     //保存答题配置
     saveUserProjectSetting() {
       let params = {
         projectKey: this.projectKey,
-        wxWrite: this.wxWrite,
-        empower: this.empower,
-        wxWriteOnce: this.inputFanbookIdOnce,
-        everyoneWriteOnce: this.inputTimes ? this.inputTimesNum : 0,
+        wxWrite: this.wxWrite, //只在Fanbook中填写
+        empower: this.empower, //授权fanbookid
+        wxWriteOnce: this.inputFanbookIdOnce, //每个fanbookid只填写一次
+        everyoneWriteOnce: this.inputTimes ? Number(this.inputTimesNum) : 0, //每人只能填写N次
         startTime: this.setTime && this.timeStart ? this.startTime : "",
         endTime: this.setTime && this.timeEnd ? this.endTime : "",
       };
@@ -938,47 +1009,51 @@ export default {
           params: { projectKey: this.projectKey },
         }
       ).then((res) => {
-        this.giftForm.sendGiftType = res.data.type;
-        if (res.data.probability == 1) {
-          this.giftForm.percentage = "must";
-        } else {
-          this.giftPercentage = res.data.probability;
-        }
-        if (res.data.prizes && res.data.prizes.length > 0) {
-          let coreSetArr = res.data.prizes.filter((item) => {
-            if (item.type) {
-              return item;
-            }
-          });
-          let cdkSetArr = res.data.prizes.filter((item) => {
-            if (!item.type) {
-              return item;
-            }
-          });
-          if (type) {
-            this.giftForm.coreSet = coreSetArr.map((item) => {
-              return {
-                desc: item.desc,
-                count: item.count == 0 ? "" : item.count,
-                flag: item.count == 0 ? 1 : 0,
-                id: item.id,
-                disabled: true,
-              };
-            });
-            if (this.giftForm.coreSet.length < 1) {
-              this.addPercentage();
-            }
+        if (res.data && res.data.id) {
+          this.id = res.data.id;
+          this.disabled = false;
+          this.giftForm.sendGiftType = res.data.type;
+          if (res.data.probability == 1) {
+            this.giftForm.percentage = "must";
           } else {
-            this.giftForm.cdkSet = cdkSetArr.map((item) => {
-              return {
-                desc: item.desc,
-                count: "",
-                id: item.id,
-                disabled: true,
-              };
+            this.giftPercentage = res.data.probability;
+          }
+          if (res.data.prizes && res.data.prizes.length > 0) {
+            let coreSetArr = res.data.prizes.filter((item) => {
+              if (item.type) {
+                return item;
+              }
             });
-            if (this.giftForm.cdkSet.length < 1) {
-              this.addPercentage();
+            let cdkSetArr = res.data.prizes.filter((item) => {
+              if (!item.type) {
+                return item;
+              }
+            });
+            if (type) {
+              this.giftForm.coreSet = coreSetArr.map((item) => {
+                return {
+                  desc: item.desc,
+                  count: item.count == 0 ? "" : item.count,
+                  flag: item.count == 0 ? 1 : 0,
+                  id: item.id,
+                  disabled: true,
+                };
+              });
+              if (this.giftForm.coreSet.length < 1) {
+                this.addPercentage();
+              }
+            } else {
+              this.giftForm.cdkSet = cdkSetArr.map((item) => {
+                return {
+                  desc: item.desc,
+                  count: "",
+                  id: item.id,
+                  disabled: true,
+                };
+              });
+              if (this.giftForm.cdkSet.length < 1) {
+                this.addPercentage();
+              }
             }
           }
         }
@@ -996,6 +1071,7 @@ export default {
       this.$api.post(`/user/prize/setting/save`, params).then((res) => {
         if (res.data && res.code == 200) {
           this.id = res.data.id;
+          this.disabled = false;
           this.$message.success("发奖规则设置成功");
         }
       });
@@ -1151,40 +1227,50 @@ export default {
     },
     //添加积分奖励
     addScore(item) {
-      if (item.desc && (item.flag || item.count)) {
-        let params = {
-          projectKey: this.projectKey,
-          desc: item.desc,
-          count: item.flag ? 0 : Number(item.count),
-        };
-        this.$api.post(`/user/prize/score/save`, params).then((res) => {
-          if (res.data && res.code) {
-            this.$message.success("添加积分分配成功");
-            this.queryGiftSetting(true);
-          } else {
-            this.$message.error("添加积分分配失败");
-          }
-        });
+      if (this.id) {
+        if (item.desc && (item.flag || item.count)) {
+          let params = {
+            projectKey: this.projectKey,
+            desc: item.desc,
+            count: item.flag ? 0 : Number(item.count),
+          };
+          this.$api.post(`/user/prize/score/save`, params).then((res) => {
+            if (res.data && res.code) {
+              this.$message.success("添加积分分配成功");
+              this.queryGiftSetting(true);
+            } else {
+              this.$message.error("添加积分分配失败");
+            }
+          });
+        }
+      } else {
+        this.$message.warning("请先设置发奖方式和分配概率");
+        this.giftForm.coreSet.splice(0, 1);
+        this.addPercentage();
       }
     },
     //删除积分奖励
     deleteScore(item) {
-      if (item.desc) {
-        let params = {
-          projectKey: this.projectKey,
-          id: item.id,
-          type: this.giftForm.giftType,
-          count: this.giftForm.giftType ? item.count : "",
-          desc: item.desc,
-        };
-        this.$api.post(`/user/prize/delete`, params).then((res) => {
-          if (res.data && res.code) {
-            this.$message.success("删除积分分配成功");
-            this.queryGiftSetting(true);
-          } else {
-            this.$message.error("删除积分分配失败");
-          }
-        });
+      if (this.id) {
+        if (item.desc) {
+          let params = {
+            projectKey: this.projectKey,
+            id: item.id,
+            type: this.giftForm.giftType,
+            count: this.giftForm.giftType ? item.count : "",
+            desc: item.desc,
+          };
+          this.$api.post(`/user/prize/delete`, params).then((res) => {
+            if (res.data && res.code) {
+              this.$message.success("删除积分分配成功");
+              this.queryGiftSetting(true);
+            } else {
+              this.$message.error("删除积分分配失败");
+            }
+          });
+        }
+      } else {
+        this.$message.warning("请先设置发奖方式和分配概率");
       }
     },
     //切换角色选项
@@ -1350,8 +1436,8 @@ export default {
   margin-right: 25px;
 }
 ::v-deep .el-input__prefix {
-  left: initial;
-  right: 5px;
+  /* left: initial; */
+  /* right: 20px; */
 }
 /* 奖品设置 */
 .giftConfig

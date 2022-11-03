@@ -521,14 +521,15 @@ export default {
           this.drawingList = res.data.map((item) =>
             dbDataConvertForItemJson(item)
           );
+          console.log('drawingList',this.drawingList)
           // 更新分页
           this.updatePaginationList();
         });
     },
     activeFormItem(currentItem) {
-      currentItem.action += this.projectKey
       this.activeData = currentItem;
       this.activeId = currentItem.__config__.formId;
+      console.log('rightPanel.activeData',this.activeData)
     },
     changeLabel(currentItem, value) {
       console.log(currentItem);
@@ -692,7 +693,6 @@ export default {
       }
     },
     beforeAvatarUpload(file) {
-      console.log(file, "sssss");
       const isJPG = file.type.includes("image");
       const isLt2M = file.size / 1024 / 1024 < 2;
 

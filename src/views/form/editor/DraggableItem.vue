@@ -36,7 +36,7 @@ const layouts = {
   colFormItem(h, currentItem, index, list) {
     // const projectKey = this.$route.query.key;
     // eslint-disable-next-line no-unused-vars
-    console.log(555, currentItem);
+    console.log('draggableItem.currentItem', currentItem);
     const { activeItem } = this.$listeners;
     const config = currentItem.__config__;
     const child = renderChildren.apply(this, arguments);
@@ -108,15 +108,6 @@ const layouts = {
               ""
             )}
           </render>
-          {/* {config.tag == "province-city" && currentItem.provinceRadio == 1 ? (
-            <el-input
-              type="textarea"
-              style="margin-top:15px;width:300px"
-              v-model={currentItem.address}
-            ></el-input>
-          ) : (
-            ""
-          )} */}
           {config.tagIcon == "image-upload" ? (
             <div style="margin-top:5px">
               <i class="el-icon-warning-outline" style="font-size: 14px" />
@@ -128,9 +119,6 @@ const layouts = {
             ""
           )}
           {config.titleTip ? (
-            // <div>
-            //   <input placeholder="请输入" value=""></input>
-            // </div>
             <div style="margin-top:15px">
               <Tinymce
                 placeholder="请输入题目说明"
@@ -244,6 +232,7 @@ export default {
     const layout = layouts[this.currentItem.__config__.layout];
 
     if (layout) {
+      console.log('layout',this.currentItem)
       return layout.call(
         this,
         h,
