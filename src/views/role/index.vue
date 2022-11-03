@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="!isMobile">
+    <div>
       <el-row
         type="flex"
         class="role-centent"
@@ -33,7 +33,8 @@
         title="提示"
         :visible.sync="dialogVisible"
         width="610px"
-        style="min-width: 610px"
+        class="mydialog"
+        :class="isMobile ? 'is-mobile' : ''"
         :before-close="() => dialogVisible = false"
       >
         <el-transfer
@@ -58,9 +59,24 @@
         </span>
       </el-dialog>
     </div>
-    <div v-else>
-      移动端样式
-    </div>
+    <!-- <div v-else>
+      <div class="mobile-phone">
+        <div class="mobile-main">
+          <p>添加成员（共 1 条记录）</p>
+          <span>添加或删除可以使用问卷管理的成员</span>
+          <div class="mobile-main-text">
+            <el-tag
+              v-for="item in items"
+              :key="item.label"
+              :type="item.type"
+              effect="plain"
+            >
+              {{ item.label }}
+            </el-tag>
+          </div>
+        </div>
+      </div>
+    </div> -->
   </div>
 </template>
 
@@ -86,10 +102,16 @@ export default {
       FbPullroles: [],
       guildId: "420861300550139904",
       token: process.env.VUE_APP_API_ROOT_TOKEN,
-      isMobile: false
+      isMobile: false,
+      items: [
+        { type: 'info', label: '标签三' },
+        { type: 'info', label: '标签三' },
+        { type: 'info', label: '标签三' },
+      ]
     }
   },
   mounted() {
+    this.isMobile = this.isMobileNavigator()
     const platform = window.fb.getPlatform();
     if (platform !== 1) {
       this.$message({
@@ -206,5 +228,13 @@ export default {
       }
     }
   }
+}
+.mobile-phone {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  background-color: #f7f7f7;
 }
 </style>
