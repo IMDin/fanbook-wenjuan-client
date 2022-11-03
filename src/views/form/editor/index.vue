@@ -283,7 +283,7 @@ import { debounce } from "throttle-debounce";
 // import RightPanel from "./RightPanel";
 import RightPanel from "./newRightPanel.vue";
 import submitResultsPage from "./submitResultsPage.vue";
-// import images from "../../../assets/images/blue.png";
+import images from "../../../assets/images/newBlue.png";
 import {
   // imageComponents,
   // assistComponents,
@@ -386,7 +386,7 @@ export default {
       uploadPhoto: true,
       imageUrl: "",
       dialogForm: {
-        projectShareImg: "https://mofang-1309045093.cos.ap-nanjing.myqcloud.com/274ad4786c3abca69fa097b85867d9a4/1667040229659-409e8101.png",
+        projectShareImg: images,
         mainText: "太棒了！终于填完了",
         description: "感谢你的支持",
         links: "",
@@ -440,7 +440,7 @@ export default {
     this.$api.get(`/user/project/${this.projectKey}`).then((res) => {
       if (res.data) {
         this.formConf.title = res.data.name;
-        this.dialogForm.projectShareImg = res.data.projectShareImg || "https://mofang-1309045093.cos.ap-nanjing.myqcloud.com/274ad4786c3abca69fa097b85867d9a4/1667040229659-409e8101.png";
+        this.dialogForm.projectShareImg = res.data.projectShareImg || images;
         this.dialogForm.mainText = res.data.mainText || "太棒了！终于填完了";
         this.dialogForm.description = res.data.description || "感谢你的支持";
         this.dialogForm.links = res.data.links || "";
