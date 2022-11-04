@@ -33,8 +33,12 @@ jobs:
           known_hosts: ${{ secrets.ACTION_KNOWN_HOSTS }}
           config: ${{ secrets.ACTION_DEPLOY_CONFIG }}
           if_key_exists: replace
+      -  name: Set Outputs
+         id: vars
+         run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
       - name: Webpack client
         run: |
+          sed -i 's#${versioon}#'${{ steps.vars.outputs.sha_short }}'#g' .env.dev
           npm install -g npm@6.14.1
           npm install -g vue-cli
           npm install
