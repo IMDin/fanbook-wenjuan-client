@@ -142,7 +142,7 @@ export default {
         this.formConf.size = window.innerWidth < 480 ? 'medium' : 'small'
     },
     async mounted() {
-        let url = `/user/project/details/${this.formConf.projectKey}`
+        let url = `/user/project/details/${this.formConf.projectKey}${this.$route.path == '/project/form/theme' ? '?isPreview=1' : ''}`
         if (this.formConf.projectKind == 2) {
             url = `/project/template/details/${this.formConf.projectKey}`
         }

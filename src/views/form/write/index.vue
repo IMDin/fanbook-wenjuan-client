@@ -9,13 +9,31 @@
       class="title-icon-view"
     >
       <div class="icon-view">
-        <i class="el-icon-check success-icon" />
+        <i 
+          class="el-icon-check success-icon" 
+          v-if="writeNotStartPrompt !== '项目时间已结束。' && writeNotStartPrompt !== '项目时间末开始。'"
+        />
+        <img 
+          src="@/assets/images/isover.jpg" 
+          width="width: 80px"
+          v-if="writeNotStartPrompt == '项目时间已结束。'"
+        >
+        <img 
+          src="@/assets/images/nostart.jpg" 
+          width="width: 80px"
+          v-if="writeNotStartPrompt == '项目时间末开始。'"
+        >
       </div>
       <p
         v-if="writeNotStartPrompt"
         style="text-align: center"
       >
-        <span v-if="writeNotStartPrompt">{{ writeNotStartPrompt }}</span>
+        <span 
+          v-if="writeNotStartPrompt" 
+          style="font-weight: bold;font-size: 20px;"
+        >{{ writeNotStartPrompt }}</span> <br>
+        <span v-if="writeNotStartPrompt == '项目时间已结束。'"> 结束时间：{{ endTime }} </span>
+        <span v-if="writeNotStartPrompt == '项目时间末开始。'">开始时间：{{ startTime }}</span>
       </p>
     </div>
     <div v-if="writeStatus == 1">
@@ -81,6 +99,8 @@ export default {
   props: {},
   data() {
     return {
+      startTime: '',
+      endTime: '',
       dialogForm: defaultValue,
       inActiveTime: 0,
       projectConfig: {
@@ -150,7 +170,7 @@ export default {
     // }
     // 如果是在fanbook里面打开的 不使用微信验证
     // this.getWxAuthorizationUrl();
-    // this.queryProjectSettingStatus();
+    this.queryProjectSettingStatus();
     // if (constants.enableWx) {
     //   // 加载微信相关 获取签名
     //   this.$api
@@ -181,7 +201,7 @@ export default {
         .get("/user/project/setting-status", {
           params: {
             projectKey: this.projectConfig.projectKey,
-            wxOpenId: this.wxUserInfo ? this.wxUserInfo.openid : "",
+            wxOpenId: localStorage.getItem("user_id"),
           },
         })
         .then((res) => {
@@ -345,6 +365,23 @@ export default {
         .then((res) => {
           if (res.data) {
             this.userProjectSetting = res.data;
+            // 验证答题时间是否开始
+            const { endTime, startTime } = res.data
+            if(endTime || startTime) {
+              let endTimes =  new Date(endTime).getTime()
+              let startTimes =  new Date(startTime).getTime()
+              const nowTime =  new Date().getTime()
+              // 如果当前时间小于开始时间
+              if(startTimes && nowTime < startTimes) {
+                this.startTime = startTime
+                return
+              }
+              if(endTimes && nowTime > endTimes) {
+                this.endTime = endTime
+                console.log('已经结束啦');
+              }
+            }
+
             // 仅在微信环境打开
             if (res.data && res.data.wxWrite && window.fb.getPlatform() == 0) {
               // // 记录微信用户信息
@@ -396,7 +433,7 @@ export default {
           completeTime: inActiveTime,
           projectKey: this.projectConfig.projectKey,
           submitOs: ua.os.name,
-          submitBrowser: ua.browser.name,
+          submitBrowser: window.fb?.getPlatform() !== 0 ? 'fanbook' : ua.browser.name, // window.fb.getPlatform();
           submitUa: ua,
           wxUserInfo: this.wxUserInfo,
           wxOpenId: this.wxUserInfo ? this.wxUserInfo.openid : "",

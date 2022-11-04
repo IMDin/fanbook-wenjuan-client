@@ -1,41 +1,51 @@
 <template>
-    <div class="preview-container">
-        <el-tabs v-if="projectConfig.projectKey" type="card">
-            <el-tab-pane>
-                <span slot="label"><i class="el-icon-mobile" />
-                    手机
-                </span>
-                <div class="preview-layer">
-                    <div class="preview-bg" />
-                    <div class="preview-phone">
-                        <iframe id="preview-html"
-                                :src="mobilePreviewUrl"
-                                class="preview-html" frameborder="0"
-                                name="preview-html"
-                                scrolling="auto"
-                        />
-                    </div>
-                </div>
-                <div v-if="mobilePreviewUrl&&previewQrcode" class="qrcode-view">
-                    <p>手机扫码查看效果</p>
-                    <vue-qr
-                        v-if="mobilePreviewUrl&&previewQrcode" :size="194" :text="mobilePreviewUrl"
-                    />
-                </div>
-            </el-tab-pane>
-            <el-tab-pane>
-                <span slot="label"><i class="el-icon-monitor" />
-                    电脑
-                </span>
-                <el-scrollbar style="height: 77vh;overflow-x: hidden!important;">
-                    <project-form
-                        v-if="projectConfig.projectKey"
-                        :project-config="projectConfig"
-                    />
-                </el-scrollbar>
-            </el-tab-pane>
-        </el-tabs>
-    </div>
+  <div class="preview-container">
+    <el-tabs
+      v-if="projectConfig.projectKey"
+      type="card"
+    >
+      <el-tab-pane>
+        <span slot="label"><i class="el-icon-mobile" />
+          手机
+        </span>
+        <div class="preview-layer">
+          <div class="preview-bg" />
+          <div class="preview-phone">
+            <iframe
+              id="preview-html"
+              :src="mobilePreviewUrl"
+              class="preview-html"
+              frameborder="0"
+              name="preview-html"
+              scrolling="auto"
+            />
+          </div>
+        </div>
+        <div
+          v-if="mobilePreviewUrl&&previewQrcode"
+          class="qrcode-view"
+        >
+          <p>手机扫码查看效果</p>
+          <vue-qr
+            v-if="mobilePreviewUrl&&previewQrcode"
+            :size="194"
+            :text="mobilePreviewUrl"
+          />
+        </div>
+      </el-tab-pane>
+      <el-tab-pane>
+        <span slot="label"><i class="el-icon-monitor" />
+          电脑
+        </span>
+        <el-scrollbar style="height: 77vh;overflow-x: hidden!important;">
+          <project-form
+            v-if="projectConfig.projectKey"
+            :project-config="projectConfig"
+          />
+        </el-scrollbar>
+      </el-tab-pane>
+    </el-tabs>
+  </div>
 </template>
 
 <script>
@@ -64,7 +74,7 @@ export default {
     mounted() {
         this.projectKey = this.$route.query.key
         let url = window.location.protocol + '//' + window.location.host
-        this.mobilePreviewUrl = `${url}/project/view?key=${this.projectKey}`
+        this.mobilePreviewUrl = `${url}/project/view?key=${this.projectKey}?isPreview=1`
         this.$set(this.projectConfig, 'projectKey', this.projectKey)
     }
 }
