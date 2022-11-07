@@ -195,8 +195,7 @@ function renderChildren(h, scheme) {
 
 function setUpload(config, scheme, response, file) {
   console.log(222,response,file)
-  console.log(111,[scheme.__vModel__],this[this.formConf.formModel],JSON.parse(this[this.formConf.formModel][scheme.__vModel__]))
-  let newValue = JSON.parse(this[this.formConf.formModel][scheme.__vModel__]);
+  let newValue = JSON.parse(this[this.formConf.formModel][scheme.__vModel__]?.length == 0 ? null : this[this.formConf.formModel][scheme.__vModel__]);
   if (!newValue) {
     newValue = [];
   }
