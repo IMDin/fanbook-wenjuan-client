@@ -348,7 +348,7 @@ export default {
           if (this.projectStats.completeCount) {
             let rate =
               this.projectStats.completeCount / this.projectStats.viewCount;
-            this.projectStats.completeRate = rate > 1 ? 100 : rate * 100;
+            this.projectStats.completeRate = rate > 1 ? 100 : rate * 100 || 0;
             this.projectStats.avgCompleteFormatStr = timeFormat(
               this.projectStats.avgCompleteTime
             );

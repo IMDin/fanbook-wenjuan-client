@@ -109,14 +109,14 @@
           <el-button
             type="text" 
             class="btn-befo"
-            @click="publishProject(row.key, row.name, row.status)"
+            @click="publishProject(row)"
           >
             发布
           </el-button>
           <el-button
             type="text" 
             class="btn-befo"
-            @click="dataCharts(row.id, row.key, row.status)"
+            @click="dataCharts(row)"
           >
             数据
           </el-button>
@@ -136,12 +136,16 @@
               <el-dropdown-item :command="'copy-' + row.key + '-' + row.name ">
                 复制
               </el-dropdown-item>
-              <el-dropdown-item :command="'stop-' + row.key + '-' + row.name ">
+              <el-dropdown-item 
+                :command="'stop-' + row.key + '-' + row.name "
+                v-if="row.status !== 1"
+              >
                 停止
               </el-dropdown-item>
               <el-dropdown-item 
                 :command="'delete-' + row.key + '-' + row.name "
                 style="color: red"
+                v-if="row.status !== 2"
               >
                 删除
               </el-dropdown-item>
@@ -161,6 +165,32 @@
         @current-change="getData"
       />
     </div>
+    <el-dialog
+      title="发布确认"
+      :visible.sync="dialogVisible"
+      width="30%"
+      top="35vh"
+      :before-close="() => dialogVisible = false"
+    >
+      <p>你确定发布问卷《{{ publishName }}》吗？</p>
+      <p>温馨提示：当前问卷非首次发布，建议你重新确认奖品设置，避免误发</p>
+      <el-button 
+        type="text"
+        @click="btnClickHandler"
+      >
+        >> 前往奖品设置
+      </el-button>
+      <span 
+        slot="footer" 
+        class="dialog-footer"
+      >
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button 
+          type="primary" 
+          @click="reqPublishProject(publishKey,publishName)"
+        >确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -197,7 +227,10 @@ export default {
         label: '已停止'
       }],
       tableData: [],
-      total: 0
+      total: 0,
+      dialogVisible: false,
+      publishKey:'',
+      publishName: ''
     };
   },
   mounted() {
@@ -205,7 +238,7 @@ export default {
   },
   filters:{
     filterP: (val) => {
-      val = val.replace(/<\/?p[^>]*>/gi,'')
+      val = val.replace(/<\/?[a-zA-Z][^>]*>/gi,'')
       return val
     }
   },
@@ -231,7 +264,10 @@ export default {
     toProjectHandle(key, type, status) {// 编辑
       this.$router.push({path: `/project/form/${type}`, query: {key: key, active: type, status} })
     },
-    publishProject(key, name, status) {
+    publishProject(res) {
+      const { key, name, status, publishNum } = res
+      this.publishKey = key
+      this.publishName = name
       //    if(this.guilds.length<1){
       //         console.log("请先选择频道再发布！",this.guilds.length)
       //      this.$message.warning('错了哦，请先选择频道再发布！');
@@ -241,19 +277,15 @@ export default {
         this.msgInfo('该问卷已发布')
         return
       }
+      if (publishNum > 0) { // 多次发布不同提示
+        this.dialogVisible = true
+        return;
+      }
       this.$confirm(`确定发布《${name}》吗？`, '确认发布', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         }).then(() => {
-          reqPublishProject({ key, fbUser: localStorage.getItem("user_id") }).then((res) => {
-            console.log( res )
-            // this.publishStatus = true;
-            // this.ksfb=true;
-            // this.sendMsg();
-            this.msgSuccess('发布成功')
-            this.$router.push({path: `/project/form/publish`, query: {key: key, active: name}})
-            this.getData()
-          })
+          this.reqPublishProject(key, name)
         }).catch(() => {
           this.$message({
             type: 'info',
@@ -261,7 +293,24 @@ export default {
           });          
         });
     },
-    dataCharts(id, key, status) { // 查看数据
+    reqPublishProject(key, name) {
+      reqPublishProject({ key, fbUser: localStorage.getItem("user_id") }).then((res) => {
+        console.log( res )
+        this.msgSuccess('发布成功')
+        this.$router.push({path: `/project/form/publish`, query: {key: key, active: name}})
+        this.getData()
+      })
+    },
+    btnClickHandler() {
+      if (!this.publishKey) return;
+      this.$router.push({path: `/project/form/setting`, query: {key: this.publishKey }})
+    },
+    dataCharts(res) { // 查看数据
+      const { id, key, status, publishNum } = res
+      if (publishNum == 0) {
+        this.msgInfo('该问卷暂未发布，请发布之后在查看数据')
+        return
+      }
       console.log('查看数据', id)
       this.$router.push({path: `/project/form/statistics`, query: {key: key, status: status}})
     },

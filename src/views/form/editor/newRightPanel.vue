@@ -1102,6 +1102,9 @@ export default {
         arr = arr.filter((item) => {
           return item.value >= this.activeData.min;
         });
+        if(arr.length >= 2) {
+          arr.shift()
+        }
         return arr;
       }
     },
