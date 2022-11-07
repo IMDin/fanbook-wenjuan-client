@@ -102,13 +102,11 @@
                 >
                   添加其他
                 </el-button>
-                 <el-button
+                <el-button
                   icon="el-icon-circle-plus-outline"
                   style="padding-bottom: 0"
                   type="text"
-                  @click="
-                    addBatchRadio(activeData.__slot__.options, 'radio')
-                  "
+                  @click="addBatchRadio(activeData.__slot__.options, 'radio')"
                 >
                   批量添加
                 </el-button>
@@ -503,12 +501,12 @@
               <p>行设置</p>
               <draggable
                 :animation="340"
-                :list="activeData.__slot__.table.rows"
+                :list="activeData.table.rows"
                 group="selectItem"
                 handle=".option-drag"
               >
                 <div
-                  v-for="(item, index) in activeData.__slot__.table.rows"
+                  v-for="(item, index) in activeData.table.rows"
                   :key="index"
                   class="select-item"
                 >
@@ -522,7 +520,7 @@
                   />
                   <div
                     class="close-btn select-line-icon"
-                    @click="activeData.__slot__.table.rows.splice(index, 1)"
+                    @click="activeData.table.rows.splice(index, 1)"
                   >
                     <i class="el-icon-remove-outline" />
                   </div>
@@ -541,16 +539,14 @@
                   icon="el-icon-circle-plus-outline"
                   style="padding-bottom: 0"
                   type="text"
-                  @click="
-                    addBatchButton(activeData.__slot__.table.rows, 'rows')
-                  "
+                  @click="addBatchButton(activeData.table.rows, 'rows')"
                 >
                   批量添加
                 </el-button>
               </div>
               <p>量表设置</p>
               <el-form-item label="极值标签">
-                <el-select v-model="activeData.__config__.maxTip">
+                <el-select v-model="activeData.table.maxTip">
                   <el-option
                     v-for="(item, index) in maxTipOptions"
                     :key="index"
@@ -559,19 +555,17 @@
                   />
                 </el-select>
               </el-form-item>
-              <el-form-item
-                v-if="activeData.__config__.maxTip !== 'satisfaction'"
-              >
+              <el-form-item v-if="activeData.table.maxTip !== 'satisfaction'">
                 <div style="display: flex; margin-top: 10px; margin-left: 0">
                   <el-input
-                    v-model="activeData.__config__.maxTipData.min"
+                    v-model="activeData.table.maxTipData.min"
                     placeholder="最低分标签"
                     style="width: 150px"
                   >
                   </el-input>
                   <span>&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;</span>
                   <el-input
-                    v-model="activeData.__config__.maxTipData.max"
+                    v-model="activeData.table.maxTipData.max"
                     placeholder="最高分标签"
                     style="width: 150px"
                   >
@@ -580,14 +574,15 @@
               </el-form-item>
               <el-form-item label="量级设置">
                 <el-input
-                  v-model="activeData.__slot__.table.level"
+                  :min="2"
+                  v-model="activeData.table.level"
                   type="number"
                   placeholder="请输入量级"
                 >
                 </el-input>
               </el-form-item>
               <el-form-item label="显示样式">
-                <el-select v-model="activeData.__config__.showIcon">
+                <el-select v-model="activeData.table.showIcon">
                   <el-option
                     v-for="(item, index) in showIconOptions"
                     :key="index"
@@ -605,12 +600,12 @@
               <p>行设置</p>
               <draggable
                 :animation="340"
-                :list="activeData.__slot__.table.rows"
+                :list="activeData.table.rows"
                 group="selectItem"
                 handle=".option-drag"
               >
                 <div
-                  v-for="(item, index) in activeData.__slot__.table.rows"
+                  v-for="(item, index) in activeData.table.rows"
                   :key="index"
                   class="select-item"
                 >
@@ -624,7 +619,7 @@
                   />
                   <div
                     class="close-btn select-line-icon"
-                    @click="activeData.__slot__.table.rows.splice(index, 1)"
+                    @click="activeData.table.rows.splice(index, 1)"
                   >
                     <i class="el-icon-remove-outline" />
                   </div>
@@ -644,7 +639,7 @@
                   style="padding-bottom: 0"
                   type="text"
                   @click="
-                    addBatchButton(activeData.__slot__.table.rows, 'rows')
+                    addBatchButton(activeData.table.rows, 'rows')
                   "
                 >
                   批量添加
@@ -653,12 +648,12 @@
               <p>选项设置</p>
               <draggable
                 :animation="340"
-                :list="activeData.__slot__.table.columns"
+                :list="activeData.table.columns"
                 group="selectItem"
                 handle=".option-drag"
               >
                 <div
-                  v-for="(item, index) in activeData.__slot__.table.columns"
+                  v-for="(item, index) in activeData.table.columns"
                   :key="index"
                   class="select-item"
                 >
@@ -672,7 +667,7 @@
                   />
                   <div
                     class="close-btn select-line-icon"
-                    @click="activeData.__slot__.table.columns.splice(index, 1)"
+                    @click="activeData.table.columns.splice(index, 1)"
                   >
                     <i class="el-icon-remove-outline" />
                   </div>
@@ -694,7 +689,7 @@
                   style="padding-bottom: 0"
                   type="text"
                   @click="
-                    addBatchButton(activeData.__slot__.table.columns, 'columns')
+                    addBatchButton(activeData.table.columns, 'columns')
                   "
                 >
                   批量添加
@@ -1174,6 +1169,7 @@ export default {
     },
     activeData: {
       handler(newValue, oldValue) {
+        console.log('jjk',newValue,oldValue)
         // 切换选中时不触发
         if (newValue.__config__.formId === oldValue.__config__.formId) {
           if (newValue) {
@@ -1183,12 +1179,18 @@ export default {
       },
       deep: true,
     },
+    'activeData.__config__': {
+      handler(newValue, oldValue) {
+        console.log('jjk56',newValue,oldValue)
+      },
+      deep: true,
+    }
   },
   methods: {
     addSelectItem(tagIcon, position) {
       let arr = [];
       if (tagIcon == "matrix-scale" || tagIcon == "matrix-select") {
-        arr = this.activeData.__slot__.table[position];
+        arr = this.activeData.table[position];
         let lastItem = _.last(arr);
         arr.push({
           label: "",
@@ -1209,7 +1211,6 @@ export default {
               : lastItem.value + 1
             : 1,
         });
-        console.log("kkk", arr);
       }
     },
     async blukAddSelectItems() {
@@ -1461,7 +1462,7 @@ export default {
     },
     addBatchData() {
       // 单选框添加 批量添加按钮
-      if(this.colOrRow  == "radio") {
+      if (this.colOrRow == "radio") {
         let arr = this.matrixTextarea.split("\n");
         this.activeData.__slot__.options = arr.map((item, index) => {
           return {
@@ -1476,7 +1477,7 @@ export default {
       let flag = this.colOrRow == "rows" ? "rows" : "columns";
       this.matrixRowDialogVisible = false;
       let arr = this.matrixTextarea.split("\n");
-      this.activeData.__slot__.table[flag] = arr.map((item, index) => {
+      this.activeData.table[flag] = arr.map((item, index) => {
         return {
           label: item,
           id: index + 1,

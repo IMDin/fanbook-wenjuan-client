@@ -112,6 +112,10 @@ function buildDataObject(confClone, dataObject) {
     }
     else {
       dataObject.attrs[key] = val
+      if (confClone.__config__.tag == "el-upload" && key=='__config__') {
+        console.log('sdwc',val.defaultValue)
+        dataObject.attrs['file-list'] = val.defaultValue
+      }
     }
   })
   console.log('render.dataObject', dataObject)

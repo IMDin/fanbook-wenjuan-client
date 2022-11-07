@@ -4,8 +4,6 @@ import { evalExpression } from "@/utils/expression";
 import render from "@/components/render/render.js";
 import _ from "lodash";
 import { componentDefaultValue } from "@/components/generator/config.js";
-import MatrixScale from "@/components/matrix/matrix-scale";
-import MatrixSelect from "@/components/matrix/matrix-select";
 
 const ruleTrigger = {
   "el-input": "blur",
@@ -59,29 +57,7 @@ const layouts = {
           prop={scheme.__vModel__}
           label={config.showLabel ? label : ""}
         >
-          {config.tag !== "matrix-select" && config.tag !== "matrix-scale" ? (
-            <render conf={scheme} {...{ on: listeners }} />
-          ) : (
-            <render conf={scheme}>
-              {config.tag == "matrix-scale" ? (
-                <MatrixScale
-                  data={scheme}
-                  update={(e) => {
-                    this.$set(config, "defaultValue", e);
-                  }}
-                />
-              ) : config.tag == "matrix-select" ? (
-                <MatrixSelect
-                  data={scheme}
-                  update={(e) => {
-                    this.$set(config, "defaultValue", e);
-                  }}
-                />
-              ) : (
-                ""
-              )}
-            </render>
-          )}
+          <render conf={scheme} {...{ on: listeners }} />
         </el-form-item>
       </el-col>
     );
@@ -194,8 +170,13 @@ function renderChildren(h, scheme) {
 }
 
 function setUpload(config, scheme, response, file) {
-  console.log(222,response,file)
-  console.log(111,[scheme.__vModel__],this[this.formConf.formModel],JSON.parse(this[this.formConf.formModel][scheme.__vModel__]))
+  console.log(222, response, file);
+  console.log(
+    111,
+    [scheme.__vModel__],
+    this[this.formConf.formModel],
+    JSON.parse(this[this.formConf.formModel][scheme.__vModel__])
+  );
   let newValue = JSON.parse(this[this.formConf.formModel][scheme.__vModel__]);
   if (!newValue) {
     newValue = [];
@@ -742,7 +723,10 @@ export default {
 ::v-deep .item-other-input:focus {
   outline: none !important;
 }
-::v-deep .el-upload {
-  display: flex;
+::v-deep .el-upload-dragger {
+  width: 100%;
+}
+::v-deep .el-radio {
+  margin-right: 30px;
 }
 </style>

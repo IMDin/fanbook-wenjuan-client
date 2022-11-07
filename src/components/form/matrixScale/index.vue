@@ -22,13 +22,13 @@
             style="margin: 0"
             v-if="scope.$index == 1"
           >
-            {{ data.__config__.maxTipData.min }}
+            {{ table.maxTipData.min }}
           </p>
           <p
             style="margin: 0"
-            v-if="scope.$index == data.__slot__.table.level"
+            v-if="scope.$index == table.level"
           >
-            {{ data.__config__.maxTipData.max }}
+            {{ table.maxTipData.max }}
           </p>
           <span>{{ scope.column.label }}</span>
         </template>
@@ -36,7 +36,7 @@
           <i
             v-if="scope.column.label"
             class="iconStyle"
-            :class="data.__config__.showIcon"
+            :class="table.showIcon"
           />
           {{ scope.column.label ? "" : scope.row.colName }}
         </template>
@@ -48,7 +48,33 @@
 <script>
 export default {
   name: "MatrixScale",
-  props: ["data", "update"],
+  props: {
+    table: {
+      type: Object,
+      default: function () {
+        return {
+          rows: [
+            {
+              label: "矩阵行1",
+              id: 1,
+            },
+            {
+              label: "矩阵行2",
+              id: 2,
+            },
+            {
+              label: "矩阵行3",
+              id: 3,
+            },
+          ],
+          maxTip: "satisfaction",
+          maxTipData: { min: "非常不满意", max: "非常满意" },
+          showIcon: "el-icon-star-off",
+          level: 5,
+        };
+      },
+    },
+  },
   data() {
     return {
       trData: [],
@@ -62,7 +88,7 @@ export default {
     };
   },
   watch: {
-    data: {
+    table: {
       handler(newV) {
         //行处理
         this.trData = [
@@ -71,12 +97,12 @@ export default {
             label: "",
           },
         ];
-        for (let i = 1; i <= newV.__slot__.table.level; i++) {
+        for (let i = 1; i <= newV.level; i++) {
           this.trData.push({ prop: String(i), label: String(i) });
         }
         //列处理
         this.tableData = [];
-        newV.__slot__.table.rows.forEach((item) => {
+        newV.rows.forEach((item) => {
           this.tableData.push({
             colName: item.label,
           });
@@ -96,7 +122,7 @@ export default {
       this.selectedData[row.colName] = Number(column.label);
       //重构数据结构
       let data = {};
-      this.data.__slot__.table.rows.forEach((item, index) => {
+      this.table.rows.forEach((item, index) => {
         Object.keys(this.selectedData).forEach((selectItem) => {
           if (selectItem == item.label) {
             data[String(index + 1)] = this.selectedData[selectItem];
@@ -105,7 +131,7 @@ export default {
       }),
         // let value = JSON.stringify(this.selectedData);
         console.log(1111, this.selectedData, data);
-      this.update(data);
+      this.$emit("input", this.selectedData);
     },
     hoverEnterClass(row, column) {
       this.currentRow = row.colName;
