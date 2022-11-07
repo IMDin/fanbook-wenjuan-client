@@ -148,8 +148,8 @@ export default {
           this.loading = false
           let { records, total, size } = res.data;
           this.projectList = records;
-          this.total = total;
-          this.queryParams.size = size;
+          this.total = Number(total);
+          this.queryParams.size = Number(size);
           this.projectListLoading = false;
         }).catch(err => {
           console.log(err);
@@ -157,6 +157,10 @@ export default {
         })
     },
     allDeleted() {
+      if (this.projectList.length == 0) {
+        this.msgInfo("回收站已清空");
+        return
+      }
       this.$confirm( `确定将从回收站中所有数据彻底删除吗？` , '清空回收站确认', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
