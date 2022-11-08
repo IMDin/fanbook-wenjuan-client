@@ -67,7 +67,7 @@ const layouts = {
           label-width={labelWidth}
           label={
             config.showLabel
-              ? config.label
+              ? config.labelIndex + " " + config.label
               : ""
           }
           required={config.required}

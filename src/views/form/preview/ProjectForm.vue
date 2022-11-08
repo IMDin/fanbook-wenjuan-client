@@ -173,7 +173,7 @@ export default {
                 if(showNumber) {
                   let ind = 0
                   fields.forEach((ele,index) => {
-                    ele.__config__.label =  this.changeNumber(index- ind) + ele.__config__.label
+                    ele.__config__.labelIndex =  this.changeNumber(index- ind)
                     if(ele.typeId == "PAGINATION") {
                       ind++
                     }
