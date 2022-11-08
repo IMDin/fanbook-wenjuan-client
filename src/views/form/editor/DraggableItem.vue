@@ -58,7 +58,9 @@ const layouts = {
           event.stopPropagation();
         }}
       >
+        <div class="questionType">{config.labelDescription}</div>
         <el-form-item
+          class={"formClass"}
           label-width={labelWidth}
           label={
             config.showLabel
@@ -67,7 +69,6 @@ const layouts = {
           }
           required={config.required}
         >
-          <div class="questionType">{config.labelDescription}</div>
           {config.titleTip ? (
             <div class="titleTip" domPropsInnerHTML={config.titleTipText}></div>
           ) : (
@@ -77,12 +78,14 @@ const layouts = {
             key={config.renderKey}
             conf={currentItem}
             onInput={(event) => {
-              console.log(789, event);
-              this.$set(config, "defaultValue", event);
+              this.$set(config, "defaultValue", event[0]);
               console.log(78989, currentItem);
             }}
-            onUpload={(response, file) => {
-              upload(response, file, currentItem, this);
+            onUpload={(response, file, fileList) => {
+              upload(response, file, fileList, currentItem, this);
+            }}
+            onDeleteUpload={(file, fileList) => {
+              deleteUpload(file, fileList, currentItem, this);
             }}
           >
             {child}
@@ -190,10 +193,19 @@ function changeNumber(num) {
     return num + 1;
   }
 }
-function upload(response, file, currentItem, that) {
-  console.log(111);
-  let newValue = [];
+function upload(response, file, fileList, currentItem, that) {
+  let newValue = currentItem.__config__.defaultValue;
+  if (!newValue) {
+    newValue = [];
+  }
   newValue.push({ fileName: file.name, url: response.data });
+  that.$set(currentItem.__config__, "defaultValue", newValue);
+}
+function deleteUpload(file, fileList, currentItem, that) {
+  let newValue = [];
+  fileList.forEach((element) => {
+    newValue.push({ fileName: element.name, url: element.url });
+  });
   that.$set(currentItem.__config__, "defaultValue", newValue);
 }
 
@@ -275,9 +287,14 @@ export default {
 ::v-deep .el-upload-dragger {
   width: 100%;
 }
+.formClass  {
+  border: 1px dashed #ccc;
+  margin: 0 15px 15px;
+}
 .questionType {
   position: absolute;
-  top: -70px;
+  top: 15px;
+  left:35px;
   background-color: #dcdfe6;
   padding: 0 5px;
 }

@@ -16,6 +16,7 @@
                 v-model="activeData.__config__.label"
                 placeholder="请输入标题"
                 @input="changeRenderKey"
+                maxlength="200"
               />
             </el-form-item>
             <el-form-item
@@ -114,17 +115,16 @@
               <el-divider />
               <el-form-item label="选项随机排列">
                 <el-switch
-                  v-model="activeData.__config__.selectRandom"
+                  v-model="activeData.selectRandom"
                   @change="randomSelect"
                 />
               </el-form-item>
               <el-form-item
-                v-if="activeData.__config__.selectRandom === true"
+                v-if="activeData.selectRandom === true"
                 label="固定最后一个选项"
               >
                 <el-switch
-                  v-model="activeData.__config__.fixLastSelect"
-                  @change="selectFix"
+                  v-model="activeData.fixLastSelect"
                 />
               </el-form-item>
             </div>
@@ -207,17 +207,16 @@
               <el-divider />
               <el-form-item label="选项随机排列">
                 <el-switch
-                  v-model="activeData.__config__.selectRandom"
+                  v-model="activeData.selectRandom"
                   @change="randomSelect"
                 />
               </el-form-item>
               <el-form-item
-                v-if="activeData.__config__.selectRandom === true"
+                v-if="activeData.selectRandom === true"
                 label="固定最后一个选项"
               >
                 <el-switch
-                  v-model="activeData.__config__.fixLastSelect"
-                  @change="selectFix"
+                  v-model="activeData.fixLastSelect"
                 />
               </el-form-item>
             </div>
@@ -309,17 +308,16 @@
               <el-divider />
               <el-form-item label="选项随机排列">
                 <el-switch
-                  v-model="activeData.__config__.selectRandom"
+                  v-model="activeData.selectRandom"
                   @change="randomSelect"
                 />
               </el-form-item>
               <el-form-item
-                v-if="activeData.__config__.selectRandom === true"
+                v-if="activeData.selectRandom === true"
                 label="固定最后一个选项"
               >
                 <el-switch
-                  v-model="activeData.__config__.fixLastSelect"
-                  @change="selectFix"
+                  v-model="activeData.fixLastSelect"
                 />
               </el-form-item>
             </div>
@@ -407,17 +405,16 @@
               </el-form-item>
               <el-form-item label="选项随机排列">
                 <el-switch
-                  v-model="activeData.__config__.selectRandom"
+                  v-model="activeData.selectRandom"
                   @change="randomSelect"
                 />
               </el-form-item>
               <el-form-item
-                v-if="activeData.__config__.selectRandom === true"
+                v-if="activeData.selectRandom === true"
                 label="固定最后一个选项"
               >
                 <el-switch
-                  v-model="activeData.__config__.fixLastSelect"
-                  @change="selectFix"
+                  v-model="activeData.fixLastSelect"
                 />
               </el-form-item>
             </div>
@@ -436,10 +433,7 @@
                   activeData.__config__.tag !== 'province-city'
                 "
               >
-                <el-select
-                  v-model="activeData.__config__.textType"
-                  style="width: 130px"
-                >
+                <el-select v-model="activeData.textType" style="width: 130px">
                   <el-option
                     v-for="item in typeRestrictOptions"
                     :key="item.value"
@@ -461,6 +455,8 @@
                   placeholder="请输入"
                   style="width: 130px"
                   type="number"
+                  @blur="changeLength(activeData.minlength, 'min')"
+                  clearable
                 >
                 </el-input>
               </el-form-item>
@@ -476,6 +472,8 @@
                   placeholder="请输入"
                   style="width: 130px"
                   type="number"
+                  @blur="changeLength(activeData.maxlength, 'max')"
+                  clearable
                 >
                 </el-input>
               </el-form-item>
@@ -638,9 +636,7 @@
                   icon="el-icon-circle-plus-outline"
                   style="padding-bottom: 0"
                   type="text"
-                  @click="
-                    addBatchButton(activeData.table.rows, 'rows')
-                  "
+                  @click="addBatchButton(activeData.table.rows, 'rows')"
                 >
                   批量添加
                 </el-button>
@@ -688,9 +684,7 @@
                   icon="el-icon-circle-plus-outline"
                   style="padding-bottom: 0"
                   type="text"
-                  @click="
-                    addBatchButton(activeData.table.columns, 'columns')
-                  "
+                  @click="addBatchButton(activeData.table.columns, 'columns')"
                 >
                   批量添加
                 </el-button>
@@ -1169,7 +1163,7 @@ export default {
     },
     activeData: {
       handler(newValue, oldValue) {
-        console.log('jjk',newValue,oldValue)
+        console.log("jjk", newValue, oldValue);
         // 切换选中时不触发
         if (newValue.__config__.formId === oldValue.__config__.formId) {
           if (newValue) {
@@ -1179,12 +1173,6 @@ export default {
       },
       deep: true,
     },
-    'activeData.__config__': {
-      handler(newValue, oldValue) {
-        console.log('jjk56',newValue,oldValue)
-      },
-      deep: true,
-    }
   },
   methods: {
     addSelectItem(tagIcon, position) {
@@ -1414,21 +1402,42 @@ export default {
         this.activeData.__config__.renderKey = +new Date();
       }
     },
+    //输入框禁止负数
+    changeLength(val, type) {
+      val = Number(
+        val && String(val).indexOf(".") > 0 ? val.replace(".", "") : val
+      );
+      if (type == "min") {
+        this.activeData.minlength =
+          val <= 0
+            ? 1
+            : this.activeData.maxlength && val < this.activeData.maxlength
+            ? val
+            : this.activeData.maxlength || val;
+      } else {
+        this.activeData.maxlength =
+          val <= 0
+            ? 1
+            : this.activeData.minlength && val < this.activeData.minlength
+            ? this.activeData.minlength || val
+            : val;
+      }
+    },
     //选项随机排列
     randomSelect(e) {
-      if (this.activeData.__config__.selectRandom) {
-        let arr = e
-          ? JSON.parse(JSON.stringify(e))
-          : JSON.parse(JSON.stringify(this.activeData.__slot__.options));
-        let m = arr.length;
-        while (m > 1) {
-          let index = Math.floor(Math.random() * m--);
-          [arr[m], arr[index]] = [arr[index], arr[m]];
-        }
-        console.log(222, arr, this.activeData.__slot__.options);
-        return arr;
+      if (this.activeData.selectRandom) {
+        // let arr = e
+        //   ? JSON.parse(JSON.stringify(e))
+        //   : JSON.parse(JSON.stringify(this.activeData.__slot__.options));
+        // let m = arr.length;
+        // while (m > 1) {
+        //   let index = Math.floor(Math.random() * m--);
+        //   [arr[m], arr[index]] = [arr[index], arr[m]];
+        // }
+        // console.log(222, arr, this.activeData.__slot__.options);
+        // return arr;
       } else {
-        this.activeData.__config__.fixLastSelect = false;
+        this.activeData.fixLastSelect = false;
       }
     },
     //固定最后一个选项
@@ -1446,6 +1455,7 @@ export default {
     // 批量编辑单选
     addBatchRadio(data, position) {
       this.colOrRow = position;
+      this.matrixTextarea = "";
       data.forEach((item) => {
         this.matrixTextarea += item.label + "\n";
       });
@@ -1467,22 +1477,22 @@ export default {
         this.activeData.__slot__.options = arr.map((item, index) => {
           return {
             label: item,
+            value: index + 1,
+          };
+        });
+      }
+      if (this.colOrRow == "rows" || this.colOrRow == "columns") {
+        let flag = this.colOrRow == "rows" ? "rows" : "columns";
+        this.matrixRowDialogVisible = false;
+        let arr = this.matrixTextarea.split("\n");
+        this.activeData.table[flag] = arr.map((item, index) => {
+          return {
+            label: item,
             id: index + 1,
           };
         });
-
-        this.matrixRowDialogVisible = false;
-        return;
       }
-      let flag = this.colOrRow == "rows" ? "rows" : "columns";
       this.matrixRowDialogVisible = false;
-      let arr = this.matrixTextarea.split("\n");
-      this.activeData.table[flag] = arr.map((item, index) => {
-        return {
-          label: item,
-          id: index + 1,
-        };
-      });
     },
   },
 };

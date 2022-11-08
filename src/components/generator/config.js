@@ -127,7 +127,7 @@ export const inputComponents = [
           message: '电子邮件格式错误'
         },
         {
-          pattern: 'http(s)?://([\\w-]+\\.)+[\\w-]+(/[\\w- ./?%&=]*)?',
+          pattern: '/^([0-9a-z-]{1,}.)?[0-9a-z-]{2,}.([0-9a-z-]{2,}.)?[a-z]{2,}$/i',
           message: '网址格式错误'
         },
         {
@@ -221,8 +221,6 @@ export const selectComponents = [
       labelDescription: '单选题',
       titleTip: false,
       titleTipText: '请输入题目说明',
-      selectRandom: false,
-      fixLastSelect: false,
       labelWidth: null,
       showLabel: true,
       showRegList: false,
@@ -249,7 +247,9 @@ export const selectComponents = [
     },
     style: {},
     size: 'medium',
-    disabled: false
+    disabled: false,
+    selectRandom: false,
+    fixLastSelect: false
   },
   {
     typeId: 'CHECKBOX',
@@ -258,8 +258,6 @@ export const selectComponents = [
       labelDescription: '多选题',
       titleTip: false,
       titleTipText: '请输入题目说明',
-      selectRandom: false,
-      fixLastSelect: false,
       tag: 'my-checkbox-group',
       tagIcon: 'checkbox',
       defaultValue: [],
@@ -288,7 +286,9 @@ export const selectComponents = [
     size: 'medium',
     min: null,
     max: null,
-    disabled: false
+    disabled: false,
+    selectRandom: false,
+    fixLastSelect: false
   },
   {
     typeId: 'SELECT',
@@ -326,6 +326,8 @@ export const selectComponents = [
     multiple: false,
     min: null,
     max: null,
+    selectRandom: false,
+    fixLastSelect: false
   },
   {
     typeId: 'IMAGE_SELECT',
@@ -354,7 +356,9 @@ export const selectComponents = [
       label: '选项1',
       value: 1
     }],
-    style: { width: '100%' }
+    style: { width: '100%' },
+    selectRandom: false,
+    fixLastSelect: false
   }
   // {
   //   typeId: 'CASCADER',
@@ -1095,7 +1099,7 @@ export const matrixComponents = [
       showIcon: 'el-icon-star-off',
       level: 5,
     },
-    placeholder: '',
+    placeholder: '请填写',
     style: {
       width: '100%'
     }
@@ -1144,7 +1148,7 @@ export const matrixComponents = [
       }]
     },
     multiple: false,
-    placeholder: '',
+    placeholder: '请填写',
     style: {
       width: '100%'
     }

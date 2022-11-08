@@ -885,7 +885,7 @@ export default {
           };
         },
         getUploadUrl() {
-            return `${process.env.VUE_APP_API_ROOT}/user/file/upload`
+            return `${process.env.VUE_APP_API_ROOT}user/file/upload`
         },
         getUserInfo() {
             return JSON.parse(this.$store.getters['user/userInfo'])

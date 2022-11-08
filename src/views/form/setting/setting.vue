@@ -956,15 +956,21 @@ export default {
           this.$message.warning("开始时间不可早于当前时间");
           this.startTime = "";
         } else if (this.timeStart) {
-          this.saveUserProjectSetting;
+          this.saveUserProjectSetting();
         }
       } else if (time == "end" && this.endTime) {
         if (new Date(this.endTime).getTime() - new Date().getTime() < 0) {
           this.$message.warning("结束时间不可早于当前时间");
           this.endTime = "";
         } else if (this.timeEnd) {
-          this.saveUserProjectSetting;
+          this.saveUserProjectSetting();
         }
+      } else if (!this.startTime) {
+        this.timeStart = false;
+        this.saveUserProjectSetting();
+      } else if (!this.endTime) {
+        this.timeEnd = false;
+        this.saveUserProjectSetting();
       }
     },
     initTime(time) {

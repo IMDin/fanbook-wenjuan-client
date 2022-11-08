@@ -171,12 +171,6 @@ function renderChildren(h, scheme) {
 
 function setUpload(config, scheme, response, file) {
   console.log(222, response, file);
-  console.log(
-    111,
-    [scheme.__vModel__],
-    this[this.formConf.formModel],
-    JSON.parse(this[this.formConf.formModel][scheme.__vModel__])
-  );
   let newValue = JSON.parse(this[this.formConf.formModel][scheme.__vModel__]);
   if (!newValue) {
     newValue = [];
@@ -199,9 +193,16 @@ function deleteUpload(config, scheme, file, fileList) {
 
 function setValue(event, config, scheme) {
   console.log("setValue,event/config/scheme", event, config, scheme);
-  this.$set(config, "defaultValue", event);
-  this.$set(this[this.formConf.formModel], scheme.__vModel__, event);
-  setValueLabel.call(this, event, config, scheme);
+  //兼容矩阵组件传值
+  if (config.tag == "matrix-scale" || config.tag == "matrix-select") {
+    this.$set(config, "defaultValue", event[0]);
+    this.$set(this[this.formConf.formModel], scheme.__vModel__, event[1]);
+    this.$set(this[this.formConf.labelFormModel], scheme.__vModel__, event[0]);
+  } else {
+    this.$set(config, "defaultValue", event);
+    this.$set(this[this.formConf.formModel], scheme.__vModel__, event);
+    setValueLabel.call(this, event, config, scheme);
+  }
   let logicShowRule = this.formConfCopy.logicShowRule;
   if (!logicShowRule) {
     return;
@@ -575,6 +576,52 @@ export default {
             callback(new Error(cur.placeholder));
           }
         };
+        //单行文本最小输入长度限制
+        const minTextLength = (rule, value, callback) => {
+          if (value && value.length < cur.minlength) {
+            callback(new Error(`最少要填字数为${cur.minlength}`));
+          } else {
+            callback();
+          }
+        };
+        //矩阵量表校验
+        const validateMatrixSale = (rule, value, callback) => {
+          if (value && config.required) {
+            let arr = [];
+            arr = Object.keys(value).filter((item) => {
+              return !value[item];
+            });
+            if (arr.length > 0) {
+              callback(new Error(`请完整填写矩阵`));
+            } else {
+              callback();
+            }
+          } else if (!config.required) {
+            callback();
+          } else {
+            callback(new Error(cur.placeholder));
+          }
+        };
+        //矩阵选择校验
+        const validateMatrixSelect = (rule, value, callback) => {
+          console.log("matrixScale", value);
+          if (value && config.required) {
+            let arr = [];
+            arr = Object.keys(value).filter((item) => {
+              return value[item].length == 0;
+            });
+            console.log("arr", arr);
+            if (arr.length > 0) {
+              callback(new Error(`请完整填写矩阵`));
+            } else {
+              callback();
+            }
+          } else if (!config.required) {
+            callback();
+          } else {
+            callback(new Error(cur.placeholder));
+          }
+        };
         if (Array.isArray(config.regList)) {
           // 必填其他输入框校验
           if (["RADIO", "CHECKBOX"].includes(cur.typeId)) {
@@ -587,6 +634,24 @@ export default {
           if (["SELECT"].includes(cur.typeId) && cur.multiple) {
             const required = {
               validator: validateSelectMultiple,
+            };
+            config.regList.push(required);
+          }
+          if (config.tag == "matrix-scale") {
+            const required = {
+              validator: validateMatrixSale,
+            };
+            config.regList.push(required);
+          }
+          if (config.tag == "matrix-select") {
+            const required = {
+              validator: validateMatrixSelect,
+            };
+            config.regList.push(required);
+          }
+          if (config.labelDescription == "单行文本" && cur.minlength) {
+            const required = {
+              validator: minTextLength,
             };
             config.regList.push(required);
           }
@@ -603,33 +668,34 @@ export default {
               (required.message = `${config.label}不能为空`);
             config.regList.push(required);
           }
+          console.log(1526, config.regList);
           // 显示时使用表单校验
           if (!flag) {
             if (config.tagIcon == "input") {
-              switch (config.textType) {
+              switch (cur.textType) {
                 case "text":
-                  config.regList = config.regList.splice(7, 1);
+                  config.regList = this.filterReg(config.regList);
                   break;
                 case "number":
-                  config.regList = config.regList.splice(0, 1);
+                  config.regList = this.filterReg(config.regList, 0);
                   break;
                 case "letter":
-                  config.regList = config.regList.splice(1, 1);
+                  config.regList = this.filterReg(config.regList, 1);
                   break;
                 case "chinese":
-                  config.regList = config.regList.splice(2, 1);
+                  config.regList = this.filterReg(config.regList, 2);
                   break;
                 case "phone":
-                  config.regList = config.regList.splice(3, 1);
+                  config.regList = this.filterReg(config.regList, 3);
                   break;
                 case "email":
-                  config.regList = config.regList.splice(4, 1);
+                  config.regList = this.filterReg(config.regList, 4);
                   break;
                 case "url":
-                  config.regList = config.regList.splice(5, 1);
+                  config.regList = this.filterReg(config.regList, 5);
                   break;
                 case "idCard":
-                  config.regList = config.regList.splice(6, 1);
+                  config.regList = this.filterReg(config.regList, 6);
                   break;
               }
             }
@@ -657,6 +723,16 @@ export default {
             item.trigger = ruleTrigger && ruleTrigger[config.tag];
             return item;
           });
+        }
+      });
+    },
+    //过滤校验规则
+    filterReg(arr, i) {
+      return arr.filter((item, index) => {
+        if (i) {
+          return index == i || index == 7 || index == 8;
+        } else {
+          return index == 7 || index == 8;
         }
       });
     },

@@ -30,13 +30,10 @@ export function formItemConvertData(item, projectKey) {
     'span': item.__config__.span,
     'displayType': item.__config__.displayType,
     'projectKey': projectKey,
-    'selectRandom': item.__config__.selectRandom,
-    'fixLastSelect': item.__config__.fixLastSelect,
     'multiple': item.multiple,
     'titleTip': item.__config__.titleTip,
     'titleTipText': item.__config__.titleTipText,
     'showTip': item.__config__.showTip,
-    'textType':item.__config__.textType,
   }
   let expand = {}
   let param = dataParams[item.typeId]
@@ -95,11 +92,13 @@ export function dbDataConvertForItemJson(data) {
     } else {
       jsonItem.__config__.defaultValue = data.defaultValue.value
     }
+    // jsonItem['file-list'] = data.defaultValue.value
   }
   // 不同项目地址区分 动态修改上传地址
   if (jsonItem.action) {
     jsonItem.action = jsonItem.action + data.projectKey
   }
+  // jsonItem.textType = data.textType
   jsonItem.regList = data.regList
   jsonItem.placeholder = data.placeholder
   jsonItem.formItemId = data.formItemId
@@ -162,7 +161,9 @@ const dataParams = {
     'options': '__slot__.options',
     'filterable': 'filterable',
     'size': 'size',
-    'multiple': 'props.props.multiple'
+    'multiple': 'props.props.multiple',
+    'selectRandom':'selectRandom',
+    'fixLastSelect':'fixLastSelect'
   },
   // 多选框组
   'CHECKBOX': {
