@@ -2,7 +2,7 @@
   <div>
     <el-radio-group
       v-if="!multiple"
-      v-model="selectValue"
+      v-model="model"
       @change="selectValueChange"
     >
       <div
@@ -30,7 +30,7 @@
     </el-radio-group>
     <el-checkbox-group
       v-else
-      v-model="selectValue"
+      v-model="model"
       @change="selectValueChange"
     >
       <div
@@ -79,28 +79,34 @@ export default {
       default: false,
     },
   },
-  data() {
-    return {
-      selectValue: '',
-    }
-  },
   watch: {
     multiple() {
       this.setValue()
     },
   },
+  computed: {
+    model: {
+      get() {
+        return this.value
+      },
+      set(val) {
+        this.$emit('input', val);
+      }
+    }
+  },
   created() {
-    this.selectValue = this.value
+    console.log(this.$parent.$props, 'this');
+    this.model = this.value
   },
   methods: {
     selectValueChange() {
-      this.$emit('input', this.selectValue)
+      this.$emit('input', this.model)
     },
     setValue() {
       if (this.multiple) {
-        this.selectValue = Array.isArray(this.vallue) ? this.value : []
+        this.model = Array.isArray(this.vallue) ? this.value : []
       } else {
-        this.selectValue = Array.isArray(this.vallue) ? '' : this.vallue
+        this.model = Array.isArray(this.vallue) ? '' : this.vallue
       }
     },
   },

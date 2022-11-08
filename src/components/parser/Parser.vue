@@ -17,6 +17,7 @@ const ruleTrigger = {
   "el-time-picker": "change",
   "el-date-picker": "change",
   "el-rate": "change",
+  "image-select": 'change'
 };
 
 const processType = {
@@ -219,6 +220,7 @@ function setValue(event, config, scheme) {
   console.log("setValue,event/config/scheme", event, config, scheme);
   this.$set(config, "defaultValue", event);
   this.$set(this[this.formConf.formModel], scheme.__vModel__, event);
+  console.log(JSON.stringify(this[this.formConf.formModel]), 'JSON.stringify------------');
   setValueLabel.call(this, event, config, scheme);
   let logicShowRule = this.formConfCopy.logicShowRule;
   if (!logicShowRule) {
@@ -553,6 +555,7 @@ export default {
     buildRules(componentList, rules) {
       console.log("buildRules", componentList, rules);
       componentList.forEach((cur) => {
+        console.log('先校验还是后校验');
         // 逻辑不显示必填问题不校验
         let triggerShow =
           _.indexOf(this.logicTriggerItemList, cur.formItemId) > -1;
@@ -593,7 +596,23 @@ export default {
             callback(new Error(cur.placeholder));
           }
         };
+        const validateImageInput = (rule, value, callback) => {
+          console.log(this[this.formConf.formModel], 'this[this.formConf.formModel]');
+          let num = this[this.formConf.formModel]?.field101
+          console.log(JSON.stringify(this[this.formConf.formModel]), 'JSON.stringify(this[this.formConf.formModel])');
+          console.log(num, '111');
+          console.log(value, 'valuevaluevaluevaluevaluevalue');
+          callback()
+        };
+
         if (Array.isArray(config.regList)) {
+          if(cur.typeId === "IMAGE_SELECT") {
+              const required = {
+                  validator: validateImageInput,
+                  message: '啊啊啊啊啊啊',
+                };
+                config.regList.push(required);
+            }
           // 必填其他输入框校验
           if (["RADIO", "CHECKBOX"].includes(cur.typeId)) {
             const required = {
@@ -683,6 +702,7 @@ export default {
       this.$refs[this.formConf.formRef].resetFields();
     },
     submitForm() {
+      console.log(this[this.formConf.formModel], 'this[this.formConf.formModel]');
       this.$refs[this.formConf.formRef].validate((valid) => {
         if (!valid) {
           // 未选中自动高亮
