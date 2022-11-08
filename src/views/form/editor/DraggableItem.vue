@@ -67,7 +67,7 @@ const layouts = {
           label-width={labelWidth}
           label={
             config.showLabel
-              ? changeNumber(index, config) + " " + config.label
+              ? config.label
               : ""
           }
           required={config.required}
@@ -212,14 +212,6 @@ function renderChildren(h, currentItem, index, list) {
 
 function layoutIsNotFound() {
   throw new Error(`没有与${this.currentItem.__config__.layout}匹配的layout`);
-}
-
-function changeNumber(num) {
-  if (num + 1 < 10) {
-    return "0" + String(num + 1);
-  } else {
-    return num + 1;
-  }
 }
 
 export default {

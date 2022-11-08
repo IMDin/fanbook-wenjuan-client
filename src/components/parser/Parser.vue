@@ -36,10 +36,7 @@ const layouts = {
     let labelWidth = config.labelWidth ? `${config.labelWidth}px` : null;
     if (config.showLabel === false) labelWidth = "0";
     let label = config.label;
-    // 显示序号
-    if (formConfCopy.showNumber) {
-      label = scheme.serialNumber + ": " + label;
-    }
+
     // 分页返回上一页时把值设置回表单
     let value = _.get(this[this.formConf.formModel], scheme.__vModel__);
     if (value) {

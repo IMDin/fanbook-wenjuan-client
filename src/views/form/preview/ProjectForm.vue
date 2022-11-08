@@ -161,16 +161,24 @@ export default {
         })
         this.$api.get(url).then(res => {
             if (res.data) {
+                let {submitBtnText, showNumber, btnsColor} = res.data.userProjectTheme
                 let serialNumber = 1
                 let fields = res.data.projectItems.map(item => {
                     let projectItem = dbDataConvertForItemJson(item)
                     projectItem.serialNumber = serialNumber
                     projectItem.logicShow = !logicItemMap.get(projectItem.formItemId)
                     serialNumber++
-                    console.log('projectItem',projectItem)
                     return projectItem
                 })
-                console.log('fields',fields)
+                if(showNumber) {
+                  let ind = 0
+                  fields.forEach((ele,index) => {
+                    ele.__config__.label =  this.changeNumber(index- ind) + ele.__config__.label
+                    if(ele.typeId == "PAGINATION") {
+                      ind++
+                    }
+                  })
+                }
                 this.pageShowHandle(fields)
                 if (_.keys(this.perPageFields).length != 0) {
                     this.formConf.fields = _.get(this.perPageFields, 1)
@@ -187,7 +195,6 @@ export default {
                 // 主题数据
                 if (res.data.userProjectTheme) {
                     this.projectTheme = res.data.userProjectTheme
-                    let {submitBtnText, showNumber, btnsColor} = res.data.userProjectTheme
                     if (submitBtnText) this.formConf.submitBtnText = submitBtnText
                     if (showNumber) this.formConf.showNumber = showNumber
                     if (btnsColor) this.formConf.submitBtnColor = btnsColor
@@ -198,6 +205,13 @@ export default {
         })
     },
     methods: {
+       changeNumber(num) {
+          if (num + 1 < 10) {
+            return "0" + String(num + 1);
+          } else {
+            return num + 1;
+          }
+        },
         // 分页显示数据处理
         pageShowHandle(allFields) {
             // 判断是否存在分页
