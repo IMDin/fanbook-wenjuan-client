@@ -516,6 +516,13 @@ export default {
         }
       });
     },
+    changeNumber(num) {
+      if (num + 1 < 10) {
+        return "0" + String(num + 1);
+      } else {
+        return num + 1;
+      }
+    },
     queryProjectItems() {
       this.$api
         .get("/user/project/item/list", { params: { key: this.projectKey } })
@@ -523,6 +530,13 @@ export default {
           this.drawingList = res.data.map((item) =>
             dbDataConvertForItemJson(item)
           );
+          let ind = 0
+          this.drawingList.forEach((ele,index) => {
+            ele.__config__.label =  this.changeNumber(index- ind) + ele.__config__.label
+            if(ele.typeId == "PAGINATION") {
+              ind++
+            }
+          })
           console.log('drawingList',this.drawingList)
           // 更新分页
           this.updatePaginationList();
