@@ -1073,9 +1073,7 @@ export default {
           arr.unshift({ label: "不限", value: 0 });
         }
         arr = arr.filter((item) => {
-          return item.value < this.activeData.max
-            ? this.activeData.max
-            : arr.length;
+          return item.value <= this.activeData.max
         });
         return arr;
       }

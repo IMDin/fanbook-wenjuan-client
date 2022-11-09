@@ -62,11 +62,7 @@ const layouts = {
         <el-form-item
           class={"formClass"}
           label-width={labelWidth}
-          label={
-            config.showLabel
-              ? config.labelIndex + " " + config.label
-              : ""
-          }
+          label={config.showLabel ? config.labelIndex + " " + config.label : ""}
           required={config.required}
         >
           {config.titleTip ? (
@@ -78,7 +74,9 @@ const layouts = {
             key={config.renderKey}
             conf={currentItem}
             onInput={(event) => {
-              this.$set(config, "defaultValue", event[0]);
+              config.tag == "matrix-scale" || config.tag == "matrix-select"
+                ? this.$set(config, "defaultValue", event[0])
+                : this.$set(config, "defaultValue", event);
               console.log(78989, currentItem);
             }}
             onUpload={(response, file, fileList) => {
@@ -280,14 +278,14 @@ export default {
 ::v-deep .el-upload-dragger {
   width: 100%;
 }
-.formClass  {
+.formClass {
   border: 1px dashed #ccc;
   margin: 0 15px 15px;
 }
 .questionType {
   position: absolute;
   top: 15px;
-  left:35px;
+  left: 35px;
   background-color: #dcdfe6;
   padding: 0 5px;
 }
