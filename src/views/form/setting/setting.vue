@@ -756,14 +756,18 @@ export default {
                 time.getTime() < new Date().getTime() - 24 * 3600 * 1000
             : time.getTime() < new Date().getTime() - 24 * 3600 * 1000;
         },
-        selectableRange: `00:00:00 -  ${
-          this.endTime &&
-          new Date(this.endTime).getTime() -
-            new Date(this.startTime).getTime() <
-            24 * 3600 * 1000
-            ? this.initTime(this.endTime)
-            : "23:59:59"
-        }
+        selectableRange:
+          new Date().getTime() - new Date(this.startTime).getTime() <
+          24 * 3600 * 1000
+            ? `${this.initTime(new Date())} - "23:59:59"`
+            : `00:00:00 -  ${
+                this.endTime &&
+                new Date(this.endTime).getTime() -
+                  new Date(this.startTime).getTime() <
+                  24 * 3600 * 1000
+                  ? this.initTime(this.endTime)
+                  : "23:59:59"
+              }
         `,
       };
     },
@@ -773,7 +777,7 @@ export default {
           let beginDateVal = this.startTime;
           return beginDateVal
             ? time.getTime() <
-                new Date(beginDateVal).getTime() - 24 * 3600 * 1000
+                new Date(beginDateVal).getTime() - 24 * 3600 * 1000 + 1
             : time.getTime() < new Date().getTime() - 24 * 3600 * 1000;
         },
         selectableRange: ` ${
@@ -965,10 +969,10 @@ export default {
         } else if (this.timeEnd) {
           this.saveUserProjectSetting();
         }
-      } else if (!this.startTime) {
+      } else if (this.timeStart) {
         this.timeStart = false;
         this.saveUserProjectSetting();
-      } else if (!this.endTime) {
+      } else if (this.timeEnd) {
         this.timeEnd = false;
         this.saveUserProjectSetting();
       }
