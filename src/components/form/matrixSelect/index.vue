@@ -16,7 +16,7 @@
             v-for="(tableItem, i) in tableData"
             :key="i"
           >
-            <div v-if="!data.multiple">
+            <div v-if="!multiple">
               <el-radio
                 v-model="radioList[i]"
                 :label="scope.column.label"
@@ -47,7 +47,47 @@
 <script>
 export default {
   name: "MatrixSelect",
-  props: ["data", "update"],
+  props: {
+    table: {
+      type: Object,
+      default: function () {
+        return {
+          rows: [
+            {
+              label: "矩阵行1",
+              id: 1,
+            },
+            {
+              label: "矩阵行2",
+              id: 2,
+            },
+            {
+              label: "矩阵行3",
+              id: 3,
+            },
+          ],
+          columns: [
+            {
+              label: "选项1",
+              id: 1,
+            },
+            {
+              label: "选项2",
+              id: 2,
+            },
+            {
+              label: "选项3",
+              id: 3,
+            },
+          ],
+        };
+      },
+    },
+    multiple: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data() {
     return {
       trData: [],
@@ -57,7 +97,7 @@ export default {
     };
   },
   watch: {
-    data: {
+    table: {
       handler(newV) {
         //行处理
         this.trData = [
@@ -66,16 +106,15 @@ export default {
             label: "",
           },
         ];
-        console.log(888, newV.__slot__.table.columns);
-        newV.__slot__.table.columns.forEach((item) => {
+        newV.columns.forEach((item) => {
           this.trData.push({
             prop: String(item.id),
-            label: item.label || "选项" + newV.__slot__.table.columns.length,
+            label: item.label || "选项" + newV.columns.length,
           });
         });
         //列处理
         this.tableData = [];
-        newV.__slot__.table.rows.forEach((item) => {
+        newV.rows.forEach((item) => {
           this.tableData.push({
             colName: item.label,
           });
@@ -88,7 +127,7 @@ export default {
   methods: {
     cellClick(row, column, cell, event) {
       if (event.target.tagName !== "SPAN") return;
-      if (this.data.multiple) {
+      if (this.multiple) {
         if (Object.keys(this.selectedData).length !== this.tableData.length) {
           this.tableData.forEach((item) => {
             this.selectedData[item.colName] = [];
@@ -108,14 +147,13 @@ export default {
         this.selectedData[row.colName].sort();
         //重构数据结构
         let data = {};
-        this.data.__slot__.table.rows.forEach((item, index) => {
+        this.table.rows.forEach((item, index) => {
           Object.keys(this.selectedData).forEach((selectItem) => {
             if (selectItem == item.label) {
               data[String(index + 1)] = this.selectedData[selectItem];
             }
           });
         });
-        // console.log("dddd", this.selectedData,data);
       } else {
         if (Object.keys(this.selectedData).length !== this.tableData.length) {
           this.tableData.forEach((item) => {
@@ -126,16 +164,16 @@ export default {
         this.selectedData[row.colName] = [Number(column.property)];
         //重构数据结构
         let data = {};
-        this.data.__slot__.table.rows.forEach((item, index) => {
+        this.table.rows.forEach((item, index) => {
           Object.keys(this.selectedData).forEach((selectItem) => {
             if (selectItem == item.label) {
               data[String(index + 1)] = this.selectedData[selectItem];
             }
           });
         }),
-          // let value = JSON.stringify(this.selectedData);
-          console.log(2222, this.selectedData, data);
-        this.update(this.selectedData);
+        // let value = JSON.stringify(this.selectedData);
+        console.log(2222, this.selectedData, data);
+        this.$emit("input", [{ ...this.selectedData }, data]);
       }
     },
   },
@@ -160,5 +198,8 @@ export default {
 }
 ::v-deep .cell {
   text-align: center;
+}
+.matrixScale ::v-deep .el-radio {
+  margin-right: 0;
 }
 </style>

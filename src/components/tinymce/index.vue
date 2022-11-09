@@ -33,7 +33,9 @@ export default {
     mounted() {
 
         loadTinymce(tinymce => {
-            let token = this.getUserToken()
+            let token = localStorage.getItem("fanbookToken")
+            let fbtoken = localStorage.getItem("fbtoken")
+            // let token = this.getUserToken()
             let uploadUrl = constants.userUploadUrl
             // eslint-disable-next-line global-require
             require('./zh_CN')
@@ -69,6 +71,7 @@ export default {
                     xhr.withCredentials = false
                     xhr.open('POST', uploadUrl)
                     xhr.setRequestHeader('token', token)
+                    xhr.setRequestHeader('fbtoken', fbtoken)
                     xhr.onload = function() {
                         var json
                         if (xhr.status != 200) {
@@ -84,6 +87,7 @@ export default {
                     }
                     formData = new FormData()
                     formData.append('file', file, file.name)// 此处与源文档不一样
+                    formData.append('fbuser', localStorage.getItem("user_id"))
                     xhr.send(formData)
                 }
             }

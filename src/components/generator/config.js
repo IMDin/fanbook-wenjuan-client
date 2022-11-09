@@ -104,7 +104,6 @@ export const inputComponents = [
       layout: 'colFormItem',
       span: 24,
       document: 'https://element.eleme.cn/#/zh-CN/component/input',
-      textType: 'text',
       // 正则校验规则
       regList: [
         {
@@ -128,7 +127,7 @@ export const inputComponents = [
           message: '电子邮件格式错误'
         },
         {
-          pattern: 'http(s)?://([\\w-]+\\.)+[\\w-]+(/[\\w- ./?%&=]*)?',
+          pattern: '/^([0-9a-z-]{1,}.)?[0-9a-z-]{2,}.([0-9a-z-]{2,}.)?[a-z]{2,}$/i',
           message: '网址格式错误'
         },
         {
@@ -142,6 +141,7 @@ export const inputComponents = [
       prepend: '',
       append: ''
     },
+    textType: 'text',
     // 其余的为可直接写在组件标签上的属性
     placeholder: '请输入',
     style: { width: '100%' },
@@ -221,8 +221,6 @@ export const selectComponents = [
       labelDescription: '单选题',
       titleTip: false,
       titleTipText: '请输入题目说明',
-      selectRandom: false,
-      fixLastSelect: false,
       labelWidth: null,
       showLabel: true,
       showRegList: false,
@@ -249,7 +247,9 @@ export const selectComponents = [
     },
     style: {},
     size: 'medium',
-    disabled: false
+    disabled: false,
+    selectRandom: false,
+    fixLastSelect: false
   },
   {
     typeId: 'CHECKBOX',
@@ -258,8 +258,6 @@ export const selectComponents = [
       labelDescription: '多选题',
       titleTip: false,
       titleTipText: '请输入题目说明',
-      selectRandom: false,
-      fixLastSelect: false,
       tag: 'my-checkbox-group',
       tagIcon: 'checkbox',
       defaultValue: [],
@@ -288,7 +286,9 @@ export const selectComponents = [
     size: 'medium',
     min: null,
     max: null,
-    disabled: false
+    disabled: false,
+    selectRandom: false,
+    fixLastSelect: false
   },
   {
     typeId: 'SELECT',
@@ -326,6 +326,8 @@ export const selectComponents = [
     multiple: false,
     min: null,
     max: null,
+    selectRandom: false,
+    fixLastSelect: false
   },
   {
     typeId: 'IMAGE_SELECT',
@@ -354,7 +356,9 @@ export const selectComponents = [
       label: '选项1',
       value: 1
     }],
-    style: { width: '100%' }
+    style: { width: '100%' },
+    selectRandom: false,
+    fixLastSelect: false
   }
   // {
   //   typeId: 'CASCADER',
@@ -1065,42 +1069,37 @@ export const matrixComponents = [
       labelDescription: '矩阵量表',
       titleTip: false,
       titleTipText: '请输入题目说明',
-      maxTip: 'satisfaction',
-      maxTipData: { min: '非常不满意', max: '非常满意' },
-      showIcon: 'el-icon-star-off',
       labelWidth: null,
       showLabel: true,
       changeTag: false,
       tag: 'matrix-scale',
       tagIcon: 'matrix-scale',
       layout: 'colFormItem',
-      defaultValue: {},
+      defaultValue: null,
       required: true,
       span: 24,
       showRegList: false,
       regList: []
     },
     __slot__: {
-      table: {
-        rows: [{
-          label: '矩阵行1',
-          id: 1
-        }, {
-          label: '矩阵行2',
-          id: 2
-        }, {
-          label: '矩阵行3',
-          id: 3
-        }],
-        // copyWriting: {
-        //   max: '非常不满意',
-        //   min: '非常满意'
-        // },
-        level: 5
-      },
     },
-    icon: 'tduck-star',
-    placeholder: '',
+    table: {
+      rows: [{
+        label: '矩阵行1',
+        id: 1
+      }, {
+        label: '矩阵行2',
+        id: 2
+      }, {
+        label: '矩阵行3',
+        id: 3
+      }],
+      maxTip: 'satisfaction',
+      maxTipData: { min: '非常不满意', max: '非常满意' },
+      showIcon: 'el-icon-star-off',
+      level: 5,
+    },
+    placeholder: '请填写',
     style: {
       width: '100%'
     }
@@ -1118,38 +1117,38 @@ export const matrixComponents = [
       tag: 'matrix-select',
       tagIcon: 'matrix-select',
       layout: 'colFormItem',
-      defaultValue: {},
+      defaultValue: null,
       required: true,
       span: 24,
       showRegList: false,
       regList: []
     },
     __slot__: {
-      table: {
-        rows: [{
-          label: '矩阵行1',
-          id: 1
-        }, {
-          label: '矩阵行2',
-          id: 2
-        }, {
-          label: '矩阵行3',
-          id: 3
-        }],
-        columns: [{
-          label: '选项1',
-          id: 1
-        }, {
-          label: '选项2',
-          id: 2
-        }, {
-          label: '选项3',
-          id: 3
-        }]
-      }
+    },
+    table: {
+      rows: [{
+        label: '矩阵行1',
+        id: 1
+      }, {
+        label: '矩阵行2',
+        id: 2
+      }, {
+        label: '矩阵行3',
+        id: 3
+      }],
+      columns: [{
+        label: '选项1',
+        id: 1
+      }, {
+        label: '选项2',
+        id: 2
+      }, {
+        label: '选项3',
+        id: 3
+      }]
     },
     multiple: false,
-    placeholder: '',
+    placeholder: '请填写',
     style: {
       width: '100%'
     }

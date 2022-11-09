@@ -396,7 +396,7 @@ export default {
   computed: {},
   watch: {
     // eslint-disable-next-line func-names
-    "activeData.__config__.label": function (val, oldVal) {
+    "activeData.__config__.labelDescription": function (val, oldVal) {
       if (
         this.activeData.placeholder === undefined ||
         !this.activeData.__config__.tag ||
@@ -892,5 +892,8 @@ export default {
   width: 178px;
   height: 178px;
   display: block;
+}
+::v-deep .el-radio {
+  margin-right: 150px;
 }
 </style>

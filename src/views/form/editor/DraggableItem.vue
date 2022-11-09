@@ -1,8 +1,6 @@
 <script>
 import draggable from "vuedraggable";
 import render from "@/components/render/render";
-import MatrixScale from "@/components/matrix/matrix-scale";
-import MatrixSelect from "@/components/matrix/matrix-select";
 
 const components = {
   itemBtns(h, currentItem, index, list) {
@@ -34,13 +32,11 @@ const components = {
 const layouts = {
   // eslint-disable-next-line no-unused-vars
   colFormItem(h, currentItem, index, list) {
-    // const projectKey = this.$route.query.key;
     // eslint-disable-next-line no-unused-vars
-    console.log('draggableItem.currentItem', currentItem);
+    console.log("draggableItem.currentItem", currentItem);
     const { activeItem } = this.$listeners;
     const config = currentItem.__config__;
     const child = renderChildren.apply(this, arguments);
-    // this.$set(currentItem, "action", currentItem.action + projectKey);
     //初始化最多可选
     if (config.tag == "my-checkbox-group") {
       this.$set(currentItem, "max", currentItem.__slot__.options.length);
@@ -58,12 +54,13 @@ const layouts = {
         span={config.span}
         class={className}
         nativeOnClick={(event) => {
-          config.tag !== ("matrix-select" || "matrix-scale")
-            ? (activeItem(currentItem), event.stopPropagation())
-            : "";
+          activeItem(currentItem);
+          event.stopPropagation();
         }}
       >
+        <div class="questionType">{config.labelDescription}</div>
         <el-form-item
+          class={"formClass"}
           label-width={labelWidth}
           label={
             config.showLabel
@@ -72,7 +69,6 @@ const layouts = {
           }
           required={config.required}
         >
-          <div class="questionType">{config.labelDescription}</div>
           {config.titleTip ? (
             <div class="titleTip" domPropsInnerHTML={config.titleTipText}></div>
           ) : (
@@ -82,42 +78,18 @@ const layouts = {
             key={config.renderKey}
             conf={currentItem}
             onInput={(event) => {
-              config.tag !== "matrix-select"
-                ? this.$set(config, "defaultValue", event)
-                : "";
+              this.$set(config, "defaultValue", event[0]);
+              console.log(78989, currentItem);
+            }}
+            onUpload={(response, file, fileList) => {
+              upload(response, file, fileList, currentItem, this);
+            }}
+            onDeleteUpload={(file, fileList) => {
+              deleteUpload(file, fileList, currentItem, this);
             }}
           >
             {child}
-            {config.tag == "matrix-scale" ? (
-              <MatrixScale
-                data={currentItem}
-                update={(e) => {
-                  this.$set(config, "defaultValue", e);
-                  // activeItem(currentItem);
-                }}
-              />
-            ) : config.tag == "matrix-select" ? (
-              <MatrixSelect
-                data={currentItem}
-                update={(e) => {
-                  this.$set(config, "defaultValue", e);
-                  // activeItem(currentItem);
-                }}
-              />
-            ) : (
-              ""
-            )}
           </render>
-          {config.tagIcon == "image-upload" ? (
-            <div style="margin-top:5px">
-              <i class="el-icon-warning-outline" style="font-size: 14px" />
-              <span style="margin-left: 10px; color: #7b7b7b; font-size: 14px">
-                单张图片大小不超过30M
-              </span>
-            </div>
-          ) : (
-            ""
-          )}
           {config.titleTip ? (
             <div style="margin-top:15px">
               <Tinymce
@@ -214,6 +186,22 @@ function layoutIsNotFound() {
   throw new Error(`没有与${this.currentItem.__config__.layout}匹配的layout`);
 }
 
+function upload(response, file, fileList, currentItem, that) {
+  let newValue = currentItem.__config__.defaultValue;
+  if (!newValue) {
+    newValue = [];
+  }
+  newValue.push({ fileName: file.name, url: response.data });
+  that.$set(currentItem.__config__, "defaultValue", newValue);
+}
+function deleteUpload(file, fileList, currentItem, that) {
+  let newValue = [];
+  fileList.forEach((element) => {
+    newValue.push({ fileName: element.name, url: element.url });
+  });
+  that.$set(currentItem.__config__, "defaultValue", newValue);
+}
+
 export default {
   components: {
     render,
@@ -224,7 +212,7 @@ export default {
     const layout = layouts[this.currentItem.__config__.layout];
 
     if (layout) {
-      console.log('layout',this.currentItem)
+      console.log("layout", this.currentItem);
       return layout.call(
         this,
         h,
@@ -289,9 +277,17 @@ export default {
   height: 178px;
   display: block;
 }
+::v-deep .el-upload-dragger {
+  width: 100%;
+}
+.formClass  {
+  border: 1px dashed #ccc;
+  margin: 0 15px 15px;
+}
 .questionType {
   position: absolute;
-  top: -70px;
+  top: 15px;
+  left:35px;
   background-color: #dcdfe6;
   padding: 0 5px;
 }

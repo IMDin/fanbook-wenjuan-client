@@ -34,6 +34,16 @@ function vModel(dataObject, confClone) {
       this.$message.error(`最多上传${confClone.limit}个文件`)
     }
     dataObject.attrs['before-upload'] = file => {
+      if (confClone.typeId == "IMAGE_UPLOAD") {
+        let testMsg = file.name.substring(file.name.lastIndexOf(".") + 1);
+        const extension1 = testMsg === "jpg";
+        const extension2 = testMsg === "jpeg";
+        const extension3 = testMsg === "png";
+        if (!extension1 && !extension2 && !extension3) {
+          this.$message.error("请上传jpg 、png、jpeg 类型图片!");
+          return false;
+        }
+      }
       let sizeUnitNum = 1
       // 文件大小判断
       switch (confClone.sizeUnit) {
@@ -112,6 +122,10 @@ function buildDataObject(confClone, dataObject) {
     }
     else {
       dataObject.attrs[key] = val
+      if (confClone.__config__.tag == "el-upload" && key == 'file-list') {
+        console.log('sdwc', val)
+        // dataObject.attrs[key] = confClone.__config__.defaultValue
+      }
     }
   })
   console.log('render.dataObject', dataObject)
