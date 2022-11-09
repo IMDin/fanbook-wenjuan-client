@@ -107,18 +107,6 @@ export const inputComponents = [
       // 正则校验规则
       regList: [
         {
-          pattern: '/[^/d]/g',
-          message: '数字格式错误'
-        },
-        {
-          pattern: '/[^a-zA-Z]/g',
-          message: '字母格式错误'
-        },
-        {
-          pattern: '/[^\u4e00-\u9fa5]/g',
-          message: '中文格式错误'
-        },
-        {
           pattern: '/^1(3|4|5|7|8|9)\\d{9}$/',
           message: '手机号格式错误'
         },
@@ -1094,11 +1082,11 @@ export const matrixComponents = [
         label: '矩阵行3',
         id: 3
       }],
-      maxTip: 'satisfaction',
-      maxTipData: { min: '非常不满意', max: '非常满意' },
-      showIcon: 'el-icon-star-off',
-      level: 5,
     },
+    maxTip: 'satisfaction',
+    maxTipData: { min: '非常不满意', max: '非常满意' },
+    showIcon: 'el-icon-star-off',
+    level: 5,
     placeholder: '请填写',
     style: {
       width: '100%'

@@ -123,9 +123,7 @@
                 v-if="activeData.selectRandom === true"
                 label="固定最后一个选项"
               >
-                <el-switch
-                  v-model="activeData.fixLastSelect"
-                />
+                <el-switch v-model="activeData.fixLastSelect" />
               </el-form-item>
             </div>
 
@@ -215,9 +213,7 @@
                 v-if="activeData.selectRandom === true"
                 label="固定最后一个选项"
               >
-                <el-switch
-                  v-model="activeData.fixLastSelect"
-                />
+                <el-switch v-model="activeData.fixLastSelect" />
               </el-form-item>
             </div>
 
@@ -316,9 +312,7 @@
                 v-if="activeData.selectRandom === true"
                 label="固定最后一个选项"
               >
-                <el-switch
-                  v-model="activeData.fixLastSelect"
-                />
+                <el-switch v-model="activeData.fixLastSelect" />
               </el-form-item>
             </div>
 
@@ -413,9 +407,7 @@
                 v-if="activeData.selectRandom === true"
                 label="固定最后一个选项"
               >
-                <el-switch
-                  v-model="activeData.fixLastSelect"
-                />
+                <el-switch v-model="activeData.fixLastSelect" />
               </el-form-item>
             </div>
 
@@ -544,7 +536,7 @@
               </div>
               <p>量表设置</p>
               <el-form-item label="极值标签">
-                <el-select v-model="activeData.table.maxTip">
+                <el-select v-model="activeData.maxTip">
                   <el-option
                     v-for="(item, index) in maxTipOptions"
                     :key="index"
@@ -553,17 +545,17 @@
                   />
                 </el-select>
               </el-form-item>
-              <el-form-item v-if="activeData.table.maxTip !== 'satisfaction'">
+              <el-form-item v-if="activeData.maxTip !== 'satisfaction'">
                 <div style="display: flex; margin-top: 10px; margin-left: 0">
                   <el-input
-                    v-model="activeData.table.maxTipData.min"
+                    v-model="activeData.maxTipData.min"
                     placeholder="最低分标签"
                     style="width: 150px"
                   >
                   </el-input>
                   <span>&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;</span>
                   <el-input
-                    v-model="activeData.table.maxTipData.max"
+                    v-model="activeData.maxTipData.max"
                     placeholder="最高分标签"
                     style="width: 150px"
                   >
@@ -571,16 +563,16 @@
                 </div>
               </el-form-item>
               <el-form-item label="量级设置">
-                <el-input
+                <el-input-number
                   :min="2"
-                  v-model="activeData.table.level"
-                  type="number"
+                  v-model="activeData.level"
                   placeholder="请输入量级"
+                  step-strictly
                 >
-                </el-input>
+                </el-input-number>
               </el-form-item>
               <el-form-item label="显示样式">
-                <el-select v-model="activeData.table.showIcon">
+                <el-select v-model="activeData.showIcon">
                   <el-option
                     v-for="(item, index) in showIconOptions"
                     :key="index"
@@ -1073,7 +1065,7 @@ export default {
           arr.unshift({ label: "不限", value: 0 });
         }
         arr = arr.filter((item) => {
-          return item.value <= this.activeData.max
+          return item.value <= this.activeData.max;
         });
         return arr;
       }
@@ -1089,8 +1081,8 @@ export default {
         arr = arr.filter((item) => {
           return item.value >= this.activeData.min;
         });
-        if(arr.length >= 2) {
-          arr.shift()
+        if (arr.length >= 2) {
+          arr.shift();
         }
         return arr;
       }

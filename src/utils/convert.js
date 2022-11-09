@@ -30,7 +30,6 @@ export function formItemConvertData(item, projectKey) {
     'span': item.__config__.span,
     'displayType': item.__config__.displayType,
     'projectKey': projectKey,
-    'multiple': item.multiple,
     'titleTip': item.__config__.titleTip,
     'titleTipText': item.__config__.titleTipText,
     'showTip': item.__config__.showTip,
@@ -169,7 +168,9 @@ const dataParams = {
     'size': 'size',
     'options': '__slot__.options',
     'max': 'max',
-    'min': 'min'
+    'min': 'min',
+    'selectRandom':'selectRandom',
+    'fixLastSelect':'fixLastSelect'
   }, // 开关
   'SWITCH': {},
   // 滑块
@@ -239,12 +240,16 @@ const dataParams = {
   },
   // 矩阵量表
   'MATRIX_SCALE': {
-    'table': 'table'
+    'table': 'table',
+    'maxTipData':'maxTipData',
+    'showIcon': 'showIcon',
+    'level': 'level',
+    'maxTip':'maxTip'
   },
   // 矩阵选择
   'MATRIX_SELECT': {
-    'table': 'table'
-    
+    'table': 'table',
+    'multiple':'multiple',
   },
   //省市区
   'PROVINCE_CITY': {

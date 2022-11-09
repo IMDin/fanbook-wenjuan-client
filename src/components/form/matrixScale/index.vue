@@ -22,13 +22,13 @@
             style="margin: 0"
             v-if="scope.$index == 1"
           >
-            {{ table.maxTipData.min }}
+            {{ maxTipData.min }}
           </p>
           <p
             style="margin: 0"
-            v-if="scope.$index == table.level"
+            v-if="scope.$index == level"
           >
-            {{ table.maxTipData.max }}
+            {{ maxTipData.max }}
           </p>
           <span>{{ scope.column.label }}</span>
         </template>
@@ -36,7 +36,7 @@
           <i
             v-if="scope.column.label"
             class="iconStyle"
-            :class="table.showIcon"
+            :class="showIcon"
           />
           {{ scope.column.label ? "" : scope.row.colName }}
         </template>
@@ -67,12 +67,26 @@ export default {
               id: 3,
             },
           ],
-          maxTip: "satisfaction",
-          maxTipData: { min: "非常不满意", max: "非常满意" },
-          showIcon: "el-icon-star-off",
-          level: 5,
         };
       },
+    },
+    maxTip: {
+      type: String,
+      default: "satisfaction",
+    },
+    maxTipData: {
+      type: Object,
+      default: function () {
+        return { min: "非常不满意", max: "非常满意" };
+      },
+    },
+    showIcon: {
+      type: String,
+      default: "el-icon-star-off",
+    },
+    level: {
+      type: Number,
+      default: 5,
     },
   },
   data() {
@@ -87,8 +101,14 @@ export default {
       selectedData: {},
     };
   },
+  computed: {
+    data() {
+      let { table, maxTip, maxTipData, showIcon, level } = this;
+      return { table, maxTip, maxTipData, showIcon, level };
+    },
+  },
   watch: {
-    table: {
+    data: {
       handler(newV) {
         //行处理
         this.trData = [
@@ -102,7 +122,7 @@ export default {
         }
         //列处理
         this.tableData = [];
-        newV.rows.forEach((item) => {
+        newV.table.rows.forEach((item) => {
           this.tableData.push({
             colName: item.label,
           });
@@ -129,8 +149,8 @@ export default {
           }
         });
       }),
-      // let value = JSON.stringify(this.selectedData);
-      console.log(1111, this.selectedData, data);
+        // let value = JSON.stringify(this.selectedData);
+        console.log(1111, this.selectedData, data);
       this.$emit("input", [{ ...this.selectedData }, data]);
     },
     hoverEnterClass(row, column) {

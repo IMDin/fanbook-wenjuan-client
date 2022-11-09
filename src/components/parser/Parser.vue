@@ -15,7 +15,7 @@ const ruleTrigger = {
   "el-time-picker": "change",
   "el-date-picker": "change",
   "el-rate": "change",
-  "image-select": 'change'
+  "image-select": "change",
 };
 
 const processType = {
@@ -36,7 +36,7 @@ const layouts = {
     let label = config.label;
     // 显示序号
     if (formConfCopy.showNumber) {
-      if(scheme.__config__.labelIndex){
+      if (scheme.__config__.labelIndex) {
         label = scheme.__config__.labelIndex + ": " + label;
       }
     }
@@ -173,8 +173,12 @@ function renderChildren(h, scheme) {
 }
 
 function setUpload(config, scheme, response, file) {
-  console.log(222,response,file)
-  let newValue = JSON.parse(this[this.formConf.formModel][scheme.__vModel__]?.length == 0 ? null : this[this.formConf.formModel][scheme.__vModel__]);
+  console.log(222, response, file);
+  let newValue = JSON.parse(
+    this[this.formConf.formModel][scheme.__vModel__]?.length == 0
+      ? null
+      : this[this.formConf.formModel][scheme.__vModel__]
+  );
   if (!newValue) {
     newValue = [];
   }
@@ -539,7 +543,7 @@ export default {
     buildRules(componentList, rules) {
       console.log("buildRules", componentList, rules);
       componentList.forEach((cur) => {
-        console.log('先校验还是后校验');
+        console.log("先校验还是后校验");
         // 逻辑不显示必填问题不校验
         let triggerShow =
           _.indexOf(this.logicTriggerItemList, cur.formItemId) > -1;
@@ -586,6 +590,25 @@ export default {
             callback(new Error(`最少要填字数为${cur.minlength}`));
           } else {
             callback();
+          }
+        };
+        //单行文本数字、字母、中文的输入校验
+        const singleText = (rule, value, callback) => {
+          let regNumber = new RegExp("^[0-9]*$");
+          let regLetter = new RegExp("^[A-Za-z]+$");
+          let regChinese = new RegExp("[^\u4e00-\u9fa5]");
+          if (cur.textType == "number") {
+            regNumber.test(value)
+              ? callback()
+              : callback(new Error("请填写数字"));
+          } else if (cur.textType == "letter") {
+            regLetter.test(value)
+              ? callback()
+              : callback(new Error("请填写字母"));
+          } else if (cur.textType == "chinese") {
+            regChinese.test(value)
+              ? callback(new Error("请填写中文"))
+              : callback();
           }
         };
         //矩阵量表校验
@@ -653,11 +676,23 @@ export default {
             };
             config.regList.push(required);
           }
-          if (config.labelDescription == "单行文本" && cur.minlength) {
-            const required = {
-              validator: minTextLength,
-            };
-            config.regList.push(required);
+          if (config.labelDescription == "单行文本") {
+            if (cur.minlength) {
+              const required = {
+                validator: minTextLength,
+              };
+              config.regList.push(required);
+            }
+            if (
+              cur.textType == "number" ||
+              cur.textType == "letter" ||
+              cur.textType == "chinese"
+            ) {
+              const required = {
+                validator: singleText,
+              };
+              config.regList.push(required);
+            }
           }
           if (config.required) {
             const required = {
@@ -680,25 +715,25 @@ export default {
                   config.regList = this.filterReg(config.regList);
                   break;
                 case "number":
-                  config.regList = this.filterReg(config.regList, 0);
+                  config.regList = this.filterReg(config.regList);
                   break;
                 case "letter":
-                  config.regList = this.filterReg(config.regList, 1);
+                  config.regList = this.filterReg(config.regList);
                   break;
                 case "chinese":
-                  config.regList = this.filterReg(config.regList, 2);
+                  config.regList = this.filterReg(config.regList);
                   break;
                 case "phone":
-                  config.regList = this.filterReg(config.regList, 3);
+                  config.regList = this.filterReg(config.regList, 0);
                   break;
                 case "email":
-                  config.regList = this.filterReg(config.regList, 4);
+                  config.regList = this.filterReg(config.regList, 1);
                   break;
                 case "url":
-                  config.regList = this.filterReg(config.regList, 5);
+                  config.regList = this.filterReg(config.regList, 2);
                   break;
                 case "idCard":
-                  config.regList = this.filterReg(config.regList, 6);
+                  config.regList = this.filterReg(config.regList, 3);
                   break;
               }
             }
@@ -734,9 +769,9 @@ export default {
     filterReg(arr, i) {
       return arr.filter((item, index) => {
         if (i || i == 0) {
-          return index == i || index == 7 || index == 8;
+          return index == i || !item.pattern;
         } else {
-          return index == 7 || index == 8;
+          return !item.pattern;
         }
       });
     },
@@ -745,7 +780,10 @@ export default {
       this.$refs[this.formConf.formRef].resetFields();
     },
     submitForm() {
-      console.log(this[this.formConf.formModel], 'this[this.formConf.formModel]');
+      console.log(
+        this[this.formConf.formModel],
+        "this[this.formConf.formModel]"
+      );
       this.$refs[this.formConf.formRef].validate((valid) => {
         if (!valid) {
           // 未选中自动高亮
