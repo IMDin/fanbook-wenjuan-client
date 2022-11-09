@@ -92,13 +92,11 @@ export function dbDataConvertForItemJson(data) {
     } else {
       jsonItem.__config__.defaultValue = data.defaultValue.value
     }
-    // jsonItem['file-list'] = data.defaultValue.value
   }
   // 不同项目地址区分 动态修改上传地址
   if (jsonItem.action) {
     jsonItem.action = jsonItem.action + data.projectKey
   }
-  // jsonItem.textType = data.textType
   jsonItem.regList = data.regList
   jsonItem.placeholder = data.placeholder
   jsonItem.formItemId = data.formItemId
@@ -241,11 +239,11 @@ const dataParams = {
   },
   // 矩阵量表
   'MATRIX_SCALE': {
-    'table': '__slot__.table'
+    'table': 'table'
   },
   // 矩阵选择
   'MATRIX_SELECT': {
-    'table': '__slot__.table'
+    'table': 'table'
     
   },
   //省市区

@@ -672,7 +672,6 @@ export default {
               (required.message = `${config.label}不能为空`);
             config.regList.push(required);
           }
-          console.log(1526, config.regList);
           // 显示时使用表单校验
           if (!flag) {
             if (config.tagIcon == "input") {
@@ -703,6 +702,7 @@ export default {
                   break;
               }
             }
+            console.log(1526, config.regList);
             rules[cur.__vModel__] = config.regList.map((item) => {
               item.pattern && (item.pattern = eval(item.pattern));
               item.trigger = ruleTrigger && ruleTrigger[config.tag];
@@ -733,7 +733,7 @@ export default {
     //过滤校验规则
     filterReg(arr, i) {
       return arr.filter((item, index) => {
-        if (i) {
+        if (i || i == 0) {
           return index == i || index == 7 || index == 8;
         } else {
           return index == 7 || index == 8;
