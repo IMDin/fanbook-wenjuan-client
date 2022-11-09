@@ -593,8 +593,9 @@ export default {
     cloneComponent(origin) {
       let index = 0
       if(this.drawingList.length != 0) {
-        let fast = this.drawingList[this.drawingList.length - 1]?.__config__
-        index = this.changeNumber(Number(fast.labelIndex))  || ''
+        let fast = this.drawingList[this.drawingList.length - 1]
+        let num =   fast.typeId === "PAGINATION" ?  Number(fast.__config__?.labelIndex) - 1 :   Number(fast.__config__?.labelIndex)
+        index = this.changeNumber(num)  || ''
       }
       const clone = deepClone(origin);
       const config = clone.__config__;
