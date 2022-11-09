@@ -147,7 +147,7 @@ export default {
     this.formConf.size = window.innerWidth < 480 ? "medium" : "small";
   },
   async mounted() {
-    let url = `/user/project/details/${this.formConf.projectKey}`;
+    let url = `/user/project/details/${this.formConf.projectKey}${this.$route.path == '/project/form/theme' ? '?isPreview=1' : ''}`;
     if (this.formConf.projectKind == 2) {
       url = `/project/template/details/${this.formConf.projectKey}`;
     }
@@ -167,8 +167,6 @@ export default {
     });
     this.$api.get(url).then((res) => {
       if (res.data) {
-        let { submitBtnText, showNumber, btnsColor } =
-          res.data.userProjectTheme;
         let serialNumber = 1;
         let fields = res.data.projectItems.map((item) => {
           let projectItem = dbDataConvertForItemJson(item);
@@ -187,15 +185,6 @@ export default {
           return projectItem;
         });
         console.log("fields", fields);
-        if (showNumber) {
-          let ind = 0;
-          fields.forEach((ele, index) => {
-            ele.__config__.labelIndex = this.changeNumber(index - ind);
-            if (ele.typeId == "PAGINATION") {
-              ind++;
-            }
-          });
-        }
         this.pageShowHandle(fields);
         if (_.keys(this.perPageFields).length != 0) {
           this.formConf.fields = _.get(this.perPageFields, 1);
@@ -212,9 +201,19 @@ export default {
         // 主题数据
         if (res.data.userProjectTheme) {
           this.projectTheme = res.data.userProjectTheme;
-
+          let { submitBtnText, showNumber, btnsColor } =
+            res.data.userProjectTheme;
           if (submitBtnText) this.formConf.submitBtnText = submitBtnText;
           if (showNumber) this.formConf.showNumber = showNumber;
+          if(showNumber) {
+              let ind = 0
+              fields.forEach((ele,index) => {
+                ele.__config__.labelIndex =  this.changeNumber(index- ind)
+                if(ele.typeId == "PAGINATION") {
+                  ind++
+                }
+              })
+            }
           if (btnsColor) this.formConf.submitBtnColor = btnsColor;
         }
         this.startParser = true;
