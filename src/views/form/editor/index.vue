@@ -591,8 +591,14 @@ export default {
       })
     },
     cloneComponent(origin) {
+      let index = 0
+      if(this.drawingList.length != 0) {
+        let fast = this.drawingList[this.drawingList.length - 1]?.__config__
+        index = this.changeNumber(Number(fast.labelIndex))  || ''
+      }
       const clone = deepClone(origin);
       const config = clone.__config__;
+      config.labelIndex = index == 0 ? '01' : index
       config.span = this.formConf.span; // 生成代码时，会根据span做精简判断
       this.createIdAndKey(clone);
       clone.placeholder !== undefined && (clone.placeholder += config.label);
