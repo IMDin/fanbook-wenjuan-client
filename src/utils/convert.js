@@ -94,6 +94,9 @@ export function dbDataConvertForItemJson(data) {
       jsonItem.__config__.defaultValue = data.defaultValue.value
     }
   }
+  if(data.type === "IMAGE_SELECT" && jsonItem.multiple) {
+    jsonItem.__config__.defaultValue = []
+  }
   // 不同项目地址区分 动态修改上传地址
   if (jsonItem.action) {
     jsonItem.action = jsonItem.action + data.projectKey

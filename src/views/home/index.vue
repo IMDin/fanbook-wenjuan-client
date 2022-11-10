@@ -157,6 +157,21 @@ export default {
                 'fbUser': localStorage.getItem("user_id")
             }).then(res => {
                 console.log(res)
+                const data = {
+                  backgroundColor: "",
+                  backgroundImg: "",
+                  logoImg: "",
+                  logoPosition: "left",
+                  projectKey: res.data,
+                  showDescribe: true,
+                  showNumber: true,
+                  showTitle: true,
+                  submitBtnText: "提交",
+                  themeId: ""
+                }
+                this.$api
+                .post("/user/project/theme/save", data)
+                .then(() => {});
                 this.$router.push({path: '/project/form', query: {key: res.data}})
             })
         },
