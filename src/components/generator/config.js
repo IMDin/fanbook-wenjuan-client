@@ -1001,7 +1001,7 @@ export const personalInfoComponents = [
       regList: [],
       document: 'https://element.eleme.cn/#/zh-CN/component/input'
     },
-    placeholder: '请选择省市县',
+    placeholder: '请选择',
     style: { width: '100%' },
     provinceRadio: 2,
     address: ''

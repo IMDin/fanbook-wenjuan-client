@@ -23,6 +23,8 @@ const processType = {
   "el-cascader": "options",
   "el-radio-group": "__slot__.options",
   "el-checkbox-group": "__slot__.options",
+  "image-select": "options",
+  "my-checkbox-group": "__slot__.options"
 };
 
 const layouts = {
@@ -60,6 +62,11 @@ const layouts = {
           prop={scheme.__vModel__}
           label={config.showLabel ? label : ""}
         >
+          {config.titleTip ? (
+            <div class="titleTip" domPropsInnerHTML={config.titleTipText}></div>
+          ) : (
+            ""
+          )}
           <render conf={scheme} {...{ on: listeners }} />
         </el-form-item>
       </el-col>
@@ -351,21 +358,21 @@ function setValueLabel(event, config, scheme) {
     if (event instanceof Array) {
       // 多选 其他自定义输入
       let labelArr = new Array();
-      if (!event.includes(0)) {
-        // 如果多选里没有选择其他，就清掉other
-        this.$set(
-          this[this.formConf.labelFormModel],
-          `${scheme.__vModel__}other`,
-          ""
-        );
-        // 同时把输入框清空
-        let otherInput = document
-          .querySelector("." + config.tag)
-          .querySelector(".item-other-input");
-        if (otherInput) {
-          otherInput.value = "";
-        }
-      }
+      // if (!event.includes(0)) {
+      //   // 如果多选里没有选择其他，就清掉other
+      //   this.$set(
+      //     this[this.formConf.labelFormModel],
+      //     `${scheme.__vModel__}other`,
+      //     ""
+      //   );
+      //   // 同时把输入框清空
+      //   let otherInput = document
+      //     .querySelector("." + config.tag)
+      //     .querySelector(".item-other-input");
+      //   if (otherInput) {
+      //     otherInput.value = "";
+      //   }
+      // }
       event.forEach((item) => {
         // 拼到头部 其他选项
         let { label } = getObject(_.get(scheme, tagOptionKey), "value", item);
@@ -379,9 +386,6 @@ function setValueLabel(event, config, scheme) {
     } else {
       // 单选 其他自定义输入
       if (event == 0) {
-        console.log(
-          this[this.formConf.labelFormModel][`${scheme.__vModel__}other`]
-        );
         // 如果选择了其他，把label存在field字段，把输入框内容存在fieldother字段
         let item = _.find(_.get(scheme, tagOptionKey), { value: event });
         this.$set(
@@ -396,24 +400,25 @@ function setValueLabel(event, config, scheme) {
         );
       } else {
         let item = _.find(_.get(scheme, tagOptionKey), { value: event });
+        console.log(1457,item)
         this.$set(
           this[this.formConf.labelFormModel],
           scheme.__vModel__,
           item.label
         );
         // 如果没有选择其他，就清掉other
-        this.$set(
-          this[this.formConf.labelFormModel],
-          `${scheme.__vModel__}other`,
-          ""
-        );
+        // this.$set(
+        //   this[this.formConf.labelFormModel],
+        //   `${scheme.__vModel__}other`,
+        //   ""
+        // );
         // 同时把输入框清空
-        let otherInput = document
-          .querySelector("." + config.tag)
-          .querySelector(".item-other-input");
-        if (otherInput) {
-          otherInput.value = "";
-        }
+        // let otherInput = document
+        //   .querySelector("." + config.tag)
+        //   .querySelector(".item-other-input");
+        // if (otherInput) {
+        //   otherInput.value = "";
+        // }
       }
     }
   } else if (config.tag === "el-upload") {
@@ -848,5 +853,9 @@ export default {
 }
 ::v-deep .el-radio {
   margin-right: 30px;
+}
+.titleTip {
+  color: #dcdfe6;
+  margin-top: -10px;
 }
 </style>

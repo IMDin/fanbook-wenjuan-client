@@ -1391,6 +1391,13 @@ export default {
       this.$emit("data-change", val);
     }),
     changeRenderKey() {
+      let placeholder = ''
+      if (["el-select", "el-date-picker","province-city"].includes(this.activeData.__config__.tag)) {
+        placeholder = '请选择'
+      } else if (["el-input"].includes(this.activeData.__config__.tag)) {
+        placeholder = '请输入'
+      }
+      this.activeData.placeholder = placeholder + this.activeData.__config__.label
       if (needRerenderList.includes(this.activeData.__config__.tag)) {
         this.activeData.__config__.renderKey = +new Date();
       }
