@@ -94,10 +94,7 @@ export default {
       }
     }
   },
-  created() {
-    console.log(this.$parent.$props,this.options, 'this');
-    this.model = this.value
-  },
+
   methods: {
     selectValueChange() {
       this.$emit('input', this.model)
