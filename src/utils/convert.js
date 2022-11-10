@@ -85,6 +85,8 @@ export function dbDataConvertForItemJson(data) {
   jsonItem.__config__.required = data.required
   jsonItem.__config__.regList = data.regList
   jsonItem.__config__.showLabel = data.showLabel
+  jsonItem.__config__.titleTip = data.titleTip
+  jsonItem.__config__.titleTipText = data.titleTipText
   if (data.defaultValue) {
     if (data.defaultValue.json) {
       jsonItem.__config__.defaultValue = JSON.parse(data.defaultValue.value)

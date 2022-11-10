@@ -95,7 +95,7 @@ export default {
     }
   },
   created() {
-    console.log(this.$parent.$props, 'this');
+    console.log(this.$parent.$props,this.options, 'this');
     this.model = this.value
   },
   methods: {

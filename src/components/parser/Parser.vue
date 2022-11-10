@@ -200,6 +200,7 @@ function deleteUpload(config, scheme, file, fileList) {
 
 function setValue(event, config, scheme) {
   console.log("setValue,event/config/scheme", event, config, scheme);
+  
   //兼容矩阵组件传值
   if (config.tag == "matrix-scale" || config.tag == "matrix-select") {
     this.$set(config, "defaultValue", event[0]);
@@ -781,7 +782,7 @@ export default {
     },
     submitForm() {
       console.log(
-        this[this.formConf.formModel],
+        this[this.formConf.formModel],this[this.formConf.labelFormModel],
         "this[this.formConf.formModel]"
       );
       this.$refs[this.formConf.formRef].validate((valid) => {
