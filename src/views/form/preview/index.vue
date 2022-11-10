@@ -74,8 +74,10 @@ export default {
     mounted() {
         this.projectKey = this.$route.query.key
         let url = window.location.protocol + '//' + window.location.host
+        console.log('window.location.protocol, ,url:--------',window.location , url);
         this.mobilePreviewUrl = `${url}/project/view?key=${this.projectKey}?isPreview=1`
         this.$set(this.projectConfig, 'projectKey', this.projectKey)
+        console.log(this.mobilePreviewUrl, 'this.mobilePreviewUrl---------', this.projectKey);
     }
 }
 </script>
