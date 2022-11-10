@@ -126,70 +126,71 @@ export default {
   },
   methods: {
     cellClick(row, column, cell, event) {
-      if (event.target.tagName !== "SPAN") return;
-      if (this.multiple) {
-        if (Object.keys(this.selectedData).length !== this.tableData.length) {
-          this.tableData.forEach((item) => {
-            this.selectedData[item.colName] = [];
+      if (event.target.tagName == "INPUT") {
+        if (this.multiple) {
+          if (Object.keys(this.selectedData).length !== this.tableData.length) {
+            this.tableData.forEach((item) => {
+              this.selectedData[item.colName] = [];
+            });
+          }
+          //数据传递使用值
+          if (
+            this.selectedData[row.colName].indexOf(Number(column.property)) < 0
+          ) {
+            this.selectedData[row.colName].push(Number(column.property));
+          } else {
+            this.selectedData[row.colName] = this.selectedData[
+              row.colName
+            ].filter((item) => {
+              return item !== Number(column.property);
+            });
+          }
+          this.selectedData[row.colName].sort();
+          //数据传递使用label
+          // if (this.selectedData[row.colName].indexOf(column.label) < 0) {
+          //   this.selectedData[row.colName].push(column.label);
+          // } else {
+          //   this.selectedData[row.colName] = this.selectedData[
+          //     row.colName
+          //   ].filter((item) => {
+          //     return item !== column.label;
+          //   });
+          // }
+          // this.selectedData[row.colName].sort();
+          //重构数据结构
+          let data = {};
+          this.table.rows.forEach((item, index) => {
+            Object.keys(this.selectedData).forEach((selectItem) => {
+              if (selectItem == item.label) {
+                data[String(index + 1)] = this.selectedData[selectItem];
+              }
+            });
           });
-        }
-        //数据传递使用值
-        // if (
-        //   this.selectedData[row.colName].indexOf(Number(column.property)) < 0
-        // ) {
-        //   this.selectedData[row.colName].push(Number(column.property));
-        // } else {
-        //   this.selectedData[row.colName] = this.selectedData[
-        //     row.colName
-        //   ].filter((item) => {
-        //     return item !== Number(column.property);
-        //   });
-        // }
-        // this.selectedData[row.colName].sort();
-        //数据传递使用label
-        if (
-          this.selectedData[row.colName].indexOf(column.label) < 0
-        ) {
-          this.selectedData[row.colName].push(column.label);
+          this.$emit("input", [{ ...this.selectedData }, data]);
         } else {
-          this.selectedData[row.colName] = this.selectedData[
-            row.colName
-          ].filter((item) => {
-            return item !== column.label;
-          });
+          if (Object.keys(this.selectedData).length !== this.tableData.length) {
+            this.tableData.forEach((item) => {
+              // this.selectedData[item.colName] = "";
+              this.selectedData[item.colName] = [];
+            });
+          }
+          this.selectedData[row.colName] = [Number(column.property)];
+          // this.selectedData[row.colName] = [column.label];
+          //重构数据结构
+          let data = {};
+          this.table.rows.forEach((item, index) => {
+            Object.keys(this.selectedData).forEach((selectItem) => {
+              if (selectItem == item.label) {
+                data[String(index + 1)] = this.selectedData[selectItem];
+              }
+            });
+          }),
+            // let value = JSON.stringify(this.selectedData);
+            console.log(2222, this.selectedData, data);
+          this.$emit("input", [{ ...this.selectedData }, data]);
         }
-        this.selectedData[row.colName].sort();
-        //重构数据结构
-        let data = {};
-        this.table.rows.forEach((item, index) => {
-          Object.keys(this.selectedData).forEach((selectItem) => {
-            if (selectItem == item.label) {
-              data[String(index + 1)] = this.selectedData[selectItem];
-            }
-          });
-        });
-        this.$emit("input", [{ ...this.selectedData }, data]);
       } else {
-        if (Object.keys(this.selectedData).length !== this.tableData.length) {
-          this.tableData.forEach((item) => {
-            // this.selectedData[item.colName] = "";
-            this.selectedData[item.colName] = [];
-          });
-        }
-        // this.selectedData[row.colName] = [Number(column.property)];
-        this.selectedData[row.colName] = [column.label];
-        //重构数据结构
-        let data = {};
-        this.table.rows.forEach((item, index) => {
-          Object.keys(this.selectedData).forEach((selectItem) => {
-            if (selectItem == item.label) {
-              data[String(index + 1)] = this.selectedData[selectItem];
-            }
-          });
-        }),
-          // let value = JSON.stringify(this.selectedData);
-          console.log(2222, this.selectedData, data);
-        this.$emit("input", [{ ...this.selectedData }, data]);
+        return;
       }
     },
   },
