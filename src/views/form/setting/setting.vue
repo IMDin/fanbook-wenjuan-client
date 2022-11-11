@@ -1190,7 +1190,7 @@ export default {
     beforeUploadFile(file, item) {
       if (!item.desc) {
         this.$message({ type: "error", message: "请填写cdk名称" });
-        return;
+        return false;
       }
       console.log("🍓 file beforeUpload: ", file);
       const isLt2M = file.size / 1024 / 1024 < 4;
