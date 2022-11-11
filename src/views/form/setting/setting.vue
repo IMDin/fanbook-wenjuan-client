@@ -1073,20 +1073,22 @@ export default {
     },
     //保存奖品设置
     saveGiftSetting() {
-      let params = {
-        id: this.id || null,
-        projectKey: this.projectKey,
-        type: this.giftForm.sendGiftType,
-        probability:
-          this.giftForm.percentage == "must" ? 1 : Number(this.giftPercentage),
-      };
-      this.$api.post(`/user/prize/setting/save`, params).then((res) => {
-        if (res.data && res.code == 200) {
-          this.id = res.data.id;
-          this.disabled = false;
-          this.$message.success("发奖规则设置成功");
-        }
-      });
+      if (this.giftForm.sendGiftType || this.giftForm.sendGiftType == 0) {
+        let params = {
+          id: this.id || null,
+          projectKey: this.projectKey,
+          type: this.giftForm.sendGiftType,
+          probability:
+            this.giftForm.percentage == "must" ? 1 : Number(this.giftPercentage),
+        };
+        this.$api.post(`/user/prize/setting/save`, params).then((res) => {
+          if (res.data && res.code == 200) {
+            this.id = res.data.id;
+            this.disabled = false;
+            this.$message.success("发奖规则设置成功");
+          }
+        });
+      }
     },
     //获取奖品领取情况
     getReceiveGiftData() {
