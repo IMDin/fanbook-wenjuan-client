@@ -150,7 +150,6 @@ export default {
         });
       }),
         // let value = JSON.stringify(this.selectedData);
-        console.log(1111, this.selectedData, data);
       this.$emit("input", [{ ...this.selectedData }, data]);
     },
     hoverEnterClass(row, column) {

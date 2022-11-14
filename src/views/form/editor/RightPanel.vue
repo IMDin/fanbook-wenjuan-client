@@ -1809,7 +1809,6 @@ export default {
     },
 
     clickSingle(e) {
-      console.log(111, e);
       this.selectType = e;
     },
     clickMore(e) {

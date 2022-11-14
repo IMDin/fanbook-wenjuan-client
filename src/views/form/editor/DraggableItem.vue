@@ -77,7 +77,6 @@ const layouts = {
               config.tag == "matrix-scale" || config.tag == "matrix-select"
                 ? this.$set(config, "defaultValue", event[0])
                 : this.$set(config, "defaultValue", event);
-              console.log(78989, currentItem);
             }}
             onUpload={(response, file, fileList) => {
               upload(response, file, fileList, currentItem, this);

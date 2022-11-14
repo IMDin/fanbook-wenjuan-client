@@ -186,7 +186,6 @@ export default {
             });
           }),
             // let value = JSON.stringify(this.selectedData);
-            console.log(2222, this.selectedData, data);
           this.$emit("input", [{ ...this.selectedData }, data]);
         }
       } else {

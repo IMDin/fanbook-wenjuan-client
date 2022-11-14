@@ -180,7 +180,6 @@ function renderChildren(h, scheme) {
 }
 
 function setUpload(config, scheme, response, file) {
-  console.log(222, response, file);
   let newValue = JSON.parse(
     this[this.formConf.formModel][scheme.__vModel__]?.length == 0
       ? null
@@ -400,7 +399,6 @@ function setValueLabel(event, config, scheme) {
         );
       } else {
         let item = _.find(_.get(scheme, tagOptionKey), { value: event });
-        console.log(1457,item)
         this.$set(
           this[this.formConf.labelFormModel],
           scheme.__vModel__,
@@ -637,13 +635,11 @@ export default {
         };
         //矩阵选择校验
         const validateMatrixSelect = (rule, value, callback) => {
-          console.log("matrixScale", value);
           if (value && config.required) {
             let arr = [];
             arr = Object.keys(value).filter((item) => {
               return value[item].length == 0;
             });
-            console.log("arr", arr);
             if (arr.length > 0) {
               callback(new Error(`请完整填写矩阵`));
             } else {
@@ -743,7 +739,6 @@ export default {
                   break;
               }
             }
-            console.log(1526, config.regList);
             rules[cur.__vModel__] = config.regList.map((item) => {
               item.pattern && (item.pattern = eval(item.pattern));
               item.trigger = ruleTrigger && ruleTrigger[config.tag];

@@ -63,7 +63,10 @@
                   />
                 </el-tooltip>
               </div>
-              <el-switch v-model="inputTimes" />
+              <el-switch
+                v-model="inputTimes"
+                @change="saveUserProjectSetting"
+              />
             </div>
             <div
               v-if="inputTimes"
@@ -79,10 +82,12 @@
               </el-select>
               <span style="line-height: 32px">答题</span>
               <el-input
+                :min="1"
                 v-model="inputTimesNum"
                 placeholder="请输入次数"
                 type="number"
-                @change="saveUserProjectSetting"
+                onkeyup="this.value = this.value ? this.value.replace(/[^A-z0-9]/, '') : 1"
+                @change="changeInputTimes"
               />
               <span
                 style="
@@ -814,6 +819,10 @@ export default {
     });
   },
   methods: {
+    changeInputTimes(val) {
+      this.inputTimesNum = val
+      this.saveUserProjectSetting()
+    },
     //自定义输入框格式处理
     changeInput(item, index) {
       let str = String(item.count).replace(".", "");

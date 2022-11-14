@@ -288,7 +288,6 @@ export default {
 
     //控制tab页签
     editorBreadClick() {
-      console.log(111, this.$route.name);
       if (this.$route.name == "editor") {
         this.currentTab = "editor";
       }

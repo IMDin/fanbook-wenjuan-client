@@ -1156,7 +1156,6 @@ export default {
     },
     activeData: {
       handler(newValue, oldValue) {
-        console.log("jjk", newValue, oldValue);
         // 切换选中时不触发
         if (newValue.__config__.formId === oldValue.__config__.formId) {
           if (newValue) {
@@ -1448,7 +1447,7 @@ export default {
         );
         let lastItem = options.pop();
         let arr = this.randomSelect(options).concat(lastItem);
-        console.log(444, lastItem, arr);
+        console.log(arr);
         return options;
       }
     },
