@@ -52,7 +52,7 @@ export default {
   mounted() {
     this.key = this.$route.query.key
     let url = window.location.protocol + '//' + window.location.host
-    this.projectUrl  = `${url}/s/${this.key}`
+    this.projectUrl  = `${url}/s/${this.key}?fb_redirect&open_type=mp`
     this.formInline.value = this.projectUrl
   },
   methods: {
