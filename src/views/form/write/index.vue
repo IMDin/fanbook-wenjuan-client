@@ -170,7 +170,7 @@ export default {
     // }
     // 如果是在fanbook里面打开的 不使用微信验证
     // this.getWxAuthorizationUrl();
-    this.queryProjectSettingStatus();
+    // this.queryProjectSettingStatus();
     // if (constants.enableWx) {
     //   // 加载微信相关 获取签名
     //   this.$api
@@ -201,7 +201,7 @@ export default {
         .get("/user/project/setting-status", {
           params: {
             projectKey: this.projectConfig.projectKey,
-            wxOpenId: localStorage.getItem("user_id"),
+            wxOpenId:  this.user_id ?  this.user_id : '',
           },
         })
         .then((res) => {
@@ -255,13 +255,21 @@ export default {
              this.guildId=res.id;
               this.guildName=res.name;
             });
+            window.fb.getUserInfo().then(v => {
+              const { userId } = v
+              this.user_id = userId
+              this.queryProjectSettingStatus();
+            })
 					}else{
             console.log("write fail to get oauth2 code!");
 						this.needAuth = true;
             // 授权失败，关闭小程序
             window.fb.closeWindow();
 					}
-				});
+				}).catch(() => {
+          // 在web 中打开
+          this.queryProjectSettingStatus();
+        });
 			},
     getFanbookLoginToken(data) {
       console.log("write start to login fanbook data:", JSON.stringify(data));
